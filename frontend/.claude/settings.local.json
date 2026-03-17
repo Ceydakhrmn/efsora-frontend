@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(rm -rf .idea)",
+      "Bash(mv temp-project/* temp-project/.* .)",
+      "Bash(rm -rf temp-project)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

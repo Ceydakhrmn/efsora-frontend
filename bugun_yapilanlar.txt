@@ -1,0 +1,25 @@
+Bugün yapılanlar özeti:
+
+- Frontend ve backend projeleri WSL ortamında çalıştırıldı.
+- Backend başlatma komutu: cd /home/ceyda/projeler/efsora/backend && ./mvnw spring-boot:run
+- Frontend başlatma komutu: cd /home/ceyda/projeler/efsora/frontend && npm run dev
+- CORS ayarları ve .env dosyası kontrol edildi.
+- Bildirim kartları için Settings.jsx dosyası modernleştirildi.
+- API bağlantı ve login hataları analiz edildi.
+- Terminal ve dosya erişimi için Linux komutları (cd, ls, cat) kullanıldı.
+- WSL ve Windows dosya yolları arasındaki farklar açıklandı.
+- Backend ve frontend logları, başlatma adımları ve hata çözüm yolları anlatıldı.
+
+Bu dosya, bugünkü çalışma özetini içerir.
+
+16 Mart 2026 - CSS Hataları ve Düzeltmeler
+
+- .theme-card:hover satırında border-color'ın ':' eksikliği giderildi.
+- .settings-layout ve altındaki bloklar iç içe açılmıştı, dışarıya çıkarılıp doğru kapatıldı.
+- App.css dosyasının sonunda fazla süslü parantezler kaldırıldı.
+- .settings-card::before bloğunun kapanış süslü parantezi eklendi.
+- .panel bloğunun kapanış süslü parantezi eklendi.
+- Tüm CSS blokları doğru şekilde kapatıldı, derleyici hataları giderildi.
+- Beyaz ekran sorununun ana sebebi olan CSS hataları çözüldü.
+
+Sonuç: Uygulama artık derlenebilir ve çalışabilir durumda. Hata olursa yeni mesaj iletebilirsin.
