@@ -1,6 +1,7 @@
-import { Menu } from 'lucide-react'
+import { Menu, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/i18n'
+import { useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 interface HeaderProps {
@@ -10,18 +11,42 @@ interface HeaderProps {
 
 export function Header({ title, onMenuClick }: HeaderProps) {
   const { language, setLanguage } = useI18n()
+  const location = useLocation()
+
+  const segments = location.pathname.split('/').filter(Boolean)
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6"
-      )}
-    >
+    <header className={cn(
+      "sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6"
+    )}>
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMenuClick}
+          className="lg:hidden"
+        >
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-1.5">
+          <span className="text-xs font-mono text-muted-foreground/50 hidden sm:block">
+            efsora
+          </span>
+          {segments.map((seg, i) => (
+            <span key={seg} className="flex items-center gap-1.5">
+              <ChevronRight className="h-3 w-3 text-muted-foreground/30 hidden sm:block" />
+              {i === segments.length - 1 ? (
+                <h1 className="text-sm font-semibold text-foreground font-archivo capitalize">
+                  {title}
+                </h1>
+              ) : (
+                <span className="text-xs text-muted-foreground font-mono capitalize">{seg}</span>
+              )}
+            </span>
+          ))}
+        </nav>
       </div>
 
       <div className="flex items-center gap-2">
@@ -30,7 +55,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <button
             onClick={() => setLanguage('tr')}
             className={cn(
-              "rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer",
+              "rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer font-mono",
               language === 'tr'
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -41,7 +66,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <button
             onClick={() => setLanguage('en')}
             className={cn(
-              "rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer",
+              "rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer font-mono",
               language === 'en'
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"

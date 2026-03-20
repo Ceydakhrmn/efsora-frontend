@@ -26,23 +26,27 @@ export function AuthPage() {
     return <Navigate to="/dashboard" replace />
   }
 
+  const languageSwitch = (
+    <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg border bg-muted p-1">
+      <button
+        onClick={() => setLanguage('tr')}
+        className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer font-mono ${language === 'tr' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        TR
+      </button>
+      <button
+        onClick={() => setLanguage('en')}
+        className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer font-mono ${language === 'en' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        EN
+      </button>
+    </div>
+  )
+
   if (showForgotPassword) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg border bg-muted p-1">
-          <button
-            onClick={() => setLanguage('tr')}
-            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${language === 'tr' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            TR
-          </button>
-          <button
-            onClick={() => setLanguage('en')}
-            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${language === 'en' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            EN
-          </button>
-        </div>
+        {languageSwitch}
         <ForgotPasswordFlow onBack={() => setShowForgotPassword(false)} />
       </div>
     )
@@ -50,30 +54,31 @@ export function AuthPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      {/* Language Switch */}
-      <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg border bg-muted p-1">
-        <button
-          onClick={() => setLanguage('tr')}
-          className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${language === 'tr' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          TR
-        </button>
-        <button
-          onClick={() => setLanguage('en')}
-          className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${language === 'en' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          EN
-        </button>
-      </div>
+      {languageSwitch}
 
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-xl">
-            E
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center">
+            <img
+              src="/efsora-logo.jpg"
+              alt="Efsora Labs"
+              className="h-14 w-14 rounded-xl object-cover shadow-lg"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+                const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                if (fallback) fallback.style.display = 'flex'
+              }}
+            />
+            <div
+              className="hidden h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-xl"
+              style={{ display: 'none' }}
+            >
+              E
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Efsora</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-foreground font-archivo">Efsora Labs</h1>
+          <p className="mt-1 text-sm text-muted-foreground font-mono">
             {activeTab === 'login' ? t.auth.loginSubtitle : t.auth.registerSubtitle}
           </p>
         </div>
