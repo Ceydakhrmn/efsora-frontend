@@ -77,7 +77,7 @@ export function UserDetailPage() {
           <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-400 dark:bg-blue-900 dark:text-blue-200">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
