@@ -54,8 +54,9 @@ docker compose down
 
 ## Servisler
 
-- Backend API: `http://localhost:8080`
-- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- Backend API: `http://localhost:8081`
+- Frontend (Vite): `http://localhost:5173`
+- Swagger UI: `http://localhost:8081/swagger-ui/index.html`
 - PostgreSQL: `localhost:5432`
 
 ## API Endpoints
@@ -84,7 +85,7 @@ docker compose down
 ## Ornek Login (curl)
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:8081/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "ahmet@test.com",

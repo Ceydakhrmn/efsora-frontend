@@ -1,7 +1,13 @@
+
 import api from './axios'
 import type { User, UserRequest, ChangePasswordRequest, MessageResponse } from '@/types'
 
 export const usersApi = {
+    // Çoklu silme
+    deleteBulk: (ids: number[]) =>
+      api.post('/kullanicilar/bulk-delete', ids, {
+        headers: { 'Content-Type': 'application/json' }
+      }),
   getAll: () =>
     api.get<User[]>('/kullanicilar'),
 

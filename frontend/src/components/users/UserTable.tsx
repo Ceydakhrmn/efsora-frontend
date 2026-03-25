@@ -16,13 +16,16 @@ import type { User } from '@/types'
 
 interface UserTableProps {
   users: User[]
+  selectedIds: number[]
+  onSelect: (id: number, checked: boolean) => void
+  onSelectAll: (checked: boolean) => void
   onEdit: (user: User) => void
   onDeactivate: (id: number) => void
   onPermanentDelete: (id: number) => void
   onRowClick: (user: User) => void
 }
 
-export function UserTable({ users, onEdit, onDeactivate, onPermanentDelete, onRowClick }: UserTableProps) {
+export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, onDeactivate, onPermanentDelete, onRowClick }: UserTableProps) {
   const { t } = useI18n()
 
   if (users.length === 0) {
@@ -33,12 +36,21 @@ export function UserTable({ users, onEdit, onDeactivate, onPermanentDelete, onRo
     )
   }
 
+  const allSelected = users.length > 0 && users.every((u) => selectedIds.includes(u.id))
   return (
     <Card className="overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b bg-muted/50">
+              <th className="px-2 py-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={e => onSelectAll(e.target.checked)}
+                  aria-label="Tümünü seç"
+                />
+              </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t.users.name}
               </th>
@@ -66,6 +78,15 @@ export function UserTable({ users, onEdit, onDeactivate, onPermanentDelete, onRo
                 className="border-b transition-colors hover:bg-muted/50 cursor-pointer"
                 onClick={() => onRowClick(user)}
               >
+                <td className="px-2 py-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(user.id)}
+                    onChange={e => onSelect(user.id, e.target.checked)}
+                    onClick={e => e.stopPropagation()}
+                    aria-label="Kullanıcıyı seç"
+                  />
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">

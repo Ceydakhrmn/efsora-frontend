@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="${BASE_URL:-http://localhost:8080}"
+BASE_URL="${BASE_URL:-http://localhost:8081}"
 AUTH_BASE="$BASE_URL/api/auth"
 USER_BASE="$BASE_URL/api/kullanicilar"
 

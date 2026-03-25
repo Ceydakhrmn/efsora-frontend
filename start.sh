@@ -64,14 +64,14 @@ else
 fi
 
 echo "[4/4] Verifying services..."
-wait_for_http "http://localhost:8080/api/kullanicilar/health" "Backend API" 60 1
+wait_for_http "http://localhost:8081/api/kullanicilar/health" "Backend API" 60 1
 wait_for_http "http://localhost:5173" "Frontend" 30 1
 
 echo
 
 echo "Application is up:"
 echo "- Frontend: http://localhost:5173"
-echo "- Backend:  http://localhost:8080"
-echo "- Swagger:  http://localhost:8080/swagger-ui/index.html"
+echo "- Backend:  http://localhost:8081"
+echo "- Swagger:  http://localhost:8081/swagger-ui/index.html"
 
 echo "To watch frontend logs: tail -f $FRONTEND_LOG_FILE"

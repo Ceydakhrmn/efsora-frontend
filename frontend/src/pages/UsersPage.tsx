@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search } from 'lucide-react'
@@ -13,6 +14,7 @@ import type { User, UserRequest } from '@/types'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
+
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 
 export function UsersPage() {
@@ -22,8 +24,35 @@ export function UsersPage() {
   const [deptFilter, setDeptFilter] = useState<string>('all')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
   const { t } = useI18n()
   const navigate = useNavigate()
+
+  // Checkbox seçimleri
+  const handleSelect = (id: number, checked: boolean) => {
+    setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id))
+  }
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filteredUsers.map((u) => u.id))
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  // Toplu silme
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return
+    try {
+      await usersApi.deleteBulk(selectedIds)
+      toast.success(t.users.userDeleted)
+      setSelectedIds([])
+      fetchUsers()
+    } catch (err) {
+      const axiosError = err as AxiosError<ErrorResponse>
+      toast.error(axiosError.response?.data?.message || t.common.error)
+    }
+  }
 
   const fetchUsers = async () => {
     try {
@@ -141,15 +170,27 @@ export function UsersPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={openCreate}>
-          <Plus className="h-4 w-4" />
-          {t.users.addUser}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={openCreate}>
+            <Plus className="h-4 w-4" />
+            {t.users.addUser}
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={selectedIds.length === 0}
+            onClick={handleBulkDelete}
+          >
+            {t.users.permanentDelete} ({selectedIds.length})
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
       <UserTable
         users={filteredUsers}
+        selectedIds={selectedIds}
+        onSelect={handleSelect}
+        onSelectAll={handleSelectAll}
         onEdit={openEdit}
         onDeactivate={handleDeactivate}
         onPermanentDelete={handlePermanentDelete}
