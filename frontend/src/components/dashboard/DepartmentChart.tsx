@@ -9,6 +9,24 @@ interface DepartmentChartProps {
   users: User[]
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const { name, value, percentage } = payload[0].payload
+    return (
+      <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
+        <p className="font-semibold text-foreground">{name}</p>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{value}</span> users
+        </p>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{percentage}%</span> of total
+        </p>
+      </div>
+    )
+  }
+  return null
+}
+
 export function DepartmentChart({ users }: DepartmentChartProps) {
   const { t } = useI18n()
 
@@ -19,7 +37,11 @@ export function DepartmentChart({ users }: DepartmentChartProps) {
   }, {})
 
   const data = Object.entries(deptData)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({
+      name,
+      value,
+      percentage: users.length > 0 ? Math.round((value / users.length) * 100) : 0,
+    }))
     .sort((a, b) => b.value - a.value)
 
   return (
@@ -34,14 +56,7 @@ export function DepartmentChart({ users }: DepartmentChartProps) {
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
               <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  color: 'hsl(var(--foreground))',
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {data.map((_entry, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />

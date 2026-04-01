@@ -9,7 +9,7 @@ import { UserTable } from '@/components/users/UserTable'
 import { UserDialog } from '@/components/users/UserDialog'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import type { User, UserRequest } from '@/types'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
@@ -45,12 +45,12 @@ export function UsersPage() {
     if (selectedIds.length === 0) return
     try {
       await usersApi.deleteBulk(selectedIds)
-      toast.success(t.users.userDeleted)
+      notify.success(t.users.userDeleted)
       setSelectedIds([])
       fetchUsers()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      toast.error(axiosError.response?.data?.message || t.common.error)
+      notify.error(axiosError.response?.data?.message || t.common.error)
     }
   }
 
@@ -81,12 +81,12 @@ export function UsersPage() {
   const handleCreate = async (data: UserRequest) => {
     try {
       await usersApi.create(data)
-      toast.success(t.users.userCreated)
+      notify.success(t.users.userCreated)
       setDialogOpen(false)
       fetchUsers()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      toast.error(axiosError.response?.data?.message || t.common.error)
+      notify.error(axiosError.response?.data?.message || t.common.error)
     }
   }
 
@@ -94,35 +94,35 @@ export function UsersPage() {
     if (!editingUser) return
     try {
       await usersApi.update(editingUser.id, data)
-      toast.success(t.users.userUpdated)
+      notify.success(t.users.userUpdated)
       setEditingUser(null)
       setDialogOpen(false)
       fetchUsers()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      toast.error(axiosError.response?.data?.message || t.common.error)
+      notify.error(axiosError.response?.data?.message || t.common.error)
     }
   }
 
   const handleDeactivate = async (id: number) => {
     try {
       await usersApi.deactivate(id)
-      toast.success(t.users.userDeactivated)
+      notify.success(t.users.userDeactivated)
       fetchUsers()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      toast.error(axiosError.response?.data?.message || t.common.error)
+      notify.error(axiosError.response?.data?.message || t.common.error)
     }
   }
 
   const handlePermanentDelete = async (id: number) => {
     try {
       await usersApi.deletePermanent(id)
-      toast.success(t.users.userDeleted)
+      notify.success(t.users.userDeleted)
       fetchUsers()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      toast.error(axiosError.response?.data?.message || t.common.error)
+      notify.error(axiosError.response?.data?.message || t.common.error)
     }
   }
 

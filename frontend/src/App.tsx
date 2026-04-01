@@ -33,7 +33,19 @@ function App() {
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
-            <Toaster position="top-right" richColors closeButton />
+            <Toaster 
+              position="top-right" 
+              richColors 
+              closeButton 
+              expand={true}
+              duration={4000}
+              toastOptions={{
+                style: {
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                },
+              }}
+            />
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>

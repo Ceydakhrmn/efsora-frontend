@@ -6,6 +6,21 @@ export interface User {
   department: string
   registrationDate: string
   active: boolean
+  lastLoginDate?: string
+  profilePhoto?: string
+}
+
+export interface UserRequest {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  department: string
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
 }
 
 export interface AuthResponse {
@@ -17,6 +32,8 @@ export interface AuthResponse {
   firstName: string
   lastName: string
   department: string
+  lastLoginDate?: string
+  profilePhoto?: string
 }
 
 export interface LoginRequest {
@@ -32,11 +49,6 @@ export interface RegisterRequest {
   department: string
 }
 
-export interface ChangePasswordRequest {
-  currentPassword: string
-  newPassword: string
-}
-
 export interface ForgotPasswordRequest {
   email: string
 }
@@ -48,20 +60,9 @@ export interface ResetPasswordRequest {
 
 export interface MessageResponse {
   message: string
-  timestamp: string
 }
 
 export interface ErrorResponse {
   message: string
-  status: number
-  timestamp: string
-  errors?: Record<string, string>
-}
-
-export interface UserRequest {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  department: string
+  status?: number
 }

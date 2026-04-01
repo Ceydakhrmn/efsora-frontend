@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { useI18n } from '@/i18n'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 
 interface NotificationPrefs {
   emailNotifications: boolean
@@ -27,7 +27,7 @@ export function NotificationSettings() {
     const newPrefs = { ...prefs, [key]: value }
     setPrefs(newPrefs)
     localStorage.setItem('notificationPrefs', JSON.stringify(newPrefs))
-    toast.success(t.settings.notificationsSaved)
+    notify.success(t.settings.notificationsSaved)
   }
 
   const items = [

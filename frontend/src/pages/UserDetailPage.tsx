@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, Building2, Calendar, Shield } from 'lucide-react'
+import { Mail, Building2, Calendar, Shield } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -96,6 +98,7 @@ export function UserDetailPage() {
                 </div>
               </div>
 
+
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-400">
                   <Calendar className="h-5 w-5" />
@@ -106,6 +109,24 @@ export function UserDetailPage() {
                     {new Date(user.registrationDate).toLocaleDateString('tr-TR', {
                       year: 'numeric', month: 'long', day: 'numeric',
                     })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Last Login Card */}
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50 text-teal-600 dark:bg-teal-950 dark:text-teal-400">
+                  <Clock className="h-5 w-5" /> 
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Last Login</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {user.lastLoginDate
+                      ? new Date(user.lastLoginDate).toLocaleDateString('en-US', {
+                          year: 'numeric', month: 'long', day: 'numeric',
+                          hour: '2-digit', minute: '2-digit',
+                        })
+                      : 'Never logged in'}
                   </p>
                 </div>
               </div>

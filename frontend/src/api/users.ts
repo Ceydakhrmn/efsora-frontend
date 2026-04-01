@@ -37,4 +37,6 @@ export const usersApi = {
 
   changePassword: (data: ChangePasswordRequest) =>
     api.post<MessageResponse>('/kullanicilar/change-password', data),
+  uploadPhoto: (id: number, photo: string) =>
+    api.post<User>(`/kullanicilar/${id}/photo`, { photo }),
 }

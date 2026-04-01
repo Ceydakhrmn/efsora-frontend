@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
@@ -43,7 +43,7 @@ export function RegisterForm(_props: RegisterFormProps) {
     setError(null)
     try {
       await registerUser(data)
-      toast.success(t.auth.registerSuccess)
+      notify.success(t.auth.registerSuccess)
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
       if (axiosError.response?.status === 400 || axiosError.response?.status === 409) {

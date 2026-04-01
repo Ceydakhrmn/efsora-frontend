@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { authApi } from '@/api/auth'
 import { useI18n } from '@/i18n'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
@@ -44,7 +44,7 @@ export function ForgotPasswordFlow({ onBack }: ForgotPasswordFlowProps) {
     try {
       const response = await authApi.forgotPassword(data)
       // Backend returns the token in message field for dev purposes
-      toast.success(t.auth.forgotPasswordSuccess)
+      notify.success(t.auth.forgotPasswordSuccess)
       // Auto-fill token if returned
       if (response.data.message) {
         resetForm.setValue('token', response.data.message)
@@ -60,7 +60,7 @@ export function ForgotPasswordFlow({ onBack }: ForgotPasswordFlowProps) {
     setError(null)
     try {
       await authApi.resetPassword(data)
-      toast.success(t.auth.resetPasswordSuccess)
+      notify.success(t.auth.resetPasswordSuccess)
       onBack()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>

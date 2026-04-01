@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
-import { toast } from 'sonner'
+import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
@@ -33,7 +33,7 @@ export function PasswordChange() {
     setError(null)
     try {
       await usersApi.changePassword(data)
-      toast.success(t.settings.passwordChanged)
+      notify.success(t.settings.passwordChanged)
       reset()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>

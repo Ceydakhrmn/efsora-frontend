@@ -21,14 +21,14 @@ export function MainLayout() {
   const title = t.nav[titleKey] || t.nav.dashboard
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen h-screen bg-background">
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
-      <div className={cn("transition-all duration-200", collapsed ? "lg:ml-16" : "lg:ml-64")}>
+      <div className={cn("flex-1 transition-all duration-200", collapsed ? "lg:ml-16" : "lg:ml-64")}> 
         <Header
           title={title}
           onMenuClick={() => setMobileOpen(true)}

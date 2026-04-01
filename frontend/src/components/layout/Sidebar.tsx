@@ -31,10 +31,18 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
     navigate('/auth')
   }
 
-  const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : '?'
+  let initials = '?';
+  if (user) {
+    if (user.firstName && user.lastName) {
+      initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+    } else if (user.email) {
+      const [name] = user.email.split('@');
+      initials = name.slice(0, 2).toUpperCase();
+    }
+  }
 
   const sidebarContent = (
-    <div className="flex h-full flex-col">
+    <div className="flex h-screen flex-col">
 
       {/* Logo */}
       <div className={cn(
@@ -142,9 +150,17 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
           collapsed && "justify-center"
         )}>
           <Avatar className="h-8 w-8 shrink-0">
-            <AvatarFallback className="text-xs font-mono bg-primary/20 text-primary font-semibold">
-              {initials}
-            </AvatarFallback>
+            {user?.profilePhoto ? (
+              <img
+                src={user.profilePhoto}
+                alt={user.firstName || user.email}
+                className="h-8 w-8 rounded-full object-cover"
+              />
+            ) : (
+              <AvatarFallback className="text-xs font-mono bg-primary/20 text-primary font-semibold">
+                {initials}
+              </AvatarFallback>
+            )}
           </Avatar>
           {!collapsed && (
             <>

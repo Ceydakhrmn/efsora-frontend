@@ -8,6 +8,7 @@ interface AuthUser {
   firstName: string
   lastName: string
   department: string
+  profilePhoto?: string
 }
 
 interface AuthContextType {
