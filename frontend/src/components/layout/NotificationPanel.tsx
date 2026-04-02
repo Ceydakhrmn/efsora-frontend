@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import type { ReactElement } from 'react'
 import { Bell, X, CheckCircle, AlertCircle, Info, AlertTriangle, Trash2 } from 'lucide-react'
 import { useNotifications } from '@/hooks/useNotifications'
 import { cn } from '@/lib/utils'
 import type { Notification } from '@/hooks/useNotifications'
 
-const iconMap: Record<Notification['type'], JSX.Element> = {
+const iconMap: Record<Notification['type'], ReactElement> = {
   success: <CheckCircle className="h-4 w-4 text-green-500" />,
   error: <AlertCircle className="h-4 w-4 text-red-500" />,
   info: <Info className="h-4 w-4 text-blue-500" />,
