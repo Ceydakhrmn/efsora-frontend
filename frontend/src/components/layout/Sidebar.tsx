@@ -31,13 +31,13 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
     navigate('/auth')
   }
 
-  let initials = '?';
+  let initials = '?'
   if (user) {
     if (user.firstName && user.lastName) {
-      initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+      initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
     } else if (user.email) {
-      const [name] = user.email.split('@');
-      initials = name.slice(0, 2).toUpperCase();
+      const [name] = user.email.split('@')
+      initials = name.slice(0, 2).toUpperCase()
     }
   }
 
@@ -120,11 +120,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     onClick={onMobileClose}
                     className={({ isActive }) =>
                       cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 relative",
+                        "w-full flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                        collapsed ? "justify-center gap-0 px-2" : "justify-start gap-3",
                         isActive
-                          ? "bg-primary/15 text-primary font-semibold before:absolute before:left-0 before:top-1/4 before:bottom-1/4 before:w-0.5 before:rounded-full before:bg-primary"
-                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        collapsed && "justify-center px-2"
+                          ? "bg-primary/15 text-primary font-semibold"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       )
                     }
                   >
