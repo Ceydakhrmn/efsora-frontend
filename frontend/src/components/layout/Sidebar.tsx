@@ -46,8 +46,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
 
       {/* Logo */}
       <div className={cn(
-        "flex h-16 items-center border-b border-sidebar-border px-4 gap-3",
-        collapsed ? "justify-center px-2" : "justify-between"
+        "flex h-16 items-center border-b border-sidebar-border gap-3",
+        collapsed ? "justify-center px-0" : "justify-between px-4"
       )}>
         {!collapsed && (
           <div className="flex items-center gap-3 min-w-0">
@@ -75,14 +75,14 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
         )}
 
         {collapsed && (
-          <img
-            src="/efsora-logo.jpg"
-            alt="Efsora"
-            className="h-8 w-8 rounded-lg object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
+            <img
+              src="/efsora-logo.jpg"
+              alt="Efsora"
+              className="h-8 w-8 rounded-lg object-cover mx-auto"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
         )}
 
         <Button
@@ -121,7 +121,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     className={({ isActive }) =>
                       cn(
                         "w-full flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
-                        collapsed ? "justify-center gap-0 px-2" : "justify-start gap-3",
+                        collapsed ? "justify-center px-2" : "justify-start",
                         isActive
                           ? "bg-primary/15 text-primary font-semibold"
                           : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -129,7 +129,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     }
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-archivo">{t.nav[item.labelKey]}</span>}
+                    {!collapsed && <span className="font-archivo ml-2">{t.nav[item.labelKey]}</span>}
                   </NavLink>
                 </TooltipTrigger>
                 {collapsed && (
@@ -188,7 +188,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             </>
           )}
         </div>
-        {collapsed && (
+      npm r  {collapsed && (
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
