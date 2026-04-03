@@ -12,6 +12,7 @@ import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
+import { PasswordStrengthBar } from '@/components/ui/PasswordStrengthBar'
 
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 
@@ -35,7 +36,7 @@ export function RegisterForm(_props: RegisterFormProps) {
   const { register: registerUser } = useAuth()
   const { t } = useI18n()
 
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   })
 
@@ -118,6 +119,7 @@ export function RegisterForm(_props: RegisterFormProps) {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+        <PasswordStrengthBar password={watch('password')} />
         {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>
 

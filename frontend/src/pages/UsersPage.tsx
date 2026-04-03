@@ -199,7 +199,7 @@ export function UsersPage() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4 mr-1" />
-            Export
+            {t.users.export}
           </Button>
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

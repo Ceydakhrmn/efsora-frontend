@@ -11,6 +11,7 @@ import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
+import { PasswordStrengthBar } from '@/components/ui/PasswordStrengthBar'
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1),
@@ -25,7 +26,7 @@ export function PasswordChange() {
   const [error, setError] = useState<string | null>(null)
   const { t } = useI18n()
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<PasswordFormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting } } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
   })
 
@@ -81,6 +82,7 @@ export function PasswordChange() {
           >
             {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
+          <PasswordStrengthBar password={watch('newPassword')} />
         </div>
         {errors.newPassword && <p className="text-xs text-destructive">{errors.newPassword.message}</p>}
       </div>
