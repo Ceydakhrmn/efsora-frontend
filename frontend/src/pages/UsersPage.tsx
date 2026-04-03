@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -136,6 +136,29 @@ export function UsersPage() {
     setDialogOpen(true)
   }
 
+  // Kullanıcıları CSV olarak dışa aktar
+  const handleExport = () => {
+    const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Department', 'Status', 'Registration Date']
+    const rows = filteredUsers.map((u) => [
+      u.id,
+      u.firstName,
+      u.lastName,
+      u.email,
+      u.department || '',
+      u.active ? 'Active' : 'Inactive',
+      new Date(u.registrationDate).toLocaleDateString('en-US'),
+    ])
+    const csv = [headers, ...rows].map((r) => r.join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `users_${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    notify.success('Users exported successfully!')
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -171,6 +194,10 @@ export function UsersPage() {
           </Select>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="h-4 w-4 mr-1" />
+            Export
+          </Button>
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />
             {t.users.addUser}
