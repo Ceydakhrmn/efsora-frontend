@@ -45,62 +45,64 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
     <div className="flex h-screen flex-col">
 
       {/* Logo */}
-      <div className={cn(
-        "flex h-16 items-center border-b border-sidebar-border gap-3",
-        collapsed ? "justify-center px-0" : "justify-between px-4"
-      )}>
-        {!collapsed && (
-          <div className="flex items-center gap-3 min-w-0">
+      <div className="flex h-16 items-center border-b border-sidebar-border px-3">
+        {collapsed ? (
+          <div className="flex w-full flex-col items-center justify-center gap-1">
             <img
               src="/efsora-logo.jpg"
               alt="Efsora"
-              className="h-8 w-8 rounded-lg object-cover shrink-0 shadow-md"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-                e.currentTarget.nextElementSibling?.classList.remove('hidden')
-              }}
+              className="h-8 w-8 rounded-lg object-cover shadow-md cursor-pointer"
+              onClick={onToggle}
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
             />
-            <div className="hidden h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm shrink-0">
-              E
+          </div>
+        ) : (
+          <div className="flex w-full items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <img
+                src="/efsora-logo.jpg"
+                alt="Efsora"
+                className="h-8 w-8 rounded-lg object-cover shrink-0 shadow-md cursor-pointer"
+                onClick={onToggle}
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-bold tracking-wide text-foreground font-archivo truncate">
+                  EFSORA LABS
+                </p>
+                <p className="text-[10px] text-muted-foreground font-mono truncate">
+                  AI Platform v2.1
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-bold tracking-wide text-foreground font-archivo truncate">
-                EFSORA LABS
-              </p>
-              <p className="text-[10px] text-muted-foreground font-mono truncate">
-                AI Platform v2.1
-              </p>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggle}
+              className="hidden lg:flex shrink-0 text-muted-foreground hover:text-foreground"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onMobileClose}
+              className="lg:hidden shrink-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         )}
-
         {collapsed && (
-            <img
-              src="/efsora-logo.jpg"
-              alt="Efsora"
-              className="h-8 w-8 rounded-lg object-cover mx-auto"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggle}
+            className="hidden lg:flex shrink-0 text-muted-foreground hover:text-foreground mt-2"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
         )}
-
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggle}
-          className="hidden lg:flex shrink-0 text-muted-foreground hover:text-foreground"
-        >
-          {collapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMobileClose}
-          className="lg:hidden shrink-0"
-        >
-          <X className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* Navigation */}
@@ -121,7 +123,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     className={({ isActive }) =>
                       cn(
                         "w-full flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
-                        collapsed ? "justify-center px-2" : "justify-start",
+                        collapsed ? "justify-center px-2" : "justify-start gap-3",
                         isActive
                           ? "bg-primary/15 text-primary font-semibold"
                           : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -129,7 +131,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     }
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-archivo ml-2">{t.nav[item.labelKey]}</span>}
+                    {!collapsed && <span className="font-archivo">{t.nav[item.labelKey]}</span>}
                   </NavLink>
                 </TooltipTrigger>
                 {collapsed && (
@@ -188,7 +190,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             </>
           )}
         </div>
-      npm r  {collapsed && (
+        {collapsed && (
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
