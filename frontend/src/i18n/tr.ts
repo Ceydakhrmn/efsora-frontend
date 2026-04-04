@@ -99,6 +99,8 @@ export const tr = {
     registrationDate: 'Kayit Tarihi',
     detail: 'Kullanici Detayi',
     userInfo: 'Kullanici Bilgileri',
+    userInfo: 'Kullanici Bilgileri',
+    export: 'Dışa Aktar',
   },
   settings: {
     title: 'Ayarlar',

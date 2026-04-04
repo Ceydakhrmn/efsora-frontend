@@ -99,6 +99,8 @@ export const en = {
     registrationDate: 'Registration Date',
     detail: 'User Detail',
     userInfo: 'User Information',
+    userInfo: 'User Information',
+    export: 'Export',
   },
   settings: {
     title: 'Settings',
