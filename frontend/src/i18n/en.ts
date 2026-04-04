@@ -99,6 +99,7 @@ export const en = {
     registrationDate: 'Registration Date',
     detail: 'User Detail',
     userInfo: 'User Information',
+      export: 'Export',
     userInfo: 'User Information',
     export: 'Export',
   },
