@@ -15,12 +15,14 @@ import type { User, UserRequest } from '@/types'
 
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 
+const roles = ['USER', 'ADMIN', 'EDITOR']
 const userSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
   email: z.string().email(),
   password: z.string().min(8).max(100),
   department: z.string().min(1),
+  role: z.string().optional(),
 })
 
 interface UserDialogProps {
@@ -50,9 +52,10 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
         email: user.email,
         password: '',
         department: user.department,
+        role: user.role || 'USER',
       })
     } else {
-      reset({ firstName: '', lastName: '', email: '', password: '', department: '' })
+      reset({ firstName: '', lastName: '', email: '', password: '', department: '', role: 'USER' })
     }
   }, [user, open, reset])
 
@@ -110,10 +113,29 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
             {errors.department && <p className="text-xs text-destructive">{errors.department.message}</p>}
           </div>
 
+
           <div className="space-y-2">
             <Label>{t.auth.password} {isEditing && <span className="text-muted-foreground text-xs">(opsiyonel)</span>}</Label>
             <Input type="password" placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Rol</Label>
+            <Select
+              defaultValue={user?.role || 'USER'}
+              onValueChange={(value) => setValue('role', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Rol" />
+              </SelectTrigger>
+              <SelectContent>
+                {roles.map((role) => (
+                  <SelectItem key={role} value={role}>{role}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

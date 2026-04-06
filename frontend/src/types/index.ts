@@ -8,6 +8,7 @@ export interface User {
   active: boolean
   lastLoginDate?: string
   profilePhoto?: string
+  role?: string
 }
 
 export interface UserRequest {
@@ -16,6 +17,7 @@ export interface UserRequest {
   email: string
   password: string
   department: string
+  role?: string
 }
 
 export interface ChangePasswordRequest {
