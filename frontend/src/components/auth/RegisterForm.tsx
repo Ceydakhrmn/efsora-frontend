@@ -19,7 +19,7 @@ const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 const registerSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
-  email: z.string().email(),
+  email: z.string().email().endsWith('@efsora.com', { message: 'Only @efsora.com emails are allowed' }),
   password: z.string().min(8).max(100),
   department: z.string().min(1),
 })
