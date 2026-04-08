@@ -63,6 +63,9 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t.common.status}
               </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
+                Role
+              </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                 {t.users.registrationDate}
               </th>
@@ -109,6 +112,18 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                 <td className="px-4 py-3">
                   <Badge variant={user.active ? 'success' : 'secondary'} className="text-xs">
                     {user.active ? t.common.active : t.common.inactive}
+                  </Badge>
+                </td>
+                <td className="px-4 py-3 hidden sm:table-cell">
+                  <Badge
+                    variant="outline"
+                    className={`text-xs ${
+                      user.role === 'ADMIN' ? 'border-red-500 text-red-500' :
+                      user.role === 'EDITOR' ? 'border-blue-500 text-blue-500' :
+                      'border-gray-400 text-gray-400'
+                    }`}
+                  >
+                    {user.role || 'USER'}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">

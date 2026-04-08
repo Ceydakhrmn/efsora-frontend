@@ -95,6 +95,7 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
             {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
           </div>
 
+
           <div className="space-y-2">
             <Label>{t.auth.department}</Label>
             <Select
@@ -111,6 +112,24 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
               </SelectContent>
             </Select>
             {errors.department && <p className="text-xs text-destructive">{errors.department.message}</p>}
+          </div>
+
+          {/* Role Select */}
+          <div className="space-y-2">
+            <Label>Role</Label>
+            <Select
+              defaultValue={user?.role || 'USER'}
+              onValueChange={(value) => setValue('role', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USER">User</SelectItem>
+                <SelectItem value="EDITOR">Editor</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
 
