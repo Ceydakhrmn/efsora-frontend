@@ -12,14 +12,8 @@ export const invitationsApi = {
       `/invitations/verify/${token}`
     ),
 
-  accept: (token: string, data: {
-    firstName: string
-    lastName: string
-    password: string
-    department: string
-  }) =>
+  accept: (token: string) =>
     api.post<{ token: string; refreshToken: string; email: string; firstName: string; lastName: string }>(
-      `/invitations/accept/${token}`,
-      data
+      `/invitations/accept/${token}`
     ),
 }
