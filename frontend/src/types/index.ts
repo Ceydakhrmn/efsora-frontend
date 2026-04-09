@@ -68,3 +68,46 @@ export interface ErrorResponse {
   message: string
   status?: number
 }
+
+export type AssetCategory = 'HARDWARE' | 'SOFTWARE_LICENSE' | 'API_SUBSCRIPTION' | 'SAAS_TOOL' | 'OFFICE_EQUIPMENT'
+export type AssetStatus = 'ACTIVE' | 'MAINTENANCE' | 'EXPIRED' | 'RETIRED'
+
+export interface Asset {
+  id: number
+  name: string
+  category: AssetCategory
+  brand?: string
+  model?: string
+  serialNumber?: string
+  vendor?: string
+  purchaseDate?: string
+  purchasePrice?: number
+  renewalDate?: string
+  warrantyExpiryDate?: string
+  status: AssetStatus
+  seatCount?: number
+  assignedUserId?: number
+  assignedUserName?: string
+  assignedDepartment?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AssetRequest {
+  name: string
+  category: AssetCategory
+  brand?: string
+  model?: string
+  serialNumber?: string
+  vendor?: string
+  purchaseDate?: string
+  purchasePrice?: number
+  renewalDate?: string
+  warrantyExpiryDate?: string
+  status: AssetStatus
+  seatCount?: number
+  assignedUserId?: number
+  assignedDepartment?: string
+  notes?: string
+}

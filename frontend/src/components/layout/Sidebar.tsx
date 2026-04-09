@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft } from 'lucide-react'
+import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -18,6 +18,7 @@ interface SidebarProps {
 const navItems = [
   { path: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' as const },
   { path: '/users', icon: Users, labelKey: 'users' as const },
+  { path: '/assets', icon: Package, label: 'Envanter' },
   { path: '/settings', icon: Settings, labelKey: 'settings' as const },
 ]
 
@@ -131,12 +132,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     }
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-archivo">{t.nav[item.labelKey]}</span>}
+                    {!collapsed && <span className="font-archivo">{'label' in item ? item.label : t.nav[item.labelKey]}</span>}
                   </NavLink>
                 </TooltipTrigger>
                 {collapsed && (
                   <TooltipContent side="right" className="font-archivo">
-                    {t.nav[item.labelKey]}
+                    {'label' in item ? item.label : t.nav[item.labelKey]}
                   </TooltipContent>
                 )}
               </Tooltip>

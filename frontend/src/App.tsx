@@ -11,6 +11,7 @@ import { UsersPage } from '@/pages/UsersPage'
 import { UserDetailPage } from '@/pages/UserDetailPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { InvitePage } from '@/pages/InvitePage'
+import { AssetsPage } from '@/pages/AssetsPage'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/users/:id" element={<UserDetailPage />} />
+                <Route path="/assets" element={<AssetsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
