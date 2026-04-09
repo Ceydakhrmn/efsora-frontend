@@ -63,6 +63,10 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
 
   const category = watch('category')
 
+  const handleFormSubmit = async (data: FormData) => {
+    await onSubmit(data as unknown as AssetRequest)
+  }
+
   useEffect(() => {
     if (asset) {
       reset({
@@ -100,7 +104,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
           <DialogDescription>Envanter varlığı bilgilerini girin.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2 col-span-2">
               <Label>Ad *</Label>
