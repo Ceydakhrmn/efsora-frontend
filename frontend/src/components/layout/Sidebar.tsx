@@ -16,11 +16,14 @@ interface SidebarProps {
   onMobileClose: () => void
 }
 
-const navItems: { path: string; icon: React.ElementType; label: string }[] = [
-  { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/users', icon: Users, label: 'Kullanıcılar' },
-  { path: '/assets', icon: Package, label: 'Envanter' },
-  { path: '/settings', icon: Settings, label: 'Ayarlar' },
+const navKeys = ['dashboard', 'users', 'assets', 'settings'] as const
+type NavKey = typeof navKeys[number]
+
+const navItems: { path: string; icon: React.ElementType; key: NavKey }[] = [
+  { path: '/dashboard', icon: LayoutDashboard, key: 'dashboard' },
+  { path: '/users', icon: Users, key: 'users' },
+  { path: '/assets', icon: Package, key: 'assets' },
+  { path: '/settings', icon: Settings, key: 'settings' },
 ]
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
@@ -133,12 +136,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     }
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-archivo">{item.label}</span>}
+                    {!collapsed && <span className="font-archivo">{t.nav[item.key]}</span>}
                   </NavLink>
                 </TooltipTrigger>
                 {collapsed && (
                   <TooltipContent side="right" className="font-archivo">
-                    {item.label}
+                    {t.nav[item.key]}
                   </TooltipContent>
                 )}
               </Tooltip>

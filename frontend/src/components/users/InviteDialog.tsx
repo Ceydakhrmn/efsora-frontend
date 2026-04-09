@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, Copy, Check } from 'lucide-react'
+import type { AxiosError } from 'axios'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog'
@@ -40,8 +41,10 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
       const link = `${window.location.origin}/invite/${res.data.token}`
       setInviteLink(link)
       notify.success('Davet linki oluşturuldu')
-    } catch {
-      notify.error('Davet gönderilemedi')
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>
+      const message = axiosError.response?.data?.message || 'Davet gönderilemedi'
+      notify.error(message)
     }
   }
 
