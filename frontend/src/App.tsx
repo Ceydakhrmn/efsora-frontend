@@ -10,6 +10,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { UsersPage } from '@/pages/UsersPage'
 import { UserDetailPage } from '@/pages/UserDetailPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { InvitePage } from '@/pages/InvitePage'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <AuthProvider>
             <Routes>
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/invite/:token" element={<InvitePage />} />
               <Route
                 element={
                   <ProtectedRoute>
