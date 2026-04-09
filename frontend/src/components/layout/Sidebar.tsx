@@ -1,3 +1,4 @@
+import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -15,11 +16,11 @@ interface SidebarProps {
   onMobileClose: () => void
 }
 
-const navItems = [
-  { path: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' as const },
-  { path: '/users', icon: Users, labelKey: 'users' as const },
+const navItems: { path: string; icon: React.ElementType; label: string }[] = [
+  { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { path: '/users', icon: Users, label: 'Kullanıcılar' },
   { path: '/assets', icon: Package, label: 'Envanter' },
-  { path: '/settings', icon: Settings, labelKey: 'settings' as const },
+  { path: '/settings', icon: Settings, label: 'Ayarlar' },
 ]
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
@@ -132,12 +133,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                     }
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-archivo">{'label' in item ? item.label : t.nav[item.labelKey]}</span>}
+                    {!collapsed && <span className="font-archivo">{item.label}</span>}
                   </NavLink>
                 </TooltipTrigger>
                 {collapsed && (
                   <TooltipContent side="right" className="font-archivo">
-                    {'label' in item ? item.label : t.nav[item.labelKey]}
+                    {item.label}
                   </TooltipContent>
                 )}
               </Tooltip>
