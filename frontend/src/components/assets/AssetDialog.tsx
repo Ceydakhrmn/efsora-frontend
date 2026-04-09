@@ -18,12 +18,12 @@ const schema = z.object({
   serialNumber: z.string().optional(),
   vendor: z.string().optional(),
   purchaseDate: z.string().optional(),
-  purchasePrice: z.coerce.number().optional(),
+  purchasePrice: z.string().optional(),
   renewalDate: z.string().optional(),
   warrantyExpiryDate: z.string().optional(),
   status: z.enum(['ACTIVE', 'MAINTENANCE', 'EXPIRED', 'RETIRED']),
-  seatCount: z.coerce.number().optional(),
-  assignedUserId: z.coerce.number().optional(),
+  seatCount: z.string().optional(),
+  assignedUserId: z.string().optional(),
   assignedDepartment: z.string().optional(),
   notes: z.string().optional(),
 })
@@ -64,7 +64,12 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
   const category = watch('category')
 
   const handleFormSubmit = async (data: FormData) => {
-    await onSubmit(data as unknown as AssetRequest)
+    await onSubmit({
+      ...data,
+      purchasePrice: data.purchasePrice ? parseFloat(data.purchasePrice) : undefined,
+      seatCount: data.seatCount ? parseInt(data.seatCount) : undefined,
+      assignedUserId: data.assignedUserId ? parseInt(data.assignedUserId) : undefined,
+    } as AssetRequest)
   }
 
   useEffect(() => {
@@ -77,12 +82,12 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
         serialNumber: asset.serialNumber || '',
         vendor: asset.vendor || '',
         purchaseDate: asset.purchaseDate || '',
-        purchasePrice: asset.purchasePrice,
+        purchasePrice: asset.purchasePrice?.toString() || '',
         renewalDate: asset.renewalDate || '',
         warrantyExpiryDate: asset.warrantyExpiryDate || '',
         status: asset.status,
-        seatCount: asset.seatCount,
-        assignedUserId: asset.assignedUserId,
+        seatCount: asset.seatCount?.toString() || '',
+        assignedUserId: asset.assignedUserId?.toString() || '',
         assignedDepartment: asset.assignedDepartment || '',
         notes: asset.notes || '',
       })
@@ -191,7 +196,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
               <Label>Atanan Kullanıcı</Label>
               <Select
                 defaultValue={asset?.assignedUserId?.toString() || 'none'}
-                onValueChange={(v) => setValue('assignedUserId', v === 'none' ? undefined : Number(v))}
+                onValueChange={(v) => setValue('assignedUserId', v === 'none' ? undefined : v)}
               >
                 <SelectTrigger><SelectValue placeholder="Seçiniz" /></SelectTrigger>
                 <SelectContent>
