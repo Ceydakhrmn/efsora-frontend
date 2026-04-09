@@ -20,7 +20,6 @@ services:
     name: efsora-frontend
     runtime: docker
     dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend
     envVars:
       - key: VITE_API_URL
         sync: false
