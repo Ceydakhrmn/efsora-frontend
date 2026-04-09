@@ -11,7 +11,7 @@ export function SettingsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       {/* Theme */}
-      <Card className="border border-gray-200 dark:border-border">
+      <Card className="border border-gray-300 dark:border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">{t.settings.theme}</CardTitle>
           <CardDescription>{t.settings.themeDescription}</CardDescription>
@@ -22,7 +22,7 @@ export function SettingsPage() {
       </Card>
 
       {/* Profile Edit */}
-      <Card className="border border-gray-200 dark:border-border">
+      <Card className="border border-gray-300 dark:border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">{t.settings.editProfile}</CardTitle>
           <CardDescription>{t.settings.editProfileDescription}</CardDescription>
@@ -33,7 +33,7 @@ export function SettingsPage() {
       </Card>
 
       {/* Password Change */}
-      <Card className="border border-gray-200 dark:border-border">
+      <Card className="border border-gray-300 dark:border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">{t.settings.changePassword}</CardTitle>
           <CardDescription>{t.settings.changePasswordDescription}</CardDescription>
@@ -44,7 +44,7 @@ export function SettingsPage() {
       </Card>
 
       {/* Notifications */}
-      <Card className="border border-gray-200 dark:border-border">
+      <Card className="border border-gray-300 dark:border-border shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">{t.settings.notifications}</CardTitle>
           <CardDescription>{t.settings.notificationsDescription}</CardDescription>
