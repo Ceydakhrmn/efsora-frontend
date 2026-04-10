@@ -64,7 +64,7 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                 {t.common.status}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
-                Role
+                {t.users.role}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                 {t.users.registrationDate}
@@ -123,7 +123,9 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                       'border-gray-400 text-gray-400'
                     }`}
                   >
-                    {user.role || 'USER'}
+                    {user.role === 'ADMIN' ? t.users.roleAdmin :
+                     user.role === 'EDITOR' ? t.users.roleEditor :
+                     t.users.roleUser}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">

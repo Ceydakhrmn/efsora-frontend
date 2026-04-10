@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 interface StatCardProps {
   title: string
-  value: number
+  value: number | string
   icon: LucideIcon
   description?: string
   color?: 'blue' | 'green' | 'purple' | 'orange'

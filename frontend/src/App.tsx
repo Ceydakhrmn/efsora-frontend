@@ -30,8 +30,16 @@ function App() {
                 }
               >
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/users" element={<UsersPage />} />
-                <Route path="/users/:id" element={<UserDetailPage />} />
+                <Route path="/users" element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <UsersPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/users/:id" element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <UserDetailPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/assets" element={<AssetsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>

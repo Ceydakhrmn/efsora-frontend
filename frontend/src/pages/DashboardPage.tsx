@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Users, UserCheck, Building2, UserPlus, UserX, TrendingUp } from 'lucide-react'
+import { Users, UserCheck, Building2, UserPlus, UserX, TrendingUp, Package, AlertTriangle, DollarSign, Wrench } from 'lucide-react'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { DepartmentChart } from '@/components/dashboard/DepartmentChart'
 import { RegistrationTrend } from '@/components/dashboard/RegistrationTrend'
 import { RecentUsers } from '@/components/dashboard/RecentUsers'
 import { usersApi } from '@/api/users'
+import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 import type { User } from '@/types'
@@ -21,6 +22,7 @@ const YEARS = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1]
 
 export function DashboardPage() {
   const [users, setUsers] = useState<User[]>([])
+  const [assetStats, setAssetStats] = useState<AssetStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [filterType, setFilterType] = useState<FilterType>('monthly')
   const [selectedYear, setSelectedYear] = useState(currentYear)
@@ -33,10 +35,14 @@ export function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await usersApi.getAll()
-        setUsers(response.data)
+        const [usersRes, statsRes] = await Promise.all([
+          usersApi.getAll(),
+          assetsApi.getStats(),
+        ])
+        setUsers(usersRes.data)
+        setAssetStats(statsRes.data)
       } catch (error) {
-        console.error('Failed to fetch users:', error)
+        console.error('Failed to fetch data:', error)
       } finally {
         setLoading(false)
       }
@@ -208,6 +214,44 @@ export function DashboardPage() {
         <DepartmentChart users={users} />
         <RegistrationTrend users={users} />
       </div>
+
+      {/* Asset Stats */}
+      {assetStats && (
+        <>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-3">📦 {t.assets.title}</h3>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard title={t.assets.title} value={assetStats.total} icon={Package} color="blue" />
+              <StatCard title={t.assets.statusActive} value={assetStats.active} icon={Package} color="green" />
+              <StatCard title={t.assets.statusMaintenance} value={assetStats.maintenance} icon={Wrench} color="orange" />
+              <StatCard
+                title={t.assets.expiringAlert.split(' ')[0] === 'varlığın' ? 'Süresi Dolacak' : 'Expiring Soon'}
+                value={assetStats.expiringSoon}
+                icon={AlertTriangle}
+                color="orange"
+                description={`${assetStats.expired} ${t.assets.statusExpired.toLowerCase()}`}
+              />
+            </div>
+          </div>
+          {assetStats.totalValue > 0 && (
+            <div className="grid gap-4 sm:grid-cols-3">
+              <StatCard
+                title="Toplam Değer"
+                value={`₺${assetStats.totalValue.toLocaleString('tr-TR')}`}
+                icon={DollarSign}
+                color="green"
+              />
+              <StatCard title={t.assets.statusRetired} value={assetStats.retired} icon={Package} color="purple" />
+              <StatCard
+                title={t.assets.allCategories}
+                value={Object.keys(assetStats.byCategory).length}
+                icon={Package}
+                color="blue"
+              />
+            </div>
+          )}
+        </>
+      )}
 
       {/* Recent Users */}
       <RecentUsers users={users} />

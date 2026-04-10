@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
+import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
 import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
 
@@ -26,6 +27,9 @@ const statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 's
 }
 
 export function AssetsPage() {
+  const { user: authUser } = useAuth()
+  const canEdit = authUser?.role === 'ADMIN' || authUser?.role === 'EDITOR'
+  const canDelete = authUser?.role === 'ADMIN'
   const [assets, setAssets] = useState<Asset[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -146,10 +150,12 @@ export function AssetsPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
-          <Plus className="h-4 w-4 mr-1" />
-          Varlık Ekle
-        </Button>
+        {canEdit && (
+          <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
+            <Plus className="h-4 w-4 mr-1" />
+            Varlık Ekle
+          </Button>
+        )}
       </div>
 
       {/* Stats */}
@@ -211,21 +217,25 @@ export function AssetsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
-                      >
-                        Düzenle
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(asset.id)}
-                      >
-                        Sil
-                      </Button>
+                      {canEdit && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
+                        >
+                          Düzenle
+                        </Button>
+                      )}
+                      {canDelete && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(asset.id)}
+                        >
+                          Sil
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>

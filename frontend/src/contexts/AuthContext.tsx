@@ -9,6 +9,7 @@ interface AuthUser {
   lastName: string
   department: string
   profilePhoto?: string
+  role?: string
 }
 
 interface AuthContextType {
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       firstName: data.firstName,
       lastName: data.lastName,
       department: data.department,
+      role: data.role || 'USER',
     }
     setToken(data.token)
     setUser(authUser)

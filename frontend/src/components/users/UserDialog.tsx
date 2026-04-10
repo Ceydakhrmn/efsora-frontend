@@ -15,7 +15,6 @@ import type { User, UserRequest } from '@/types'
 
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 
-const roles = ['USER', 'ADMIN', 'EDITOR']
 const userSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
@@ -116,18 +115,18 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
 
           {/* Role Select */}
           <div className="space-y-2">
-            <Label>Role</Label>
+            <Label>{t.users.role}</Label>
             <Select
               defaultValue={user?.role || 'USER'}
               onValueChange={(value) => setValue('role', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select role" />
+                <SelectValue placeholder={t.users.selectRole} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USER">User</SelectItem>
-                <SelectItem value="EDITOR">Editor</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
+                <SelectItem value="USER">{t.users.roleUser}</SelectItem>
+                <SelectItem value="EDITOR">{t.users.roleEditor}</SelectItem>
+                <SelectItem value="ADMIN">{t.users.roleAdmin}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -137,24 +136,6 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
             <Label>{t.auth.password} {isEditing && <span className="text-muted-foreground text-xs">(opsiyonel)</span>}</Label>
             <Input type="password" placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Rol</Label>
-            <Select
-              defaultValue={user?.role || 'USER'}
-              onValueChange={(value) => setValue('role', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Rol" />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem key={role} value={role}>{role}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

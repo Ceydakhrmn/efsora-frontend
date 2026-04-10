@@ -19,9 +19,9 @@ interface SidebarProps {
 const navKeys = ['dashboard', 'users', 'assets', 'settings'] as const
 type NavKey = typeof navKeys[number]
 
-const navItems: { path: string; icon: React.ElementType; key: NavKey }[] = [
+const navItems: { path: string; icon: React.ElementType; key: NavKey; roles?: string[] }[] = [
   { path: '/dashboard', icon: LayoutDashboard, key: 'dashboard' },
-  { path: '/users', icon: Users, key: 'users' },
+  { path: '/users', icon: Users, key: 'users', roles: ['ADMIN'] },
   { path: '/assets', icon: Package, key: 'assets' },
   { path: '/settings', icon: Settings, key: 'settings' },
 ]
@@ -119,7 +119,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             </p>
           )}
           <TooltipProvider delayDuration={0}>
-            {navItems.map((item) => (
+            {navItems
+              .filter((item) => !item.roles || (user?.role && item.roles.includes(user.role)))
+              .map((item) => (
               <Tooltip key={item.path}>
                 <TooltipTrigger asChild>
                   <NavLink

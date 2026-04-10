@@ -101,6 +101,11 @@ export const tr = {
     detail: 'Kullanici Detayi',
     userInfo: 'Kullanici Bilgileri',
     export: 'Dışa Aktar',
+    role: 'Rol',
+    roleAdmin: 'Yönetici',
+    roleEditor: 'Editör',
+    roleUser: 'Kullanıcı',
+    selectRole: 'Rol seçin',
   },
   assets: {
     title: 'Envanter Yönetimi',

@@ -101,6 +101,11 @@ export const en = {
     detail: 'User Detail',
     userInfo: 'User Information',
     export: 'Export',
+    role: 'Role',
+    roleAdmin: 'Admin',
+    roleEditor: 'Editor',
+    roleUser: 'User',
+    selectRole: 'Select role',
   },
   assets: {
     title: 'Inventory Management',

@@ -34,6 +34,7 @@ export interface AuthResponse {
   firstName: string
   lastName: string
   department: string
+  role?: string
   lastLoginDate?: string
   profilePhoto?: string
 }
