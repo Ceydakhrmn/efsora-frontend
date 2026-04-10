@@ -27,7 +27,7 @@ interface LoginFormProps {
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { login, passwordExpired } = useAuth()
+  const { login } = useAuth()
   const { t } = useI18n()
   const navigate = useNavigate()
 
