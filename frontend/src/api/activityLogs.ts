@@ -8,6 +8,8 @@ export interface ActivityLog {
   details: string
   userEmail: string
   userName: string
+  ipAddress?: string
+  userAgent?: string
   createdAt: string
 }
 

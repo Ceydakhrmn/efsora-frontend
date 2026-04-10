@@ -72,7 +72,7 @@ export function ActivityLogPage() {
       'Varlık Tipi': log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
       'Detay': log.details,
       'Kullanıcı': log.userName || log.userEmail,
-      'IP Adresi': (log as Record<string, unknown>).ipAddress || '',
+      'IP Adresi': log.ipAddress || '',
       'Tarih': formatDate(log.createdAt),
     }))
     exportToExcel(rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')

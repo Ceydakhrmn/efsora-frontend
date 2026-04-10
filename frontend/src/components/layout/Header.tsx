@@ -1,4 +1,4 @@
-import { Menu, ChevronRight, Bell } from 'lucide-react'
+import { Menu, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useI18n } from '@/i18n'
@@ -6,8 +6,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
-import { useState } from 'react'
 import { NotificationPanel } from './NotificationPanel'
+import { GlobalSearch } from './GlobalSearch'
 
 interface HeaderProps {
   title: string
@@ -20,8 +20,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : '??'
-
-  const [showNotifications, setShowNotifications] = useState(false)
 
   const segments = location.pathname.split('/').filter(Boolean)
 
@@ -59,7 +57,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         </nav>
       </div>
 
-      <div className="flex items-center gap-2 relative">
+      <div className="flex items-center gap-2">
+        {/* Global Search */}
+        <div className="hidden sm:block">
+          <GlobalSearch />
+        </div>
+
         {/* Language Switch */}
         <div className="flex items-center gap-1 rounded-lg border bg-muted p-1">
           <button
@@ -85,19 +88,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             EN
           </button>
         </div>
+
         {/* Notification Bell */}
-        <button
-          className="relative p-2 rounded-full hover:bg-muted transition-colors"
-          onClick={() => setShowNotifications((v) => !v)}
-          aria-label="Bildirimler"
-        >
-          <Bell className="h-5 w-5 text-muted-foreground" />
-        </button>
-        {showNotifications && (
-          <div className="absolute right-0 top-12 z-30">
-            <NotificationPanel />
-          </div>
-        )}
+        <NotificationPanel />
+
         {/* Profile Avatar */}
         <button onClick={() => navigate('/settings')} className="cursor-pointer">
           <Avatar className="h-8 w-8">
