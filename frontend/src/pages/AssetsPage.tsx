@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -104,6 +104,35 @@ export function AssetsPage() {
     )
   }
 
+  const handleExport = () => {
+    const headers = ['ID', 'Ad', 'Kategori', 'Marka', 'Model', 'Durum', 'Atanan Kullanıcı', 'Departman', 'Satın Alma Tarihi', 'Fiyat (₺)', 'Yenileme Tarihi']
+    const rows = filtered.map((a) => [
+      a.id,
+      a.name,
+      categoryLabels[a.category],
+      a.brand || '',
+      a.model || '',
+      statusConfig[a.status].label,
+      a.assignedUserName || '',
+      a.assignedDepartment || '',
+      a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString('tr-TR') : '',
+      a.purchasePrice ?? '',
+      a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
+    ])
+    const csv = [headers, ...rows]
+      .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const BOM = '\uFEFF'
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `envanter_${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    notify.success('Envanter dışa aktarıldı')
+  }
+
   return (
     <div className="space-y-6">
 
@@ -150,12 +179,18 @@ export function AssetsPage() {
             </SelectContent>
           </Select>
         </div>
-        {canEdit && (
-          <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
-            <Plus className="h-4 w-4 mr-1" />
-            Varlık Ekle
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="h-4 w-4 mr-1" />
+            Dışa Aktar
           </Button>
-        )}
+          {canEdit && (
+            <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
+              <Plus className="h-4 w-4 mr-1" />
+              Varlık Ekle
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Stats */}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft, Package } from 'lucide-react'
+import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft, Package, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -16,13 +16,14 @@ interface SidebarProps {
   onMobileClose: () => void
 }
 
-const navKeys = ['dashboard', 'users', 'assets', 'settings'] as const
+const navKeys = ['dashboard', 'users', 'assets', 'activityLog', 'settings'] as const
 type NavKey = typeof navKeys[number]
 
 const navItems: { path: string; icon: React.ElementType; key: NavKey; roles?: string[] }[] = [
   { path: '/dashboard', icon: LayoutDashboard, key: 'dashboard' },
   { path: '/users', icon: Users, key: 'users', roles: ['ADMIN'] },
   { path: '/assets', icon: Package, key: 'assets' },
+  { path: '/activity-log', icon: Activity, key: 'activityLog', roles: ['ADMIN'] },
   { path: '/settings', icon: Settings, key: 'settings' },
 ]
 

@@ -12,6 +12,7 @@ import { UserDetailPage } from '@/pages/UserDetailPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { InvitePage } from '@/pages/InvitePage'
 import { AssetsPage } from '@/pages/AssetsPage'
+import { ActivityLogPage } from '@/pages/ActivityLogPage'
 
 function App() {
   return (
@@ -41,6 +42,11 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/assets" element={<AssetsPage />} />
+                <Route path="/activity-log" element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <ActivityLogPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
