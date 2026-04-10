@@ -1,6 +1,6 @@
 
 import api from './axios'
-import type { User, UserRequest, ChangePasswordRequest, MessageResponse } from '@/types'
+import type { User, UserRequest, ChangePasswordRequest, MessageResponse, AuthResponse } from '@/types'
 
 export const usersApi = {
     // Çoklu silme
@@ -39,4 +39,7 @@ export const usersApi = {
     api.post<MessageResponse>('/kullanicilar/change-password', data),
   uploadPhoto: (id: number, photo: string) =>
     api.post<User>(`/kullanicilar/${id}/photo`, { photo }),
+
+  impersonate: (id: number) =>
+    api.post<AuthResponse>(`/kullanicilar/${id}/impersonate`),
 }

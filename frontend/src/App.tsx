@@ -13,6 +13,7 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { InvitePage } from '@/pages/InvitePage'
 import { AssetsPage } from '@/pages/AssetsPage'
 import { ActivityLogPage } from '@/pages/ActivityLogPage'
+import { ImpersonationBar } from '@/components/layout/ImpersonationBar'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <ThemeProvider>
         <I18nProvider>
           <AuthProvider>
+            <ImpersonationBar />
             <Routes>
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/invite/:token" element={<InvitePage />} />

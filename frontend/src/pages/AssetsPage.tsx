@@ -10,6 +10,7 @@ import { usersApi } from '@/api/users'
 import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
 import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
+import { exportToExcel } from '@/lib/exportExcel'
 
 const categoryLabels: Record<AssetCategory, string> = {
   HARDWARE: 'Donanım',
@@ -105,31 +106,20 @@ export function AssetsPage() {
   }
 
   const handleExport = () => {
-    const headers = ['ID', 'Ad', 'Kategori', 'Marka', 'Model', 'Durum', 'Atanan Kullanıcı', 'Departman', 'Satın Alma Tarihi', 'Fiyat (₺)', 'Yenileme Tarihi']
-    const rows = filtered.map((a) => [
-      a.id,
-      a.name,
-      categoryLabels[a.category],
-      a.brand || '',
-      a.model || '',
-      statusConfig[a.status].label,
-      a.assignedUserName || '',
-      a.assignedDepartment || '',
-      a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString('tr-TR') : '',
-      a.purchasePrice ?? '',
-      a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
-    ])
-    const csv = [headers, ...rows]
-      .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-      .join('\n')
-    const BOM = '\uFEFF'
-    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `envanter_${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    const rows = filtered.map((a) => ({
+      ID: a.id,
+      'Ad': a.name,
+      'Kategori': categoryLabels[a.category],
+      'Marka': a.brand || '',
+      'Model': a.model || '',
+      'Durum': statusConfig[a.status].label,
+      'Atanan Kullanıcı': a.assignedUserName || '',
+      'Departman': a.assignedDepartment || '',
+      'Satın Alma Tarihi': a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString('tr-TR') : '',
+      'Fiyat (₺)': a.purchasePrice ?? '',
+      'Yenileme Tarihi': a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
+    }))
+    exportToExcel(rows, 'envanter', 'Envanter')
     notify.success('Envanter dışa aktarıldı')
   }
 

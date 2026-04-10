@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
+import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
@@ -26,7 +27,7 @@ interface LoginFormProps {
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { login } = useAuth()
+  const { login, passwordExpired } = useAuth()
   const { t } = useI18n()
   const navigate = useNavigate()
 
@@ -37,12 +38,19 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const onSubmit = async (data: LoginFormData) => {
     setError(null)
     try {
-      await login(data)
-      navigate('/dashboard')
+      const result = await login(data)
+      if (result.passwordExpired) {
+        notify.warning('Şifrenizin süresi dolmuş. Lütfen şifrenizi değiştirin.')
+        navigate('/settings')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
       if (axiosError.response?.status === 401) {
         setError(t.auth.invalidCredentials)
+      } else if (axiosError.response?.status === 429) {
+        setError(axiosError.response.data?.message || 'Hesap kilitlendi. Lütfen bekleyin.')
       } else {
         setError(axiosError.response?.data?.message || t.common.error)
       }

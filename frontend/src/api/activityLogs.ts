@@ -25,4 +25,14 @@ export const activityLogsApi = {
     api.get<PageResponse<ActivityLog>>(`/activity-logs/page?page=${page}&size=${size}`),
   getByUser: (email: string) => api.get<ActivityLog[]>(`/activity-logs/user/${encodeURIComponent(email)}`),
   getByEntityType: (type: string) => api.get<ActivityLog[]>(`/activity-logs/entity/${encodeURIComponent(type)}`),
+  getSecurityStats: () => api.get<SecurityStats>('/activity-logs/security-stats'),
+}
+
+export interface SecurityStats {
+  failedLogins24h: number
+  accountLocks24h: number
+  successLogins24h: number
+  blockedLogins24h: number
+  suspiciousIps: string[]
+  recentSecurityEvents: ActivityLog[]
 }

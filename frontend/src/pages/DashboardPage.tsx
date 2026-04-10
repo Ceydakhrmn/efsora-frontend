@@ -4,6 +4,7 @@ import { StatCard } from '@/components/dashboard/StatCard'
 import { DepartmentChart } from '@/components/dashboard/DepartmentChart'
 import { RegistrationTrend } from '@/components/dashboard/RegistrationTrend'
 import { RecentUsers } from '@/components/dashboard/RecentUsers'
+import { SecurityDashboard } from '@/components/dashboard/SecurityDashboard'
 import { usersApi } from '@/api/users'
 import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
@@ -255,6 +256,9 @@ export function DashboardPage() {
 
       {/* Recent Users */}
       <RecentUsers users={users} />
+
+      {/* Security Dashboard - Admin Only */}
+      {user?.role === 'ADMIN' && <SecurityDashboard />}
     </div>
   )
 }

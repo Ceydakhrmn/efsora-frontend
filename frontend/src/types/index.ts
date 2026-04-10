@@ -37,6 +37,7 @@ export interface AuthResponse {
   role?: string
   lastLoginDate?: string
   profilePhoto?: string
+  passwordExpired?: boolean
 }
 
 export interface LoginRequest {

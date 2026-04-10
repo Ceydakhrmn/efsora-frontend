@@ -86,6 +86,7 @@ export const en = {
   users: {
     title: 'User Management',
     addUser: 'New User',
+    impersonate: 'Login As',
     editUser: 'Edit User',
     deleteUser: 'Delete User',
     deleteConfirm: 'Are you sure you want to delete this user?',
@@ -198,5 +199,18 @@ export const en = {
       BULK_DELETE: 'Bulk Delete',
       PERMANENT_DELETE: 'Permanent Delete',
     } as Record<string, string>,
+  },
+  security: {
+    title: 'Security Dashboard',
+    successLogins: 'Successful Logins (24h)',
+    failedLogins: 'Failed Logins (24h)',
+    accountLocks: 'Account Locks (24h)',
+    suspiciousIps: 'Suspicious IPs',
+    suspiciousIpList: 'Suspicious IP List',
+    recentEvents: 'Recent Security Events',
+  },
+  impersonation: {
+    banner: 'You are acting as {name}',
+    exit: 'Exit',
   },
 }

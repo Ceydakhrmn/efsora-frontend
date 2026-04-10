@@ -86,6 +86,7 @@ export const tr = {
   users: {
     title: 'Kullanici Yonetimi',
     addUser: 'Yeni Kullanici',
+    impersonate: 'Olarak Giriş Yap',
     editUser: 'Kullanici Duzenle',
     deleteUser: 'Kullaniciyi Sil',
     deleteConfirm: 'Bu kullaniciyi silmek istediginize emin misiniz?',
@@ -198,5 +199,18 @@ export const tr = {
       BULK_DELETE: 'Toplu Silme',
       PERMANENT_DELETE: 'Kalıcı Silme',
     } as Record<string, string>,
+  },
+  security: {
+    title: 'Güvenlik Paneli',
+    successLogins: 'Başarılı Girişler (24s)',
+    failedLogins: 'Başarısız Girişler (24s)',
+    accountLocks: 'Hesap Kilitleri (24s)',
+    suspiciousIps: 'Şüpheli IP Adresleri',
+    suspiciousIpList: 'Şüpheli IP Listesi',
+    recentEvents: 'Son Güvenlik Olayları',
+  },
+  impersonation: {
+    banner: 'Şu an {name} adına işlem yapıyorsunuz',
+    exit: 'Çıkış Yap',
   },
 }

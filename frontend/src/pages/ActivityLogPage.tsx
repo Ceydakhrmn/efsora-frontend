@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Activity, User, Package, Filter } from 'lucide-react'
+import { Activity, User, Package, Filter, Download } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { activityLogsApi, type ActivityLog, type PageResponse } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
+import { exportToExcel } from '@/lib/exportExcel'
 
 const PAGE_SIZE = 20
 
@@ -64,6 +65,19 @@ export function ActivityLogPage() {
     })
   }
 
+  const handleExport = () => {
+    const rows = logs.map((log) => ({
+      ID: log.id,
+      'İşlem': t.activityLog.actions[log.action] || log.action,
+      'Varlık Tipi': log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
+      'Detay': log.details,
+      'Kullanıcı': log.userName || log.userEmail,
+      'IP Adresi': (log as Record<string, unknown>).ipAddress || '',
+      'Tarih': formatDate(log.createdAt),
+    }))
+    exportToExcel(rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -72,6 +86,10 @@ export function ActivityLogPage() {
           <p className="text-muted-foreground">{t.activityLog.subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={logs.length === 0}>
+            <Download className="h-4 w-4 mr-1" />
+            {t.users.export}
+          </Button>
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={entityFilter} onValueChange={(v) => { setEntityFilter(v); setPage(0) }}>
             <SelectTrigger className="w-[160px]">

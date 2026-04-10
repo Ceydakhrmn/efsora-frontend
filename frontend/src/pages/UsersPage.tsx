@@ -10,10 +10,12 @@ import { UserDialog } from '@/components/users/UserDialog'
 import { InviteDialog } from '@/components/users/InviteDialog'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
+import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
 import type { User, UserRequest } from '@/types'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
+import { exportToExcel } from '@/lib/exportExcel'
 
 
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
@@ -28,6 +30,7 @@ export function UsersPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const { t } = useI18n()
+  const { startImpersonation } = useAuth()
   const navigate = useNavigate()
 
   // Checkbox seçimleri
@@ -128,6 +131,17 @@ export function UsersPage() {
     }
   }
 
+  const handleImpersonate = async (user: User) => {
+    try {
+      const response = await usersApi.impersonate(user.id)
+      startImpersonation(response.data)
+      navigate('/dashboard')
+    } catch (err) {
+      const axiosError = err as AxiosError<ErrorResponse>
+      notify.error(axiosError.response?.data?.message || t.common.error)
+    }
+  }
+
   const openEdit = (user: User) => {
     setEditingUser(user)
     setDialogOpen(true)
@@ -138,30 +152,19 @@ export function UsersPage() {
     setDialogOpen(true)
   }
 
-  // Kullanıcıları CSV olarak dışa aktar
+  // Kullanıcıları Excel olarak dışa aktar
   const handleExport = () => {
-    const headers = ['ID', 'First Name', 'Last Name', 'Email', 'Department', 'Status', 'Registration Date']
-    const rows = filteredUsers.map((u) => [
-      u.id,
-      u.firstName,
-      u.lastName,
-      u.email,
-      u.department || '',
-      u.active ? 'Active' : 'Inactive',
-      new Date(u.registrationDate).toLocaleDateString('en-US'),
-    ])
-    const csv = [headers, ...rows]
-      .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-      .join('\n')
-    const BOM = '\uFEFF'
-    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `users_${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-    notify.success('Users exported successfully!')
+    const rows = filteredUsers.map((u) => ({
+      ID: u.id,
+      'Ad': u.firstName,
+      'Soyad': u.lastName,
+      'E-posta': u.email,
+      'Departman': u.department || '',
+      'Durum': u.active ? 'Aktif' : 'Pasif',
+      'Kayıt Tarihi': new Date(u.registrationDate).toLocaleDateString('tr-TR'),
+    }))
+    exportToExcel(rows, 'kullanicilar', 'Kullanıcılar')
+    notify.success(t.users.export + ' ✓')
   }
 
   if (loading) {
@@ -230,6 +233,7 @@ export function UsersPage() {
         onEdit={openEdit}
         onDeactivate={handleDeactivate}
         onPermanentDelete={handlePermanentDelete}
+        onImpersonate={handleImpersonate}
         onRowClick={(user) => navigate(`/users/${user.id}`)}
       />
 

@@ -1,4 +1,4 @@
-import { MoreHorizontal, Pencil, UserX, Trash2 } from 'lucide-react'
+import { MoreHorizontal, Pencil, UserX, Trash2, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -22,10 +22,11 @@ interface UserTableProps {
   onEdit: (user: User) => void
   onDeactivate: (id: number) => void
   onPermanentDelete: (id: number) => void
+  onImpersonate?: (user: User) => void
   onRowClick: (user: User) => void
 }
 
-export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, onDeactivate, onPermanentDelete, onRowClick }: UserTableProps) {
+export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, onDeactivate, onPermanentDelete, onImpersonate, onRowClick }: UserTableProps) {
   const { t } = useI18n()
 
   if (users.length === 0) {
@@ -164,6 +165,13 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+                      )}
+                      <DropdownMenuSeparator />
+                      {onImpersonate && (
+                        <DropdownMenuItem onClick={() => onImpersonate(user)}>
+                          <Eye className="h-4 w-4" />
+                          {t.users.impersonate || 'Login As'}
+                        </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
                       <AlertDialog>
