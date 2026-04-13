@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Mail, Building2, Calendar, Shield } from 'lucide-react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Activity } from 'lucide-react'
 import { Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,13 +9,28 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { usersApi } from '@/api/users'
+import { activityLogsApi, type ActivityLog } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
 import type { User } from '@/types'
+
+function actionIcon(action: string) {
+  switch (action) {
+    case 'CREATE': return '➕'
+    case 'UPDATE': return '✏️'
+    case 'DELETE': case 'PERMANENT_DELETE': case 'BULK_DELETE': return '🗑️'
+    case 'LOGIN': return '🔑'
+    case 'LOGIN_FAILED': return '⚠️'
+    case 'ACCOUNT_LOCKED': return '🔒'
+    case 'IMPERSONATE': return '👤'
+    default: return '📋'
+  }
+}
 
 export function UserDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [activities, setActivities] = useState<ActivityLog[]>([])
   const navigate = useNavigate()
   const { t } = useI18n()
 
@@ -24,6 +39,13 @@ export function UserDetailPage() {
       try {
         const response = await usersApi.getById(Number(id))
         setUser(response.data)
+        // Kullanıcının aktivitelerini getir
+        try {
+          const logsRes = await activityLogsApi.getByUser(response.data.email)
+          setActivities(logsRes.data)
+        } catch {
+          // aktivite yoksa sorun değil
+        }
       } catch {
         navigate('/users')
       } finally {
@@ -154,6 +176,55 @@ export function UserDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Aktivite Geçmişi */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            {t.activityLog?.title || 'Aktivite Geçmişi'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {activities.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              Henüz aktivite kaydı yok
+            </p>
+          ) : (
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+              {activities.map((log) => (
+                <div
+                  key={log.id}
+                  className="flex items-start gap-3 rounded-lg border p-3 text-sm"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                    {actionIcon(log.action)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="text-xs">
+                        {t.activityLog?.actions?.[log.action as keyof typeof t.activityLog.actions] || log.action}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {log.entityType}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {log.details}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {new Date(log.createdAt).toLocaleDateString('tr-TR', {
+                      day: '2-digit', month: '2-digit', year: 'numeric',
+                      hour: '2-digit', minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
