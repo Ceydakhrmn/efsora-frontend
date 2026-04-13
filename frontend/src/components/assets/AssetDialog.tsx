@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Asset, AssetRequest, User } from '@/types'
+import { AssetAttachments } from './AssetAttachments'
 
 const schema = z.object({
   name: z.string().min(1, 'Ad gerekli'),
@@ -52,10 +53,11 @@ interface AssetDialogProps {
   onOpenChange: (open: boolean) => void
   asset: Asset | null
   users: User[]
+  canEdit?: boolean
   onSubmit: (data: AssetRequest) => Promise<void>
 }
 
-export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: AssetDialogProps) {
+export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, onSubmit }: AssetDialogProps) {
   const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { status: 'ACTIVE', category: 'HARDWARE' },
@@ -229,6 +231,10 @@ export function AssetDialog({ open, onOpenChange, asset, users, onSubmit }: Asse
               <Input {...register('notes')} placeholder="Ek bilgiler..." />
             </div>
           </div>
+
+          {asset && (
+            <AssetAttachments assetId={asset.id} canEdit={canEdit} />
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>İptal</Button>

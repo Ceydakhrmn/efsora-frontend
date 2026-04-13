@@ -113,3 +113,12 @@ export interface AssetRequest {
   assignedDepartment?: string
   notes?: string
 }
+
+export interface AssetAttachment {
+  id: number
+  fileName: string
+  contentType: string
+  fileSize: number
+  uploadedBy: string
+  createdAt: string
+}

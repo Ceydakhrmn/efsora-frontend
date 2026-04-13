@@ -275,6 +275,7 @@ export function AssetsPage() {
         onOpenChange={(open) => { setDialogOpen(open); if (!open) setEditingAsset(null) }}
         asset={editingAsset}
         users={users}
+        canEdit={canEdit}
         onSubmit={handleSubmit}
       />
     </div>
