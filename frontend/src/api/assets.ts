@@ -1,6 +1,21 @@
 import api from './axios'
 import type { Asset, AssetRequest, AssetAttachment } from '@/types'
 
+export interface AssetAssignmentHistory {
+  id: number
+  assetId: number
+  assetName: string
+  action: 'ASSIGNED' | 'UNASSIGNED' | 'REASSIGNED'
+  fromUserId?: number
+  fromUserName?: string
+  toUserId?: number
+  toUserName?: string
+  fromDepartment?: string
+  toDepartment?: string
+  performedBy: string
+  createdAt: string
+}
+
 export const assetsApi = {
   getAll: () => api.get<Asset[]>('/assets'),
   getById: (id: number) => api.get<Asset>(`/assets/${id}`),
@@ -23,6 +38,10 @@ export const assetsApi = {
   downloadAttachment: (attachmentId: number) =>
     api.get(`/assets/attachments/${attachmentId}/download`, { responseType: 'blob' }),
   deleteAttachment: (attachmentId: number) => api.delete(`/assets/attachments/${attachmentId}`),
+
+  // Assignment history
+  getAssignmentHistory: (assetId: number) =>
+    api.get<AssetAssignmentHistory[]>(`/assets/${assetId}/assignment-history`),
 }
 
 export interface AssetStats {

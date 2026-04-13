@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Asset, AssetRequest, User } from '@/types'
 import { AssetAttachments } from './AssetAttachments'
+import { AssetAssignmentHistory } from './AssetAssignmentHistory'
 
 const schema = z.object({
   name: z.string().min(1, 'Ad gerekli'),
@@ -234,6 +235,10 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
 
           {asset && (
             <AssetAttachments assetId={asset.id} canEdit={canEdit} />
+          )}
+
+          {asset && (
+            <AssetAssignmentHistory assetId={asset.id} />
           )}
 
           <div className="flex justify-end gap-2 pt-2">
