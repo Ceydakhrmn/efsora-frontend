@@ -8,11 +8,11 @@ export const authApi = {
   register: (data: RegisterRequest) =>
     api.post<AuthResponse>('/auth/register', data),
 
-  logout: (refreshToken: string) =>
-    api.post<MessageResponse>('/auth/logout', { refreshToken }),
+  logout: (refreshToken?: string) =>
+    api.post<MessageResponse>('/auth/logout', refreshToken ? { refreshToken } : {}),
 
-  refresh: (refreshToken: string) =>
-    api.post<AuthResponse>('/auth/refresh', { refreshToken }),
+  refresh: (refreshToken?: string) =>
+    api.post<AuthResponse>('/auth/refresh', refreshToken ? { refreshToken } : {}),
 
   forgotPassword: (data: ForgotPasswordRequest) =>
     api.post<MessageResponse>('/auth/forgot-password', data),
