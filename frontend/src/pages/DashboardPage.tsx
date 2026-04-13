@@ -5,11 +5,14 @@ import { DepartmentChart } from '@/components/dashboard/DepartmentChart'
 import { RegistrationTrend } from '@/components/dashboard/RegistrationTrend'
 import { RecentUsers } from '@/components/dashboard/RecentUsers'
 import { SecurityDashboard } from '@/components/dashboard/SecurityDashboard'
+import { AssetCategoryChart } from '@/components/dashboard/AssetCategoryChart'
+import { AssetStatusChart } from '@/components/dashboard/AssetStatusChart'
+import { AssetValueChart } from '@/components/dashboard/AssetValueChart'
 import { usersApi } from '@/api/users'
 import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
-import type { User } from '@/types'
+import type { Asset, User } from '@/types'
 
 type FilterType = 'monthly' | 'yearly' | 'custom'
 
@@ -23,6 +26,7 @@ const YEARS = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1]
 
 export function DashboardPage() {
   const [users, setUsers] = useState<User[]>([])
+  const [assets, setAssets] = useState<Asset[]>([])
   const [assetStats, setAssetStats] = useState<AssetStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [filterType, setFilterType] = useState<FilterType>('monthly')
@@ -36,11 +40,13 @@ export function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, statsRes] = await Promise.all([
+        const [usersRes, assetsRes, statsRes] = await Promise.all([
           usersApi.getAll(),
+          assetsApi.getAll(),
           assetsApi.getStats(),
         ])
         setUsers(usersRes.data)
+        setAssets(assetsRes.data)
         setAssetStats(statsRes.data)
       } catch (error) {
         console.error('Failed to fetch data:', error)
@@ -249,6 +255,18 @@ export function DashboardPage() {
                 icon={Package}
                 color="blue"
               />
+            </div>
+          )}
+
+          {/* Asset Charts */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <AssetCategoryChart stats={assetStats} />
+            <AssetStatusChart stats={assetStats} />
+          </div>
+
+          {assets.length > 0 && (
+            <div className="grid gap-6">
+              <AssetValueChart assets={assets} />
             </div>
           )}
         </>
