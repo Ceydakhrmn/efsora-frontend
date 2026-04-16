@@ -13,6 +13,7 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { InvitePage } from '@/pages/InvitePage'
 import { AssetsPage } from '@/pages/AssetsPage'
 import { ActivityLogPage } from '@/pages/ActivityLogPage'
+import { ReportsPage } from '@/pages/ReportsPage'
 import { ImpersonationBar } from '@/components/layout/ImpersonationBar'
 
 function App() {
@@ -47,6 +48,11 @@ function App() {
                 <Route path="/activity-log" element={
                   <ProtectedRoute allowedRoles={['ADMIN']}>
                     <ActivityLogPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/reports" element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <ReportsPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/settings" element={<SettingsPage />} />

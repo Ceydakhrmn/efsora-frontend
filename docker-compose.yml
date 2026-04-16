@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: efsora-backend
+    container_name: efsora-backend 
     depends_on:
       postgres:
         condition: service_healthy

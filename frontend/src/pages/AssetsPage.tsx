@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle, Download } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download, QrCode } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { AssetDialog } from '@/components/assets/AssetDialog'
+import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
 import { useAuth } from '@/contexts/AuthContext'
+import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
@@ -29,6 +31,7 @@ const statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 's
 
 export function AssetsPage() {
   const { user: authUser } = useAuth()
+  const { t } = useI18n()
   const canEdit = authUser?.role === 'ADMIN' || authUser?.role === 'EDITOR'
   const canDelete = authUser?.role === 'ADMIN'
   const [assets, setAssets] = useState<Asset[]>([])
@@ -40,7 +43,8 @@ export function AssetsPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null)
   const [expiringSoon, setExpiringSoon] = useState<Asset[]>([])
-
+  const [qrAsset, setQrAsset] = useState<Asset | null>(null)
+  const [qrDialogOpen, setQrDialogOpen] = useState(false)
   const fetchAssets = async () => {
     try {
       const [assetsRes, usersRes, expiringRes] = await Promise.all([
@@ -242,6 +246,14 @@ export function AssetsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => { setQrAsset(asset); setQrDialogOpen(true) }}
+                        title={t.assets.showQr}
+                      >
+                        <QrCode className="h-4 w-4" />
+                      </Button>
                       {canEdit && (
                         <Button
                           size="sm"
@@ -277,6 +289,12 @@ export function AssetsPage() {
         users={users}
         canEdit={canEdit}
         onSubmit={handleSubmit}
+      />
+
+      <AssetQrDialog
+        open={qrDialogOpen}
+        onOpenChange={setQrDialogOpen}
+        asset={qrAsset}
       />
     </div>
   )

@@ -1,13 +1,14 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Download, Mail } from 'lucide-react'
+import { Plus, Search, Download, Mail, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { UserTable } from '@/components/users/UserTable'
 import { UserDialog } from '@/components/users/UserDialog'
 import { InviteDialog } from '@/components/users/InviteDialog'
+import { BulkImportDialog } from '@/components/users/BulkImportDialog'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
 import { useAuth } from '@/contexts/AuthContext'
@@ -29,6 +30,7 @@ export function UsersPage() {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
+  const [bulkImportOpen, setBulkImportOpen] = useState(false)
   const { t } = useI18n()
   const { startImpersonation } = useAuth()
   const navigate = useNavigate()
@@ -206,6 +208,10 @@ export function UsersPage() {
             <Download className="h-4 w-4 mr-1" />
             {t.users.export}
           </Button>
+          <Button variant="outline" onClick={() => setBulkImportOpen(true)}>
+            <Upload className="h-4 w-4 mr-1" />
+            {t.bulkImport.importUsers}
+          </Button>
           <Button variant="outline" onClick={() => setInviteDialogOpen(true)}>
             <Mail className="h-4 w-4 mr-1" />
             Davet Et
@@ -239,6 +245,9 @@ export function UsersPage() {
 
       {/* Invite Dialog */}
       <InviteDialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen} />
+
+      {/* Bulk Import Dialog */}
+      <BulkImportDialog open={bulkImportOpen} onOpenChange={setBulkImportOpen} onSuccess={fetchUsers} />
 
       {/* Create/Edit Dialog */}
       <UserDialog

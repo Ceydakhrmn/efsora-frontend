@@ -42,4 +42,7 @@ export const usersApi = {
 
   impersonate: (id: number) =>
     api.post<AuthResponse>(`/kullanicilar/${id}/impersonate`),
+
+  bulkImport: (users: UserRequest[]) =>
+    api.post<{ total: number; success: number; failed: number; results: Array<{ row: number; email: string; status: string; message?: string }> }>('/kullanicilar/bulk-import', users),
 }
