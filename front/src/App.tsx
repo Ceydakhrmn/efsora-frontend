@@ -10,6 +10,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { UsersPage } from '@/pages/UsersPage'
 import { UserDetailPage } from '@/pages/UserDetailPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { ReportsPage } from '@/pages/ReportsPage'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/users/:id" element={<UserDetailPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
               </Route>
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>

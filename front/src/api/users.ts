@@ -31,4 +31,7 @@ export const usersApi = {
 
   changePassword: (data: ChangePasswordRequest) =>
     api.post<MessageResponse>('/kullanicilar/change-password', data),
+
+  bulkImport: (users: UserRequest[]) =>
+    api.post<{ total: number; success: number; failed: number; results: Array<{ row: number; email: string; status: string; message?: string }> }>('/kullanicilar/bulk-import', users),
 }
