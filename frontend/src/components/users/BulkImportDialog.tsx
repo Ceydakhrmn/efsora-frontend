@@ -106,7 +106,10 @@ export function BulkImportDialog({ open, onOpenChange, onSuccess }: BulkImportDi
         role: r.role,
       }))
       const { data } = await usersApi.bulkImport(payload)
-      setResults(data.results)
+      setResults(data.results.map((r: { row: number; email: string; status: string; message?: string }) => ({
+        ...r,
+        status: r.status as 'success' | 'error',
+      })))
       if (data.success > 0) {
         notify.success(`${data.success} ${t.bulkImport.usersImported}`)
         onSuccess()
