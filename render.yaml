@@ -30,5 +30,5 @@ services:
     dockerContext: ./frontend
     envVars:
       - key: VITE_API_URL
-        value: https://efsora-backend-XXXXX.onrender.com
+        value: https://envanter-yonetimi-backend.onrender.com
         sync: false
