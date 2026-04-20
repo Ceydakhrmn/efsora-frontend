@@ -2,8 +2,8 @@ services:
   - type: web
     name: efsora-backend
     runtime: docker
-    dockerfilePath: Dockerfile
-    dockerContext: ./backend
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://${POSTGRES_HOST}:5432/envanter_db
@@ -26,8 +26,8 @@ services:
   - type: web
     name: efsora-frontend
     runtime: docker
-    dockerfilePath: Dockerfile
-    dockerContext: ./frontend
+    dockerfilePath: frontend/Dockerfile
+    dockerContext: .
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com
