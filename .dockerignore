@@ -1,3 +1,12 @@
 backend/postgres-data
 backend/.git
 backend/.github
+node_modules
+frontend/node_modules
+backend/node_modules
+dist
+frontend/dist
+.env
+.env.local
+*.log
+.DS_Store

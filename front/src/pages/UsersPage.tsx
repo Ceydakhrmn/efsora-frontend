@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { UserTable } from '@/components/users/UserTable'
 import { UserDialog } from '@/components/users/UserDialog'
+import { BulkImportDialog } from '@/components/users/BulkImportDialog'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
 import { toast } from 'sonner'
@@ -22,6 +23,7 @@ export function UsersPage() {
   const [deptFilter, setDeptFilter] = useState<string>('all')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [bulkImportOpen, setBulkImportOpen] = useState(false)
   const { t } = useI18n()
   const navigate = useNavigate()
 
@@ -141,10 +143,16 @@ export function UsersPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={openCreate}>
-          <Plus className="h-4 w-4" />
-          {t.users.addUser}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setBulkImportOpen(true)}>
+            <Upload className="h-4 w-4" />
+            {t.users.importUsers}
+          </Button>
+          <Button onClick={openCreate}>
+            <Plus className="h-4 w-4" />
+            {t.users.addUser}
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
@@ -165,6 +173,12 @@ export function UsersPage() {
         }}
         user={editingUser}
         onSubmit={editingUser ? handleUpdate : handleCreate}
+      />
+
+      <BulkImportDialog
+        open={bulkImportOpen}
+        onOpenChange={setBulkImportOpen}
+        onSuccess={fetchUsers}
       />
     </div>
   )

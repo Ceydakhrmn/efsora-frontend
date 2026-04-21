@@ -1,14 +1,10 @@
-
-# Build stage
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM node:22-slim
 WORKDIR /app
-COPY backend/pom.xml .
-COPY backend/src ./src
-RUN mvn package -DskipTests
-
-# Run stage
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+COPY frontend/package*.json ./
+RUN npm install --legacy-peer-deps
+COPY frontend/ .
+ENV VITE_API_URL=https://envanter-yonetimi-backend.onrender.com
+RUN npm run build
+RUN npm install -g serve
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
