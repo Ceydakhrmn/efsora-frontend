@@ -27,7 +27,7 @@ services:
     name: efsora-frontend
     runtime: docker
     dockerfilePath: frontend/Dockerfile
-    dockerContext: frontend
+    dockerContext: .
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com

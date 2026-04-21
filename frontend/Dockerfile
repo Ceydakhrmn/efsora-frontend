@@ -1,8 +1,8 @@
 FROM node:22-slim
 WORKDIR /app
-COPY package*.json ./
+COPY frontend/package*.json ./
 RUN npm install --legacy-peer-deps
-COPY . .
+COPY frontend/ .
 ENV VITE_API_URL=https://envanter-yonetimi-backend.onrender.com
 RUN npm run build
 RUN npm install -g serve
