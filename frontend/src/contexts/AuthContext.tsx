@@ -39,25 +39,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [originalAuth, setOriginalAuth] = useState<{ token: string; user: AuthUser; refreshToken: string } | null>(null)
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token')
-    const savedUser = localStorage.getItem('user')
-    const savedImpersonating = localStorage.getItem('isImpersonating')
-    if (savedToken && savedUser) {
-      setToken(savedToken)
+    const initAuth = async () => {
+      const savedToken = localStorage.getItem('token')
+      const savedUser = localStorage.getItem('user')
+      const savedImpersonating = localStorage.getItem('isImpersonating')
+      if (savedToken && savedUser) {
+        setToken(savedToken)
+        try {
+          setUser(JSON.parse(savedUser))
+        } catch {
+          localStorage.removeItem('user')
+        }
+      }
+      if (savedImpersonating === 'true') {
+        setIsImpersonating(true)
+        const orig = localStorage.getItem('originalAuth')
+        if (orig) {
+          try { setOriginalAuth(JSON.parse(orig)) } catch { /* ignore */ }
+        }
+      }
+      
+      // Warmup backend (Render free tier)
       try {
-        setUser(JSON.parse(savedUser))
+        const { healthApi } = await import('@/api/health')
+        await healthApi.ping()
       } catch {
-        localStorage.removeItem('user')
+        // Ignore warmup failure
       }
+      
+      setIsLoading(false)
     }
-    if (savedImpersonating === 'true') {
-      setIsImpersonating(true)
-      const orig = localStorage.getItem('originalAuth')
-      if (orig) {
-        try { setOriginalAuth(JSON.parse(orig)) } catch { /* ignore */ }
-      }
-    }
-    setIsLoading(false)
+    
+    initAuth()
   }, [])
 
   const handleAuthResponse = (data: AuthResponse) => {
