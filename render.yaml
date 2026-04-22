@@ -4,6 +4,7 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile.backend
     dockerContext: .
+    healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://${POSTGRES_HOST}:5432/envanter_db
@@ -19,7 +20,7 @@ services:
       - key: APP_CORS_ALLOWED_ORIGINS
         value: https://efsora-frontend-m3ke.onrender.com
         sync: false
-      - key: SERVER_PORT
+      - key: PORT
         value: "8081"
         sync: false
 
