@@ -1,9 +1,9 @@
-import { axiosInstance } from './axios'
+import api from './axios'
 
 export const healthApi = {
   ping: async () => {
     try {
-      const response = await axiosInstance.get('/health/ping')
+      const response = await api.get('/health/ping')
       return response.data
     } catch (error) {
       console.warn('Backend warmup failed:', error)
