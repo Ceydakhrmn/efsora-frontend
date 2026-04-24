@@ -7,29 +7,28 @@ services:
     healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_DATASOURCE_URL
+        scope: build
         value: jdbc:postgresql://${POSTGRES_HOST}:5432/envanter_db
-        sync: false
       - key: SPRING_DATASOURCE_USERNAME
+        scope: run
         value: ${POSTGRES_USER}
-        sync: false
       - key: SPRING_DATASOURCE_PASSWORD
+        scope: run
         value: ${POSTGRES_PASSWORD}
-        sync: false
       - key: JWT_SECRET
-        sync: false
+        scope: run
+        # SECRET: Must be set in Render Dashboard as environment variable
       - key: APP_CORS_ALLOWED_ORIGINS
         value: https://efsora-frontend-m3ke.onrender.com
-        sync: false
       - key: PORT
         value: "8081"
-        sync: false
 
   - type: web
     name: efsora-frontend
     runtime: docker
-    dockerfilePath: frontend/Dockerfile
+    dockerfilePath: Dockerfile
     dockerContext: .
+    buildCommand: npm run build --prefix frontend
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com
-        sync: false
