@@ -98,7 +98,7 @@ export function ReportsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.reports.allDepartments}</SelectItem>
-              {deptSummary.map((d) => (
+              {deptSummary.filter((d) => d.department).map((d) => (
                 <SelectItem key={d.department} value={d.department}>{d.department}</SelectItem>
               ))}
             </SelectContent>
