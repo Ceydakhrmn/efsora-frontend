@@ -28,7 +28,6 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     dockerContext: .
-    buildCommand: npm run build --prefix frontend
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com

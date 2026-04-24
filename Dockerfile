@@ -7,4 +7,4 @@ ENV VITE_API_URL=https://envanter-yonetimi-backend.onrender.com
 RUN npm run build
 RUN npm install -g serve
 EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["sh", "-c", "serve -s dist -l ${PORT:-3000}"]
