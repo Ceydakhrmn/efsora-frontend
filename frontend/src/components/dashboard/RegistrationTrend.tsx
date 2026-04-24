@@ -8,17 +8,18 @@ interface RegistrationTrendProps {
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
+  const t = useI18n()
   if (active && payload && payload.length) {
     const { label, count, change } = payload[0].payload
     return (
       <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
         <p className="font-semibold text-foreground">{label}</p>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{count}</span> registrations
+          <span className="font-medium text-foreground">{count}</span> {t.reports.registrations}
         </p>
         {change !== null && (
           <p className={`text-sm font-medium ${change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {change >= 0 ? '▲' : '▼'} {Math.abs(change)} vs prev month
+            {change >= 0 ? '▲' : '▼'} {Math.abs(change)} {t.reports.vsPrevMonth}
           </p>
         )}
       </div>

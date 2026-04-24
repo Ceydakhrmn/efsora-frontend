@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import type { AssetStats } from '@/api/assets'
+import { useI18n } from '@/contexts/I18nProvider'
 
 const CATEGORY_LABELS: Record<string, string> = {
   HARDWARE: 'Donanım',
@@ -35,6 +36,7 @@ interface AssetCategoryChartProps {
 }
 
 export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
+  const t = useI18n()
   const data = Object.entries(stats.byCategory).map(([key, value]) => ({
     name: CATEGORY_LABELS[key] || key,
     value,
@@ -45,10 +47,10 @@ export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Kategori Dağılımı</CardTitle>
+          <CardTitle className="text-base">{t.reports.categoryBreakdown}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">Veri yok</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.noData}</p>
         </CardContent>
       </Card>
     )
@@ -57,7 +59,7 @@ export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Kategori Dağılımı</CardTitle>
+        <CardTitle className="text-base">{t.reports.categoryBreakdown}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import type { Asset } from '@/types'
+import { useI18n } from '@/contexts/I18nProvider'
 
 const CATEGORY_LABELS: Record<string, string> = {
   HARDWARE: 'Donanım',
@@ -32,6 +33,7 @@ interface AssetValueChartProps {
 }
 
 export function AssetValueChart({ assets }: AssetValueChartProps) {
+  const t = useI18n()
   const categoryValues = assets.reduce<Record<string, number>>((acc, asset) => {
     if (asset.purchasePrice) {
       const cat = asset.category
@@ -51,10 +53,10 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
     return (
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle className="text-base">Kategori Bazlı Değer (₺)</CardTitle>
+          <CardTitle className="text-base">{t.reports.categoryValue}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">Değer verisi yok</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.valueNoData}</p>
         </CardContent>
       </Card>
     )
@@ -63,7 +65,7 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
   return (
     <Card className="col-span-2">
       <CardHeader>
-        <CardTitle className="text-base">Kategori Bazlı Değer (₺)</CardTitle>
+        <CardTitle className="text-base">{t.reports.categoryValue}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

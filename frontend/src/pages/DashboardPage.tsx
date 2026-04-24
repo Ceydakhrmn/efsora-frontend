@@ -16,21 +16,13 @@ import type { Asset, User } from '@/types'
 
 type FilterType = 'monthly' | 'yearly' | 'custom'
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
-
-const currentYear = new Date().getFullYear()
-const YEARS = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1]
-
 export function DashboardPage() {
   const [users, setUsers] = useState<User[]>([])
   const [assets, setAssets] = useState<Asset[]>([])
   const [assetStats, setAssetStats] = useState<AssetStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [filterType, setFilterType] = useState<FilterType>('monthly')
-  const [selectedYear, setSelectedYear] = useState(currentYear)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [customStart, setCustomStart] = useState('')
   const [customEnd, setCustomEnd] = useState('')
@@ -114,9 +106,9 @@ export function DashboardPage() {
             onChange={(e) => setFilterType(e.target.value as FilterType)}
             className="bg-card text-foreground text-sm outline-none cursor-pointer rounded px-1"
           >
-            <option value="monthly" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>Monthly</option>
-            <option value="yearly" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>Yearly</option>
-            <option value="custom" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>Custom range</option>
+            <option value="monthly" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{t.dashboard.monthly}</option>
+            <option value="yearly" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{t.dashboard.yearly}</option>
+            <option value="custom" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{t.dashboard.customRange}</option>
           </select>
 
           <div className="w-px h-4 bg-border" />
@@ -128,7 +120,7 @@ export function DashboardPage() {
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
                 className="bg-card text-foreground text-sm outline-none cursor-pointer rounded px-1"
               >
-                {YEARS.map((y) => (
+                {Array.from({ length: 4 }, (_, i) => new Date().getFullYear() - 2 + i).map((y) => (
                   <option key={y} value={y} style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{y}</option>
                 ))}
               </select>
@@ -138,7 +130,7 @@ export function DashboardPage() {
                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
                 className="bg-card text-foreground text-sm outline-none cursor-pointer rounded px-1"
               >
-                {MONTHS.map((m, i) => (
+                {t.dashboard.months.map((m, i) => (
                   <option key={m} value={i} style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{m}</option>
                 ))}
               </select>
@@ -151,7 +143,7 @@ export function DashboardPage() {
               onChange={(e) => setSelectedYear(Number(e.target.value))}
               className="bg-card text-foreground text-sm outline-none cursor-pointer rounded px-1"
             >
-              {YEARS.map((y) => (
+              {Array.from({ length: 4 }, (_, i) => new Date().getFullYear() - 2 + i).map((y) => (
                 <option key={y} value={y} style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}>{y}</option>
               ))}
             </select>
@@ -232,7 +224,7 @@ export function DashboardPage() {
               <StatCard title={t.assets.statusActive} value={assetStats.active} icon={Package} color="green" />
               <StatCard title={t.assets.statusMaintenance} value={assetStats.maintenance} icon={Wrench} color="orange" />
               <StatCard
-                title={t.assets.expiringAlert.split(' ')[0] === 'varlığın' ? 'Süresi Dolacak' : 'Expiring Soon'}
+                title={t.reports.expiringSoon}
                 value={assetStats.expiringSoon}
                 icon={AlertTriangle}
                 color="orange"
@@ -243,7 +235,7 @@ export function DashboardPage() {
           {assetStats.totalValue > 0 && (
             <div className="grid gap-4 sm:grid-cols-3">
               <StatCard
-                title="Toplam Değer"
+                title={t.dashboard.totalValue}
                 value={`₺${assetStats.totalValue.toLocaleString('tr-TR')}`}
                 icon={DollarSign}
                 color="green"

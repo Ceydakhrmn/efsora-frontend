@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import type { AssetStats } from '@/api/assets'
+import { useI18n } from '@/contexts/I18nProvider'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   active: { label: 'Aktif', color: '#10b981' },
@@ -32,6 +33,7 @@ interface AssetStatusChartProps {
 }
 
 export function AssetStatusChart({ stats }: AssetStatusChartProps) {
+  const t = useI18n()
   const data = Object.entries(STATUS_CONFIG)
     .map(([key, config]) => ({
       name: config.label,
@@ -45,10 +47,10 @@ export function AssetStatusChart({ stats }: AssetStatusChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Durum Dağılımı</CardTitle>
+          <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">Veri yok</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.noData}</p>
         </CardContent>
       </Card>
     )
@@ -57,7 +59,7 @@ export function AssetStatusChart({ stats }: AssetStatusChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Durum Dağılımı</CardTitle>
+        <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

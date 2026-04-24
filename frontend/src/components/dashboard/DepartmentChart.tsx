@@ -10,16 +10,17 @@ interface DepartmentChartProps {
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
+  const t = useI18n()
   if (active && payload && payload.length) {
     const { name, value, percentage } = payload[0].payload
     return (
       <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
         <p className="font-semibold text-foreground">{name}</p>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{value}</span> users
+          <span className="font-medium text-foreground">{value}</span> {t.reports.users}
         </p>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{percentage}%</span> of total
+          <span className="font-medium text-foreground">{percentage}%</span> {t.reports.ofTotal}
         </p>
       </div>
     )
