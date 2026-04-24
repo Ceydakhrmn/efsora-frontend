@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import type { AssetStats } from '@/api/assets'
-import { useI18n } from '@/contexts/I18nProvider'
+import { useI18n } from '@/i18n'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   active: { label: 'Aktif', color: '#10b981' },
@@ -33,7 +33,7 @@ interface AssetStatusChartProps {
 }
 
 export function AssetStatusChart({ stats }: AssetStatusChartProps) {
-  const t = useI18n()
+  const { t } = useI18n()
   const data = Object.entries(STATUS_CONFIG)
     .map(([key, config]) => ({
       name: config.label,

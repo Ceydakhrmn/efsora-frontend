@@ -16,6 +16,8 @@ import type { Asset, User } from '@/types'
 
 type FilterType = 'monthly' | 'yearly' | 'custom'
 
+const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
+
 export function DashboardPage() {
   const [users, setUsers] = useState<User[]>([])
   const [assets, setAssets] = useState<Asset[]>([])

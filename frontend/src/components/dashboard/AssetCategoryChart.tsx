@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import type { AssetStats } from '@/api/assets'
-import { useI18n } from '@/contexts/I18nProvider'
+import { useI18n } from '@/i18n'
 
 const CATEGORY_LABELS: Record<string, string> = {
   HARDWARE: 'Donanım',
@@ -36,7 +36,7 @@ interface AssetCategoryChartProps {
 }
 
 export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
-  const t = useI18n()
+  const { t } = useI18n()
   const data = Object.entries(stats.byCategory).map(([key, value]) => ({
     name: CATEGORY_LABELS[key] || key,
     value,

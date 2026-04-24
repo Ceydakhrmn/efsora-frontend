@@ -8,7 +8,7 @@ interface RegistrationTrendProps {
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
-  const t = useI18n()
+  const { t } = useI18n()
   if (active && payload && payload.length) {
     const { label, count, change } = payload[0].payload
     return (

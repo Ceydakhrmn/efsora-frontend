@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import type { Asset } from '@/types'
-import { useI18n } from '@/contexts/I18nProvider'
+import { useI18n } from '@/i18n'
 
 const CATEGORY_LABELS: Record<string, string> = {
   HARDWARE: 'Donanım',
@@ -33,7 +33,7 @@ interface AssetValueChartProps {
 }
 
 export function AssetValueChart({ assets }: AssetValueChartProps) {
-  const t = useI18n()
+  const { t } = useI18n()
   const categoryValues = assets.reduce<Record<string, number>>((acc, asset) => {
     if (asset.purchasePrice) {
       const cat = asset.category
