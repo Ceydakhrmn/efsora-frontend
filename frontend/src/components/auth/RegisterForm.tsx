@@ -30,7 +30,7 @@ interface RegisterFormProps {
   onSuccess?: () => void
 }
 
-export function RegisterForm(_props: RegisterFormProps) {
+export function RegisterForm(props: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { register: registerUser } = useAuth()
@@ -45,6 +45,7 @@ export function RegisterForm(_props: RegisterFormProps) {
     try {
       await registerUser(data)
       notify.success(t.auth.registerSuccess)
+      props.onSuccess?.()
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
       if (axiosError.response?.status === 400 || axiosError.response?.status === 409) {
