@@ -2,14 +2,12 @@ import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { LoginForm } from '@/components/auth/LoginForm'
-import { RegisterForm } from '@/components/auth/RegisterForm'
 import { ForgotPasswordFlow } from '@/components/auth/ForgotPasswordFlow'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 
 export function AuthPage() {
   const [showForgotPassword, setShowForgotPassword] = useState(false)
-  const [showRegister, setShowRegister] = useState(false)
   const { isAuthenticated, isLoading } = useAuth()
   const { t, language, setLanguage } = useI18n()
 
@@ -78,43 +76,13 @@ export function AuthPage() {
           </div>
           <h1 className="text-2xl font-bold text-foreground font-archivo">Efsora Labs</h1>
           <p className="mt-1 text-sm text-muted-foreground font-mono">
-            {showRegister ? t.auth.registerSubtitle : t.auth.loginSubtitle}
+            {t.auth.loginSubtitle}
           </p>
         </div>
 
         <Card>
           <CardContent className="pt-6">
-            {showRegister ? (
-              <>
-                <RegisterForm onSuccess={() => setShowRegister(false)} />
-                <div className="mt-6 border-t border-border pt-4">
-                  <p className="text-center text-sm text-muted-foreground">
-                    {t.auth.hasAccount}{' '}
-                    <button
-                      onClick={() => setShowRegister(false)}
-                      className="text-primary hover:underline cursor-pointer font-medium"
-                    >
-                      {t.auth.login}
-                    </button>
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <LoginForm onForgotPassword={() => setShowForgotPassword(true)} />
-                <div className="mt-6 border-t border-border pt-4">
-                  <p className="text-center text-sm text-muted-foreground">
-                    {t.auth.noAccount}{' '}
-                    <button
-                      onClick={() => setShowRegister(true)}
-                      className="text-primary hover:underline cursor-pointer font-medium"
-                    >
-                      {t.auth.register}
-                    </button>
-                  </p>
-                </div>
-              </>
-            )}
+            <LoginForm onForgotPassword={() => setShowForgotPassword(true)} />
           </CardContent>
         </Card>
       </div>
