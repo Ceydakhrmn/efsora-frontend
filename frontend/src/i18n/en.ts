@@ -115,6 +115,7 @@ export const en = {
     roleEditor: 'Editor',
     roleUser: 'User',
     selectRole: 'Select role',
+    ofTotal: 'of total users',
   },
   assets: {
     title: 'Inventory Management',

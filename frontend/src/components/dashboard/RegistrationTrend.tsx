@@ -29,14 +29,18 @@ const CustomTooltip = ({ active, payload }: any) => {
 }
 
 export function RegistrationTrend({ users }: RegistrationTrendProps) {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
 
   const now = new Date()
   const months: { label: string; count: number; change: number | null }[] = []
 
   for (let i = 5; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const monthLabel = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+    const monthIndex = date.getMonth()
+    const shortYear = String(date.getFullYear()).slice(-2)
+    const monthLabel = language === 'tr'
+      ? `${t.dashboard.months[monthIndex]} '${shortYear}`
+      : date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
     const count = users.filter((u) => {
       const regDate = new Date(u.registrationDate)
       return regDate.getMonth() === date.getMonth() && regDate.getFullYear() === date.getFullYear()
