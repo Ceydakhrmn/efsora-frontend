@@ -19,7 +19,7 @@ const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 const registerSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
-  email: z.string().email().endsWith('@efsora.com', { message: 'Only @efsora.com emails are allowed' }),
+  email: z.string().email(),
   password: z.string().min(8).max(100),
   department: z.string().min(1),
 })
@@ -84,7 +84,7 @@ export function RegisterForm(props: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="reg-email">{t.auth.email}</Label>
-        <Input id="reg-email" type="email" placeholder="ahmet@efsora.com" {...register('email')} />
+        <Input id="reg-email" type="email" placeholder="ornek@gmail.com" {...register('email')} />
         {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
 
