@@ -122,3 +122,13 @@ export interface AssetAttachment {
   uploadedBy: string
   createdAt: string
 }
+
+export interface PagedResponse<T> {
+  content: T[]
+  currentPage: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+  hasNext: boolean
+  hasPrevious: boolean
+}

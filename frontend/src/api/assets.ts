@@ -1,5 +1,5 @@
 import api from './axios'
-import type { Asset, AssetRequest, AssetAttachment } from '@/types'
+import type { Asset, AssetRequest, AssetAttachment, PagedResponse } from '@/types'
 
 export interface AssetAssignmentHistory {
   id: number
@@ -17,7 +17,7 @@ export interface AssetAssignmentHistory {
 }
 
 export const assetsApi = {
-  getAll: () => api.get<Asset[]>('/assets'),
+  getAll: (page: number = 0, size: number = 10) => api.get<PagedResponse<Asset>>('/assets', { params: { page, size } }),
   getById: (id: number) => api.get<Asset>(`/assets/${id}`),
   create: (data: AssetRequest) => api.post<Asset>('/assets', data),
   update: (id: number, data: AssetRequest) => api.put<Asset>(`/assets/${id}`, data),

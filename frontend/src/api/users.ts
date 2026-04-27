@@ -1,6 +1,6 @@
 
 import api from './axios'
-import type { User, UserRequest, ChangePasswordRequest, MessageResponse, AuthResponse } from '@/types'
+import type { User, UserRequest, ChangePasswordRequest, MessageResponse, AuthResponse, PagedResponse } from '@/types'
 
 export const usersApi = {
     // Çoklu silme
@@ -8,8 +8,8 @@ export const usersApi = {
       api.post('/kullanicilar/bulk-delete', ids, {
         headers: { 'Content-Type': 'application/json' }
       }),
-  getAll: () =>
-    api.get<User[]>('/kullanicilar'),
+  getAll: (page: number = 0, size: number = 10) =>
+    api.get<PagedResponse<User>>('/kullanicilar', { params: { page, size } }),
 
   getById: (id: number) =>
     api.get<User>(`/kullanicilar/${id}`),
