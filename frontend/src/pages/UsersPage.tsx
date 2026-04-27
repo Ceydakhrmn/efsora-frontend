@@ -64,7 +64,7 @@ export function UsersPage() {
   const fetchUsers = async () => {
     try {
       const response = await usersApi.getAll()
-      setUsers(response.data)
+      setUsers(response.data.content)
     } catch (error) {
       console.error('Failed to fetch users:', error)
     } finally {

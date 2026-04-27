@@ -52,8 +52,8 @@ export function AssetsPage() {
         usersApi.getAll(),
         assetsApi.getExpiringSoon(),
       ])
-      setAssets(assetsRes.data)
-      setUsers(usersRes.data)
+      setAssets(assetsRes.data.content)
+      setUsers(usersRes.data.content)
       setExpiringSoon(expiringRes.data)
     } catch {
       notify.error('Veriler yüklenemedi')

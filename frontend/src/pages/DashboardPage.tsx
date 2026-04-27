@@ -39,8 +39,8 @@ export function DashboardPage() {
           assetsApi.getAll(),
           assetsApi.getStats(),
         ])
-        setUsers(usersRes.data)
-        setAssets(assetsRes.data)
+        setUsers(usersRes.data.content)
+        setAssets(assetsRes.data.content)
         setAssetStats(statsRes.data)
       } catch (error) {
         console.error('Failed to fetch data:', error)
