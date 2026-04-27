@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { SuspenseFallback } from '@/components/SuspenseFallback'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { I18nProvider } from '@/contexts/I18nProvider'
@@ -20,68 +22,70 @@ const ImpersonationBar = lazy(() => import('@/components/layout/ImpersonationBar
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <I18nProvider>
-          <AuthProvider>
-            <Suspense fallback={null}>
-              <ImpersonationBar />
-            </Suspense>
-            <Suspense fallback={null}>
-              <Routes>
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/invite/:token" element={<InvitePage />} />
-                <Route
-                  element={
-                    <ProtectedRoute>
-                      <MainLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/users" element={
-                    <ProtectedRoute allowedRoles={['ADMIN']}>
-                      <UsersPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/users/:id" element={
-                    <ProtectedRoute allowedRoles={['ADMIN']}>
-                      <UserDetailPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/assets" element={<AssetsPage />} />
-                  <Route path="/activity-log" element={
-                    <ProtectedRoute allowedRoles={['ADMIN']}>
-                      <ActivityLogPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/reports" element={
-                    <ProtectedRoute allowedRoles={['ADMIN']}>
-                      <ReportsPage />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/settings" element={<SettingsPage />} />
-                </Route>
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </Suspense>
-            <Toaster
-              position="top-right"
-              richColors
-              closeButton
-              expand={true}
-              duration={4000}
-              toastOptions={{
-                style: {
-                  borderRadius: '12px',
-                  fontSize: '14px',
-                },
-              }}
-            />
-          </AuthProvider>
-        </I18nProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider>
+          <I18nProvider>
+            <AuthProvider>
+              <Suspense fallback={null}>
+                <ImpersonationBar />
+              </Suspense>
+              <Suspense fallback={<SuspenseFallback />}>
+                <Routes>
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/invite/:token" element={<InvitePage />} />
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <MainLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/users" element={
+                      <ProtectedRoute allowedRoles={['ADMIN']}>
+                        <UsersPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/users/:id" element={
+                      <ProtectedRoute allowedRoles={['ADMIN']}>
+                        <UserDetailPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/assets" element={<AssetsPage />} />
+                    <Route path="/activity-log" element={
+                      <ProtectedRoute allowedRoles={['ADMIN']}>
+                        <ActivityLogPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/reports" element={
+                      <ProtectedRoute allowedRoles={['ADMIN']}>
+                        <ReportsPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/settings" element={<SettingsPage />} />
+                  </Route>
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </Suspense>
+              <Toaster
+                position="top-right"
+                richColors
+                closeButton
+                expand={true}
+                duration={4000}
+                toastOptions={{
+                  style: {
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                  },
+                }}
+              />
+            </AuthProvider>
+          </I18nProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }
 
