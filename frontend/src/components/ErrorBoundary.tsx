@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({
       hasError: true,
       error,
-      errorInfo: errorInfo.componentStack,
+      errorInfo: errorInfo.componentStack || null,
     })
 
     // TODO: Send error to monitoring service (Sentry, LogRocket, etc.)
