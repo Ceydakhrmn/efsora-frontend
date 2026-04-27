@@ -1,4 +1,5 @@
-import { Component, ReactNode } from 'react'
+import type { ReactNode, ErrorInfo } from 'react'
+import { Component } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -9,7 +10,7 @@ interface Props {
 interface State {
   hasError: boolean
   error: Error | null
-  errorInfo: { componentStack: string } | null
+  errorInfo: string | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -27,13 +28,14 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
     
-    this.setState((prevState) => ({
-      ...prevState,
-      errorInfo,
-    }))
+    this.setState({
+      hasError: true,
+      error,
+      errorInfo: errorInfo.componentStack,
+    })
 
     // TODO: Send error to monitoring service (Sentry, LogRocket, etc.)
     // logErrorToService(error, errorInfo)
@@ -50,6 +52,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      const isDevelopment = import.meta.env.DEV
+
       return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
           <div className="w-full max-w-md">
@@ -65,14 +69,14 @@ export class ErrorBoundary extends Component<Props, State> {
                 Uygulamada beklenmeyen bir sorun yaşandı. Lütfen sayfayı yenilemek veya anasayfaya gitmek için aşağıdaki düğmeyi tıklayın.
               </p>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {isDevelopment && this.state.error && (
                 <div className="mb-6 max-h-40 overflow-auto rounded bg-muted p-3 text-left">
                   <p className="mb-2 font-mono text-xs font-semibold text-destructive">
                     {this.state.error.toString()}
                   </p>
                   {this.state.errorInfo && (
                     <pre className="font-mono text-xs text-muted-foreground whitespace-pre-wrap break-words">
-                      {this.state.errorInfo.componentStack}
+                      {this.state.errorInfo}
                     </pre>
                   )}
                 </div>
