@@ -275,4 +275,15 @@ export const en = {
     templateHint: 'CSV header row: firstName, lastName, email, password, department, role. If password is empty, "Efsora123!" is used by default.',
     importUsers: 'CSV Import',
   },
+  apiErrors: {
+    rateLimitExceeded: 'Too many requests. Please wait a moment.',
+    rateLimitWait: 'Please wait {{seconds}} seconds.',
+    loginRateLimited: 'Too many failed login attempts. Please try again in a few minutes.',
+    registerRateLimited: 'Too many registration attempts. Please try again in a few hours.',
+    networkError: 'Network error. Please check your internet connection.',
+    serverError: 'Server error. Please try again later.',
+    unauthorized: 'Unauthorized access. Please login again.',
+    forbidden: 'You do not have permission to perform this action.',
+    notFound: 'The requested resource was not found.',
+  },
 }

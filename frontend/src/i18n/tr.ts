@@ -275,4 +275,16 @@ export const tr = {
     templateHint: 'CSV başlık satırı: ad, soyad, email, sifre, departman, rol. Şifre boşsa varsayılan olarak "Efsora123!" kullanılır.',
     importUsers: 'CSV İçe Aktar',
   },
+  apiErrors: {
+    rateLimitExceeded: 'İstek çok fazla. Lütfen bir süre bekleyiniz.',
+    rateLimitWait: 'Lütfen {{seconds}} saniye bekleyiniz.',
+    loginRateLimited: 'Çok fazla başarısız giriş denemesi. Lütfen birkaç dakika sonra tekrar deneyin.',
+    registerRateLimited: 'Çok fazla kayıt denemesi. Lütfen birkaç saat sonra tekrar deneyin.',
+    networkError: 'Ağ hatası. Lütfen internet bağlantınızı kontrol edin.',
+    serverError: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
+    unauthorized: 'Yetkisiz erişim. Lütfen tekrar giriş yapın.',
+    forbidden: 'Bu işlemi gerçekleştirme izniniz yok.',
+    notFound: 'İstenen kaynak bulunamadı.',
+  },
 }
+
