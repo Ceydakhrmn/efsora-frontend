@@ -6,12 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
+import { Pagination } from '@/components/Pagination'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
-import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
+import type { Asset, AssetCategory, AssetRequest, AssetStatus, User, PagedResponse } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
 
 const categoryLabels: Record<AssetCategory, string> = {
@@ -45,14 +46,20 @@ export function AssetsPage() {
   const [expiringSoon, setExpiringSoon] = useState<Asset[]>([])
   const [qrAsset, setQrAsset] = useState<Asset | null>(null)
   const [qrDialogOpen, setQrDialogOpen] = useState(false)
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
   const fetchAssets = async () => {
     try {
       const [assetsRes, usersRes, expiringRes] = await Promise.all([
-        assetsApi.getAll(),
-        usersApi.getAll(),
+        assetsApi.getAll(page, pageSize),
+        usersApi.getAll(0, 1000),
         assetsApi.getExpiringSoon(),
       ])
       setAssets(assetsRes.data.content)
+      setTotalElements(assetsRes.data.totalElements)
+      setTotalPages(assetsRes.data.totalPages)
       setUsers(usersRes.data.content)
       setExpiringSoon(expiringRes.data)
     } catch {
@@ -62,7 +69,7 @@ export function AssetsPage() {
     }
   }
 
-  useEffect(() => { fetchAssets() }, [])
+  useEffect(() => { fetchAssets() }, [page, pageSize])
 
   const filtered = assets.filter((a) => {
     const matchSearch = search === '' ||
@@ -281,6 +288,16 @@ export function AssetsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalElements={totalElements}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
 
       <AssetDialog
         open={dialogOpen}

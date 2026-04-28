@@ -295,5 +295,10 @@ export const tr = {
     forbidden: 'Bu işlemi gerçekleştirme izniniz yok.',
     notFound: 'İstenen kaynak bulunamadı.',
   },
+  pagination: {
+    showing: 'Gösterilen',
+    of: 'tanesi',
+    perPage: 'Sayfa başına',
+  },
 }
 

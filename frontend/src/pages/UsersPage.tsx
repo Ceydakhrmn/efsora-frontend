@@ -9,11 +9,12 @@ import { UserTable } from '@/components/users/UserTable'
 import { UserDialog } from '@/components/users/UserDialog'
 import { InviteDialog } from '@/components/users/InviteDialog'
 import { BulkImportDialog } from '@/components/users/BulkImportDialog'
+import { Pagination } from '@/components/Pagination'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
 import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
-import type { User, UserRequest } from '@/types'
+import type { User, UserRequest, PagedResponse } from '@/types'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
@@ -31,6 +32,10 @@ export function UsersPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const [bulkImportOpen, setBulkImportOpen] = useState(false)
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
   const { t } = useI18n()
   const { startImpersonation } = useAuth()
   const navigate = useNavigate()
@@ -63,8 +68,10 @@ export function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await usersApi.getAll()
+      const response = await usersApi.getAll(page, pageSize)
       setUsers(response.data.content)
+      setTotalElements(response.data.totalElements)
+      setTotalPages(response.data.totalPages)
     } catch (error) {
       console.error('Failed to fetch users:', error)
     } finally {
@@ -74,7 +81,7 @@ export function UsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [page, pageSize])
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -241,6 +248,16 @@ export function UsersPage() {
         onPermanentDelete={handlePermanentDelete}
         onImpersonate={handleImpersonate}
         onRowClick={(user) => navigate(`/users/${user.id}`)}
+      />
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalElements={totalElements}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
       />
 
       {/* Invite Dialog */}
