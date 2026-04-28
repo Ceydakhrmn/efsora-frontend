@@ -23,11 +23,10 @@ services:
       - key: PORT
         value: "8081"
 
-  - type: web
-    name: efsora-frontend
-    runtime: docker
-    dockerfilePath: Dockerfile
-    dockerContext: .
+staticSites:
+  - name: efsora-frontend
+    buildCommand: cd frontend && npm run build
+    staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com
