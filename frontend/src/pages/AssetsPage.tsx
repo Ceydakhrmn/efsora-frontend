@@ -12,7 +12,7 @@ import { usersApi } from '@/api/users'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
-import type { Asset, AssetCategory, AssetRequest, AssetStatus, User, PagedResponse } from '@/types'
+import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
 
 const categoryLabels: Record<AssetCategory, string> = {
