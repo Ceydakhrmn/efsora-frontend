@@ -46,7 +46,7 @@ export function ProfileEdit() {
     if (!file || !user) return
 
     if (file.size > 2 * 1024 * 1024) {
-      notify.error('Photo must be under 2MB')
+      notify.error(t.settings.photoMaxSize)
       return
     }
 
@@ -58,9 +58,9 @@ export function ProfileEdit() {
       try {
         await usersApi.uploadPhoto(user.id, base64)
         updateUser({ ...user, profilePhoto: base64 })
-        notify.success('Profile photo updated!')
+        notify.success(t.settings.photoUploadSuccess)
       } catch {
-        notify.error('Failed to upload photo')
+        notify.error(t.settings.photoUploadError)
         setPhotoPreview(user.profilePhoto || null)
       } finally {
         setUploadingPhoto(false)
@@ -76,9 +76,9 @@ export function ProfileEdit() {
       await usersApi.uploadPhoto(user.id, '')
       setPhotoPreview(null)
       updateUser({ ...user, profilePhoto: undefined })
-      notify.success('Profile photo removed')
+      notify.success(t.settings.photoRemoveSuccess)
     } catch {
-      notify.error('Failed to remove photo')
+      notify.error(t.settings.photoRemoveError)
     } finally {
       setUploadingPhoto(false)
     }
@@ -127,7 +127,7 @@ export function ProfileEdit() {
               disabled={uploadingPhoto}
             >
               <Camera className="h-4 w-4 mr-1" />
-              {photoPreview ? 'Change Photo' : 'Upload Photo'}
+              {photoPreview ? t.settings.changePhoto : t.settings.uploadPhoto}
             </Button>
             {photoPreview && (
               <Button
@@ -138,11 +138,11 @@ export function ProfileEdit() {
                 disabled={uploadingPhoto}
               >
                 <X className="h-4 w-4 mr-1" />
-                Remove
+                {t.settings.remove}
               </Button>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">JPG, PNG or GIF · Max 2MB</p>
+          <p className="text-xs text-muted-foreground">{t.settings.photoFormat}</p>
         </div>
         <input
           ref={fileInputRef}
