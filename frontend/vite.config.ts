@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'dist',
+    sourcemap: false, // Smaller bundle size
+    minify: 'terser', // Best minification
     rollupOptions: {
       output: {
         manualChunks: {
