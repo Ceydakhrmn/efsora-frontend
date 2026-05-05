@@ -19,4 +19,16 @@ export const authApi = {
 
   resetPassword: (data: ResetPasswordRequest) =>
     api.post<MessageResponse>('/auth/reset-password', data),
+  
+  verifyMfa: (data: { userId: number; code: string }) =>
+    api.post<AuthResponse>('/auth/verify-mfa', data),
+
+  startMfaSetup: () =>
+    api.post<{ secret: string; qr: string }>('/auth/mfa/setup', {}),
+
+  verifyMfaSetup: (data: { code: string }) =>
+    api.post('/auth/mfa/verify-setup', data),
+
+  disableMfa: () =>
+    api.post('/auth/mfa/disable', {}),
 }

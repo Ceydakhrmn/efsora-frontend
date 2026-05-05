@@ -21,16 +21,14 @@ class WebSocketService {
   private notificationCallbacks: NotificationCallback[] = [];
   private connected = false;
 
-  private apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+  private wsUrl = import.meta.env.VITE_WS_URL || 'wss://envanter-yonetimi-backend.onrender.com/ws';
 
   constructor() {
     this.setupClient();
   }
 
   private setupClient() {
-    const wsUrl = this.apiUrl.replace('http', 'ws') + '/ws';
-    const socket = new SockJS(wsUrl);
-    
+    const socket = new SockJS(this.wsUrl);
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {

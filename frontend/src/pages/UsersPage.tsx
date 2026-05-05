@@ -20,13 +20,22 @@ import type { ErrorResponse } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
 
 
+
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+const roles = ['ADMIN', 'USER', 'EDITOR']
+const statuses = [
+  { value: 'all', label: 'Tümü' },
+  { value: 'active', label: 'Aktif' },
+  { value: 'inactive', label: 'Pasif' },
+]
 
 export function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [deptFilter, setDeptFilter] = useState<string>('all')
+  const [roleFilter, setRoleFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
@@ -68,7 +77,13 @@ export function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await usersApi.getAll(page, pageSize)
+      // Gelişmiş filtreler backend'e parametre olarak gönderiliyor
+      const params: any = { page, size: pageSize }
+      if (deptFilter !== 'all') params.department = deptFilter
+      if (roleFilter !== 'all') params.role = roleFilter
+      if (statusFilter !== 'all') params.active = statusFilter === 'active' ? true : false
+      if (search) params.search = search
+      const response = await usersApi.getAll(params)
       setUsers(response.data.content)
       setTotalElements(response.data.totalElements)
       setTotalPages(response.data.totalPages)
@@ -81,16 +96,10 @@ export function UsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [page, pageSize])
+  }, [page, pageSize, deptFilter, roleFilter, statusFilter, search])
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      search === '' ||
-      `${user.firstName} ${user.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase())
-    const matchesDept = deptFilter === 'all' || user.department === deptFilter
-    return matchesSearch && matchesDept
-  })
+  // Backend filtreli getirdiği için local filtre kaldırıldı
+  const filteredUsers = users
 
   const handleCreate = async (data: UserRequest) => {
     try {
@@ -188,7 +197,7 @@ export function UsersPage() {
     <div className="space-y-6">
       {/* Toolbar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 items-center gap-3">
+        <div className="flex flex-1 items-center gap-3 flex-wrap">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -199,13 +208,34 @@ export function UsersPage() {
             />
           </div>
           <Select value={deptFilter} onValueChange={setDeptFilter}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[120px]">
               <SelectValue placeholder={t.common.filter} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.common.all}</SelectItem>
               {departments.map((dept) => (
                 <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={roleFilter} onValueChange={setRoleFilter}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Rol" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tümü</SelectItem>
+              {roles.map((role) => (
+                <SelectItem key={role} value={role}>{role}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Durum" />
+            </SelectTrigger>
+            <SelectContent>
+              {statuses.map((s) => (
+                <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>

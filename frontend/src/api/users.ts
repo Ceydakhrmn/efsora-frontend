@@ -8,8 +8,8 @@ export const usersApi = {
       api.post('/kullanicilar/bulk-delete', ids, {
         headers: { 'Content-Type': 'application/json' }
       }),
-  getAll: (page: number = 0, size: number = 10) =>
-    api.get<PagedResponse<User>>('/kullanicilar', { params: { page, size } }),
+  getAll: (params: any) =>
+    api.get<PagedResponse<User>>('/kullanicilar', { params }),
 
   getById: (id: number) =>
     api.get<User>(`/kullanicilar/${id}`),

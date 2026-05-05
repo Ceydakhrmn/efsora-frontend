@@ -4,6 +4,7 @@ import { PasswordChange } from '@/components/settings/PasswordChange'
 import { ProfileEdit } from '@/components/settings/ProfileEdit'
 import { NotificationSettings } from '@/components/settings/NotificationSettings'
 import { useI18n } from '@/i18n'
+import { MFASettings } from '@/components/settings/MFASettings'
 
 export function SettingsPage() {
   const { t } = useI18n()
@@ -40,6 +41,17 @@ export function SettingsPage() {
         </CardHeader>
         <CardContent>
           <PasswordChange />
+        </CardContent>
+      </Card>
+
+      {/* MFA/2FA Settings */}
+      <Card className="border border-gray-300 dark:border-border shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-base">MFA / 2FA</CardTitle>
+          <CardDescription>Hesabınız için çok faktörlü kimlik doğrulama ayarları.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <MFASettings />
         </CardContent>
       </Card>
 

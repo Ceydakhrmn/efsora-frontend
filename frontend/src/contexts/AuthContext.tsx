@@ -10,6 +10,7 @@ interface AuthUser {
   department: string
   profilePhoto?: string
   role?: string
+  mfaEnabled?: boolean
 }
 
 interface AuthContextType {

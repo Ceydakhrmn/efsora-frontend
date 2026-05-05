@@ -54,7 +54,7 @@ export function AssetsPage() {
     try {
       const [assetsRes, usersRes, expiringRes] = await Promise.all([
         assetsApi.getAll(page, pageSize),
-        usersApi.getAll(0, 1000),
+        usersApi.getAll({ page: 0, size: 1000 }),
         assetsApi.getExpiringSoon(),
       ])
       setAssets(assetsRes.data.content)

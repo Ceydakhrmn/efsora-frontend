@@ -35,7 +35,7 @@ export function DashboardPage() {
     const fetchData = async () => {
       try {
         const [usersRes, assetsRes, statsRes] = await Promise.all([
-          usersApi.getAll(),
+          usersApi.getAll({}),
           assetsApi.getAll(),
           assetsApi.getStats(),
         ])
