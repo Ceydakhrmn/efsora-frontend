@@ -21,14 +21,16 @@ class WebSocketService {
   private notificationCallbacks: NotificationCallback[] = [];
   private connected = false;
 
-  private wsUrl = import.meta.env.VITE_WS_URL || 'wss://envanter-yonetimi-backend.onrender.com/ws';
+  // SockJS için http(s) ile başlayan kök adres kullanılmalı
+  private sockJsUrl = import.meta.env.VITE_SOCKJS_URL || 'https://envanter-yonetimi-backend.onrender.com/ws';
 
   constructor() {
     this.setupClient();
   }
 
   private setupClient() {
-    const socket = new SockJS(this.wsUrl);
+    // SockJS için ws:// veya wss:// değil, http(s):// ile başlayan adres kullanılmalı
+    const socket = new SockJS(this.sockJsUrl);
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {
