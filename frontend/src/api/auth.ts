@@ -15,7 +15,7 @@ export const authApi = {
     api.post<AuthResponse>('/auth/refresh', refreshToken ? { refreshToken } : {}),
 
   forgotPassword: (data: ForgotPasswordRequest) =>
-    api.post<MessageResponse>('/auth/forgot-password', data),
+    api.post<MessageResponse>('/kullanicilar/forgot-password', data),
 
   resetPassword: (data: ResetPasswordRequest) =>
     api.post<MessageResponse>('/auth/reset-password', data),
@@ -24,11 +24,11 @@ export const authApi = {
     api.post<AuthResponse>('/auth/verify-mfa', data),
 
   startMfaSetup: () =>
-    api.post<{ secret: string; qr: string }>('/auth/mfa/setup', {}),
+    api.post<{ secret: string; qr: string }>('/kullanicilar/mfa/enable', {}),
 
   verifyMfaSetup: (data: { code: string }) =>
-    api.post('/auth/mfa/verify-setup', data),
+    api.post('/kullanicilar/mfa/verify', data),
 
   disableMfa: () =>
-    api.post('/auth/mfa/disable', {}),
+    api.post('/kullanicilar/mfa/disable', {}),
 }
