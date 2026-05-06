@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { authApi } from '@/api/auth'
@@ -75,7 +76,11 @@ export function MFASettings() {
     return (
       <div className="space-y-3">
         <p>Authenticator uygulamanızda bu QR kodu okutun veya anahtarı girin:</p>
-        {qr && <img src={qr} alt="QR Code" className="mx-auto" />}
+        {qr && (
+          <div className="bg-white p-4 rounded-lg mx-auto w-fit">
+            <QRCodeSVG value={qr} size={200} level="M" />
+          </div>
+        )}
         <div className="font-mono text-sm break-all">{secret}</div>
         <Input
           placeholder="6 haneli kod"
