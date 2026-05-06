@@ -1,115 +1,61 @@
 import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { authApi } from '@/api/auth'
 import { useAuth } from '@/contexts/AuthContext'
-import { notify } from '@/lib/notify'
+
+function getTimeSlot() {
+  return Math.floor(Date.now() / 30000)
+}
+
+function getSecondsLeft() {
+  return 30 - (Math.floor(Date.now() / 1000) % 30)
+}
 
 export function MFASettings() {
   const { user } = useAuth()
-  const [enabled, setEnabled] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [secret, setSecret] = useState('')
-  const [qr, setQr] = useState('')
-  const [code, setCode] = useState('')
-  const [step, setStep] = useState<'view'|'setup'|'verify'>('view')
-  const [error, setError] = useState<string|null>(null)
+  const [timeSlot, setTimeSlot] = useState(getTimeSlot())
+  const [secondsLeft, setSecondsLeft] = useState(getSecondsLeft())
 
   useEffect(() => {
-    // Kullanıcı MFA aktif mi?
-    if (user) {
-      setEnabled(!!user.mfaEnabled)
-      setLoading(false)
-    }
-  }, [user])
+    const interval = setInterval(() => {
+      setTimeSlot(getTimeSlot())
+      setSecondsLeft(getSecondsLeft())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
-  const startSetup = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      // Backend'den secret ve QR al
-      const res = await authApi.startMfaSetup()
-      setSecret(res.data.secret)
-      setQr(res.data.qr)
-      setStep('setup')
-    } catch (e) {
-      setError('MFA başlatılamadı.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  if (!user) return null
 
-  const handleVerify = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      await authApi.verifyMfaSetup({ code })
-      notify.success('MFA etkinleştirildi!')
-      setEnabled(true)
-      setStep('view')
-    } catch (e) {
-      setError('Kod doğrulanamadı.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const qrValue = `EFSORA|ID:${user.id}|EMAIL:${user.email}|SLOT:${timeSlot}`
 
-  const handleDisable = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      await authApi.disableMfa()
-      notify.success('MFA devre dışı bırakıldı.')
-      setEnabled(false)
-      setStep('view')
-    } catch (e) {
-      setError('Devre dışı bırakılamadı.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) return <div>Yükleniyor...</div>
-
-  if (step === 'setup') {
-    return (
-      <div className="space-y-3">
-        <p>Authenticator uygulamanızda bu QR kodu okutun veya anahtarı girin:</p>
-        {qr && (
-          <div className="bg-white p-4 rounded-lg mx-auto w-fit">
-            <QRCodeSVG value={qr} size={200} level="M" />
-          </div>
-        )}
-        <div className="font-mono text-sm break-all">{secret}</div>
-        <Input
-          placeholder="6 haneli kod"
-          value={code}
-          onChange={e => setCode(e.target.value)}
-          className="max-w-xs"
-        />
-        {error && <div className="text-destructive text-xs">{error}</div>}
-        <div className="flex gap-2">
-          <Button onClick={handleVerify} disabled={loading || code.length < 6}>Doğrula</Button>
-          <Button variant="outline" onClick={() => setStep('view')}>İptal</Button>
-        </div>
-      </div>
-    )
-  }
+  const radius = 20
+  const circumference = 2 * Math.PI * radius
+  const progress = circumference - (secondsLeft / 30) * circumference
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <span className={enabled ? 'text-green-600' : 'text-muted-foreground'}>
-          {enabled ? 'MFA/2FA Etkin' : 'MFA/2FA Kapalı'}
-        </span>
-        {enabled ? (
-          <Button variant="destructive" size="sm" onClick={handleDisable}>Devre Dışı Bırak</Button>
-        ) : (
-          <Button size="sm" onClick={startSetup}>Etkinleştir</Button>
-        )}
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Oturumunuza ait QR kod. Her 30 saniyede bir yenilenir. Çıkış yapıp tekrar giriş yaptığınızda yeni bir kod üretilir.
+      </p>
+      <div className="flex flex-col items-center gap-3">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
+          <QRCodeSVG value={qrValue} size={180} level="M" />
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <svg width="48" height="48" className="-rotate-90">
+            <circle cx="24" cy="24" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth="4" />
+            <circle
+              cx="24" cy="24" r={radius} fill="none"
+              stroke="hsl(var(--primary))" strokeWidth="4"
+              strokeDasharray={circumference}
+              strokeDashoffset={progress}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 1s linear' }}
+            />
+          </svg>
+          <span className="font-mono text-base">{secondsLeft}s</span>
+        </div>
+        <p className="text-xs text-muted-foreground font-mono">{user.email}</p>
       </div>
-      {error && <div className="text-destructive text-xs">{error}</div>}
     </div>
   )
 }
