@@ -23,12 +23,8 @@ services:
       - key: APP_BACKEND_PUBLIC_URL
         value: https://envanter-yonetimi-backend.onrender.com
 
-staticSites:
-  - name: efsora-frontend
-    buildCommand: cd frontend && npm install --legacy-peer-deps && npm run build
-    staticPublishPath: ./frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://envanter-yonetimi-backend.onrender.com
-      - key: VITE_SOCKJS_URL
-        value: https://envanter-yonetimi-backend.onrender.com/ws
+  - type: web
+    name: efsora-frontend
+    runtime: docker
+    dockerfilePath: Dockerfile.frontend
+    dockerContext: .
