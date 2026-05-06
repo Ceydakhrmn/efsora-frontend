@@ -18,7 +18,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: "./backend"
       dockerfile: Dockerfile
     container_name: efsora-backend 
     depends_on:
@@ -42,7 +42,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: "./frontend"
       dockerfile: Dockerfile
       args:
         VITE_API_URL: http://backend:8081

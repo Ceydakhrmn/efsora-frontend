@@ -1,32 +1,34 @@
 services:
   - type: web
-    name: efsora-backend
+    name: envanter-yonetimi-backend
     runtime: docker
     dockerfilePath: Dockerfile.backend
     dockerContext: .
     healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_DATASOURCE_URL
-        scope: build
-        value: jdbc:postgresql://${POSTGRES_HOST}:5432/envanter_db
+        sync: false
       - key: SPRING_DATASOURCE_USERNAME
-        scope: run
-        value: ${POSTGRES_USER}
+        sync: false
       - key: SPRING_DATASOURCE_PASSWORD
-        scope: run
-        value: ${POSTGRES_PASSWORD}
+        sync: false
       - key: JWT_SECRET
-        scope: run
-        # SECRET: Must be set in Render Dashboard as environment variable
+        sync: false
+      - key: JWT_EXPIRATION
+        value: "86400000"
+      - key: JWT_REFRESH_EXPIRATION
+        value: "604800000"
       - key: APP_CORS_ALLOWED_ORIGINS
         value: https://efsora-frontend-m3ke.onrender.com
-      - key: PORT
-        value: "8081"
+      - key: APP_BACKEND_PUBLIC_URL
+        value: https://envanter-yonetimi-backend.onrender.com
 
 staticSites:
   - name: efsora-frontend
-    buildCommand: cd frontend && npm run build
+    buildCommand: cd frontend && npm install --legacy-peer-deps && npm run build
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://envanter-yonetimi-backend.onrender.com
+      - key: VITE_SOCKJS_URL
+        value: https://envanter-yonetimi-backend.onrender.com/ws
