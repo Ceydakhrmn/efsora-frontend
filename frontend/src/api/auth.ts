@@ -31,4 +31,7 @@ export const authApi = {
 
   disableMfa: () =>
     api.post('/kullanicilar/mfa/disable', {}),
+
+  loginWithTotp: (data: { email: string; code: string }) =>
+    api.post<AuthResponse>('/auth/login-totp', data),
 }

@@ -24,6 +24,7 @@ interface AuthContextType {
   register: (data: RegisterRequest) => Promise<void>
   logout: () => Promise<void>
   updateUser: (user: AuthUser) => void
+  handleAuthResponse: (data: AuthResponse) => void
   startImpersonation: (data: AuthResponse) => void
   stopImpersonation: () => void
 }
@@ -182,6 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         updateUser,
+        handleAuthResponse,
         startImpersonation,
         stopImpersonation,
       }}
