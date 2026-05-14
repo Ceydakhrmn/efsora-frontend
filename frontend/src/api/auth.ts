@@ -34,4 +34,7 @@ export const authApi = {
 
   loginWithTotp: (data: { email: string; code: string }) =>
     api.post<AuthResponse>('/auth/login-totp', data),
+
+  getTotpQr: (email: string) =>
+    api.post<{ qr: string }>('/auth/totp-qr', { email }),
 }

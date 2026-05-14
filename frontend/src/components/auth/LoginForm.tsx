@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { MFACodeModal } from './MFACodeModal'
 import { authApi } from '@/api/auth'
 import { useNavigate } from 'react-router-dom'
@@ -36,6 +37,8 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [totpEmail, setTotpEmail] = useState('')
   const [totpCode, setTotpCode] = useState('')
   const [totpLoading, setTotpLoading] = useState(false)
+  const [totpQr, setTotpQr] = useState<string | null>(null)
+  const [totpQrLoading, setTotpQrLoading] = useState(false)
 
   const { login, handleAuthResponse } = useAuth()
   const { t } = useI18n()
@@ -82,6 +85,22 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     } catch (err) {
       const axiosError = err as AxiosError<any>
       setMfaError(axiosError.response?.data?.message || 'Kod doğrulanamadı.')
+    }
+  }
+
+  const handleShowQr = async () => {
+    if (!totpEmail) return
+    setTotpQrLoading(true)
+    setError(null)
+    setTotpQr(null)
+    try {
+      const res = await authApi.getTotpQr(totpEmail)
+      setTotpQr(res.data.qr)
+    } catch (err) {
+      const axiosError = err as AxiosError<any>
+      setError(axiosError.response?.data?.message || 'Bu hesap için Authenticator aktif değil.')
+    } finally {
+      setTotpQrLoading(false)
     }
   }
 
@@ -172,31 +191,58 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         </form>
       ) : (
         <div className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            Google Authenticator uygulamasında görünen 6 haneli kodu girin.
-          </p>
           <div className="space-y-2">
             <Label htmlFor="totp-email">{t.auth.email}</Label>
-            <Input
-              id="totp-email"
-              type="email"
-              placeholder="ornek@efsora.com"
-              value={totpEmail}
-              onChange={e => setTotpEmail(e.target.value)}
-            />
+            <div className="flex gap-2">
+              <Input
+                id="totp-email"
+                type="email"
+                placeholder="ornek@efsora.com"
+                value={totpEmail}
+                onChange={e => { setTotpEmail(e.target.value); setTotpQr(null) }}
+              />
+              <Button
+                variant="outline"
+                onClick={handleShowQr}
+                disabled={totpQrLoading || !totpEmail}
+                className="shrink-0"
+              >
+                {totpQrLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'QR Göster'}
+              </Button>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="totp-code">Authenticator Kodu</Label>
-            <Input
-              id="totp-code"
-              placeholder="000000"
-              value={totpCode}
-              onChange={e => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="font-mono text-center text-lg tracking-widest"
-              maxLength={6}
-            />
-          </div>
-          <Button className="w-full" onClick={handleTotpLogin} disabled={totpLoading || totpCode.length < 6 || !totpEmail}>
+
+          {totpQr && (
+            <div className="flex flex-col items-center gap-2 py-2">
+              <div className="bg-white p-3 rounded-xl">
+                <QRCodeSVG value={totpQr} size={160} level="M" />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                Google Authenticator ile okutun — kod otomatik gelir
+              </p>
+            </div>
+          )}
+
+          {(totpQr || totpCode) && (
+            <div className="space-y-2">
+              <Label htmlFor="totp-code">Authenticator Kodu</Label>
+              <Input
+                id="totp-code"
+                placeholder="000000"
+                value={totpCode}
+                onChange={e => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className="font-mono text-center text-lg tracking-widest"
+                maxLength={6}
+                autoFocus={!!totpQr}
+              />
+            </div>
+          )}
+
+          <Button
+            className="w-full"
+            onClick={handleTotpLogin}
+            disabled={totpLoading || totpCode.length < 6 || !totpEmail}
+          >
             {totpLoading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.common.loading}</> : 'Giriş Yap'}
           </Button>
         </div>
