@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle, Download, QrCode } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download, QrCode, ArrowRightLeft, Undo2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
+import { AssetTransferDialog } from '@/components/assets/AssetTransferDialog'
 import { Pagination } from '@/components/Pagination'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
@@ -47,6 +48,8 @@ export function AssetsPage() {
   const [expiringSoon, setExpiringSoon] = useState<Asset[]>([])
   const [qrAsset, setQrAsset] = useState<Asset | null>(null)
   const [qrDialogOpen, setQrDialogOpen] = useState(false)
+  const [transferAsset, setTransferAsset] = useState<Asset | null>(null)
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false)
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [totalElements, setTotalElements] = useState(0)
@@ -144,6 +147,19 @@ export function AssetsPage() {
     ])
     exportToPdf(cols, rows, 'envanter', 'Envanter Listesi')
     notify.success('PDF oluşturuldu')
+  }
+
+  const handleTransfer = async (assetId: number, userId: number) => {
+    await assetsApi.transfer(assetId, userId)
+    notify.success('Varlık devredildi')
+    fetchAssets()
+  }
+
+  const handleReturn = async (asset: Asset) => {
+    if (!asset.assignedUserId) return
+    await assetsApi.returnAsset(asset.id)
+    notify.success('Varlık iade edildi')
+    fetchAssets()
   }
 
   return (
@@ -278,13 +294,33 @@ export function AssetsPage() {
                         <QrCode className="h-4 w-4" />
                       </Button>
                       {canEdit && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
-                        >
-                          Düzenle
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => { setTransferAsset(asset); setTransferDialogOpen(true) }}
+                            title="Devret"
+                          >
+                            <ArrowRightLeft className="h-4 w-4" />
+                          </Button>
+                          {asset.assignedUserId && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleReturn(asset)}
+                              title="İade Et"
+                            >
+                              <Undo2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
+                          >
+                            Düzenle
+                          </Button>
+                        </>
                       )}
                       {canDelete && (
                         <Button
@@ -328,6 +364,14 @@ export function AssetsPage() {
         open={qrDialogOpen}
         onOpenChange={setQrDialogOpen}
         asset={qrAsset}
+      />
+
+      <AssetTransferDialog
+        open={transferDialogOpen}
+        onOpenChange={setTransferDialogOpen}
+        asset={transferAsset}
+        users={users}
+        onTransfer={handleTransfer}
       />
     </div>
   )

@@ -42,6 +42,12 @@ export const assetsApi = {
   // Assignment history
   getAssignmentHistory: (assetId: number) =>
     api.get<AssetAssignmentHistory[]>(`/assets/${assetId}/assignment-history`),
+
+  transfer: (assetId: number, userId: number) =>
+    api.post<Asset>(`/assets/${assetId}/transfer`, { userId }),
+
+  returnAsset: (assetId: number) =>
+    api.post<Asset>(`/assets/${assetId}/return`, {}),
 }
 
 export interface AssetStats {
