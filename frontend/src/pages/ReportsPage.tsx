@@ -6,6 +6,7 @@ import { reportsApi, type DepartmentSummary, type AssetOverview, type UserOvervi
 import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import { exportToExcel } from '@/lib/exportExcel'
+import { exportToPdf } from '@/lib/exportPdf'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
 const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6']
@@ -51,6 +52,16 @@ export function ReportsPage() {
     }))
     exportToExcel(rows, 'departman-raporu', t.reports.departmentReport)
     notify.success(t.reports.exported)
+  }
+
+  const handleExportPdf = () => {
+    const cols = [t.reports.department, t.reports.totalUsers, t.reports.activeUsers, t.reports.totalAssets, t.reports.activeAssets, t.reports.maintenanceAssets, t.reports.expiredAssets, t.reports.totalValue + ' (₺)']
+    const rows = deptSummary.map((d) => [
+      d.department, d.totalUsers, d.activeUsers,
+      d.totalAssets, d.activeAssets, d.maintenanceAssets, d.expiredAssets, d.totalValue,
+    ])
+    exportToPdf(cols, rows, 'departman-raporu', t.reports.departmentReport)
+    notify.success('PDF oluşturuldu')
   }
 
   if (loading) {
@@ -105,7 +116,11 @@ export function ReportsPage() {
           </Select>
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4 mr-1" />
-            {t.reports.export}
+            Excel
+          </Button>
+          <Button variant="outline" onClick={handleExportPdf}>
+            <Download className="h-4 w-4 mr-1" />
+            PDF
           </Button>
         </div>
       </div>

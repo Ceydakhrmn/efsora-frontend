@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { activityLogsApi, type ActivityLog, type PageResponse } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
+import { exportToPdf } from '@/lib/exportPdf'
 
 const PAGE_SIZE = 20
 
@@ -78,6 +79,16 @@ export function ActivityLogPage() {
     exportToExcel(rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')
   }
 
+  const handleExportPdf = () => {
+    const cols = ['ID', 'İşlem', 'Varlık Tipi', 'Detay', 'Kullanıcı', 'IP Adresi', 'Tarih']
+    const rows = logs.map((log) => [
+      log.id, t.activityLog.actions[log.action] || log.action,
+      log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
+      log.details, log.userName || log.userEmail, log.ipAddress || '', formatDate(log.createdAt),
+    ])
+    exportToPdf(cols, rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -88,7 +99,11 @@ export function ActivityLogPage() {
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleExport} disabled={logs.length === 0}>
             <Download className="h-4 w-4 mr-1" />
-            {t.users.export}
+            Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={logs.length === 0}>
+            <Download className="h-4 w-4 mr-1" />
+            PDF
           </Button>
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={entityFilter} onValueChange={(v) => { setEntityFilter(v); setPage(0) }}>

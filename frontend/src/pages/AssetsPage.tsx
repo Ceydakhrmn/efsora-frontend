@@ -14,6 +14,7 @@ import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
+import { exportToPdf } from '@/lib/exportPdf'
 
 const categoryLabels: Record<AssetCategory, string> = {
   HARDWARE: 'Donanım',
@@ -134,6 +135,17 @@ export function AssetsPage() {
     notify.success('Envanter dışa aktarıldı')
   }
 
+  const handleExportPdf = () => {
+    const cols = ['ID', 'Ad', 'Kategori', 'Marka', 'Model', 'Durum', 'Atanan', 'Departman', 'Fiyat (₺)', 'Yenileme']
+    const rows = filtered.map((a) => [
+      a.id, a.name, categoryLabels[a.category], a.brand || '', a.model || '',
+      statusConfig[a.status].label, a.assignedUserName || '', a.assignedDepartment || '',
+      a.purchasePrice ?? '', a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
+    ])
+    exportToPdf(cols, rows, 'envanter', 'Envanter Listesi')
+    notify.success('PDF oluşturuldu')
+  }
+
   return (
     <div className="space-y-6">
 
@@ -183,7 +195,11 @@ export function AssetsPage() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4 mr-1" />
-            Dışa Aktar
+            Excel
+          </Button>
+          <Button variant="outline" onClick={handleExportPdf}>
+            <Download className="h-4 w-4 mr-1" />
+            PDF
           </Button>
           {canEdit && (
             <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>

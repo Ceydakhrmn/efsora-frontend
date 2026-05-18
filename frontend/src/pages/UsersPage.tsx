@@ -18,6 +18,7 @@ import type { User, UserRequest } from '@/types'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
+import { exportToPdf } from '@/lib/exportPdf'
 
 
 
@@ -185,6 +186,17 @@ export function UsersPage() {
     notify.success(t.users.export + ' ✓')
   }
 
+  const handleExportPdf = () => {
+    const cols = ['ID', 'Ad', 'Soyad', 'E-posta', 'Departman', 'Durum', 'Kayıt Tarihi']
+    const rows = filteredUsers.map((u) => [
+      u.id, u.firstName, u.lastName, u.email,
+      u.department || '', u.active ? 'Aktif' : 'Pasif',
+      new Date(u.registrationDate).toLocaleDateString('tr-TR'),
+    ])
+    exportToPdf(cols, rows, 'kullanicilar', 'Kullanıcı Listesi')
+    notify.success('PDF oluşturuldu')
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -243,7 +255,11 @@ export function UsersPage() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4 mr-1" />
-            {t.users.export}
+            Excel
+          </Button>
+          <Button variant="outline" onClick={handleExportPdf}>
+            <Download className="h-4 w-4 mr-1" />
+            PDF
           </Button>
           <Button variant="outline" onClick={() => setBulkImportOpen(true)}>
             <Upload className="h-4 w-4 mr-1" />
