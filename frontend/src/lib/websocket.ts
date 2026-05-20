@@ -21,8 +21,8 @@ class WebSocketService {
   private notificationCallbacks: NotificationCallback[] = [];
   private connected = false;
 
-  // SockJS için http(s) ile başlayan kök adres kullanılmalı
-  private sockJsUrl = import.meta.env.VITE_SOCKJS_URL || 'https://envanter-yonetimi-backend.onrender.com/ws';
+  private sockJsUrl = import.meta.env.VITE_SOCKJS_URL ||
+    (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') + '/ws' : 'http://localhost:8081/ws');
 
   constructor() {
     this.setupClient();

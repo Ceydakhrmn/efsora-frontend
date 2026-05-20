@@ -214,6 +214,7 @@ export const en = {
     disconnected: 'Authenticator connection removed.',
     disconnect: 'Remove Authenticator Connection',
     connect: 'Connect Google Authenticator',
+    notActiveForAccount: 'Authenticator is not active for this account.',
     step1: '1. Open Google Authenticator',
     step1Sub: 'Download from App Store or Google Play.',
     step2: '2. Scan the QR code below',

@@ -214,6 +214,7 @@ export const tr = {
     disconnected: 'Authenticator bağlantısı kaldırıldı.',
     disconnect: 'Authenticator Bağlantısını Kaldır',
     connect: "Google Authenticator'a Bağlan",
+    notActiveForAccount: 'Bu hesap için Authenticator aktif değil.',
     step1: '1. Google Authenticator uygulamasını açın',
     step1Sub: "App Store veya Google Play'den indirin.",
     step2: '2. Aşağıdaki QR kodu okutun',

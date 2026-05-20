@@ -130,7 +130,7 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">
-                  {new Date(user.registrationDate).toLocaleDateString('tr-TR')}
+                  {new Date(user.registrationDate).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>

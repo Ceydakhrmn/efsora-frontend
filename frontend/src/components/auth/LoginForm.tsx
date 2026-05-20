@@ -98,7 +98,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       setTotpQr(res.data.qr)
     } catch (err) {
       const axiosError = err as AxiosError<any>
-      setError(axiosError.response?.data?.message || 'Bu hesap için Authenticator aktif değil.')
+      setError(axiosError.response?.data?.message || t.mfa.notActiveForAccount)
     } finally {
       setTotpQrLoading(false)
     }
