@@ -23,8 +23,12 @@ export interface PageResponse<T> {
 
 export const activityLogsApi = {
   getRecent: () => api.get<ActivityLog[]>('/activity-logs'),
-  getPage: (page: number, size: number) =>
-    api.get<PageResponse<ActivityLog>>(`/activity-logs/page?page=${page}&size=${size}`),
+  getPage: (page: number, size: number, startDate?: string, endDate?: string) => {
+    const params: Record<string, string | number> = { page, size }
+    if (startDate) params.startDate = startDate
+    if (endDate) params.endDate = endDate
+    return api.get<PageResponse<ActivityLog>>('/activity-logs/page', { params })
+  },
   getByUser: (email: string) => api.get<ActivityLog[]>(`/activity-logs/user/${encodeURIComponent(email)}`),
   getByEntityType: (type: string) => api.get<ActivityLog[]>(`/activity-logs/entity/${encodeURIComponent(type)}`),
   getSecurityStats: () => api.get<SecurityStats>('/activity-logs/security-stats'),

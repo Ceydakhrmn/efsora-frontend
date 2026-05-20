@@ -1,14 +1,35 @@
 import { useEffect, useState } from 'react'
-import { Activity, User, Package, Filter, Download } from 'lucide-react'
+import { Activity, User, Package, Filter, Download, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { activityLogsApi, type ActivityLog, type PageResponse } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 
 const PAGE_SIZE = 20
+
+function toDateStr(d: Date) {
+  return d.toISOString().slice(0, 10)
+}
+
+function getPresetRange(preset: string): { start: string; end: string } {
+  const today = new Date()
+  const end = toDateStr(today)
+  if (preset === 'today') return { start: end, end }
+  if (preset === 'week') {
+    const start = new Date(today)
+    start.setDate(today.getDate() - today.getDay())
+    return { start: toDateStr(start), end }
+  }
+  if (preset === 'month') {
+    const start = new Date(today.getFullYear(), today.getMonth(), 1)
+    return { start: toDateStr(start), end }
+  }
+  return { start: '', end: '' }
+}
 
 const actionColors: Record<string, string> = {
   CREATE: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
@@ -29,6 +50,9 @@ export function ActivityLogPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(true)
   const [entityFilter, setEntityFilter] = useState<string>('all')
+  const [datePreset, setDatePreset] = useState<string>('all')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const { t } = useI18n()
 
   const fetchLogs = async () => {
@@ -39,7 +63,7 @@ export function ActivityLogPage() {
         setLogs(res.data)
         setTotalPages(1)
       } else {
-        const res = await activityLogsApi.getPage(page, PAGE_SIZE)
+        const res = await activityLogsApi.getPage(page, PAGE_SIZE, startDate || undefined, endDate || undefined)
         const data = res.data as PageResponse<ActivityLog>
         setLogs(data.content)
         setTotalPages(data.totalPages)
@@ -53,7 +77,27 @@ export function ActivityLogPage() {
 
   useEffect(() => {
     fetchLogs()
-  }, [page, entityFilter])
+  }, [page, entityFilter, startDate, endDate])
+
+  const applyPreset = (preset: string) => {
+    setDatePreset(preset)
+    setPage(0)
+    if (preset === 'all') {
+      setStartDate('')
+      setEndDate('')
+    } else if (preset !== 'custom') {
+      const range = getPresetRange(preset)
+      setStartDate(range.start)
+      setEndDate(range.end)
+    }
+  }
+
+  const clearDateFilter = () => {
+    setDatePreset('all')
+    setStartDate('')
+    setEndDate('')
+    setPage(0)
+  }
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
@@ -91,12 +135,12 @@ export function ActivityLogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t.activityLog.title}</h1>
           <p className="text-muted-foreground">{t.activityLog.subtitle}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleExport} disabled={logs.length === 0}>
             <Download className="h-4 w-4 mr-1" />
             Excel
@@ -107,7 +151,7 @@ export function ActivityLogPage() {
           </Button>
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={entityFilter} onValueChange={(v) => { setEntityFilter(v); setPage(0) }}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[150px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -117,6 +161,53 @@ export function ActivityLogPage() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Date range filter */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground">{t.activityLog.dateFilter}:</span>
+        {(['all', 'today', 'week', 'month', 'custom'] as const).map((preset) => {
+          const labels: Record<string, string> = {
+            all: t.common.all,
+            today: t.activityLog.today,
+            week: t.activityLog.thisWeek,
+            month: t.activityLog.thisMonth,
+            custom: t.activityLog.customRange,
+          }
+          return (
+            <Button
+              key={preset}
+              size="sm"
+              variant={datePreset === preset ? 'default' : 'outline'}
+              onClick={() => applyPreset(preset)}
+            >
+              {labels[preset]}
+            </Button>
+          )
+        })}
+        {datePreset === 'custom' && (
+          <div className="flex items-center gap-2">
+            <Input
+              type="date"
+              className="h-8 w-[140px] text-sm"
+              value={startDate}
+              onChange={(e) => { setStartDate(e.target.value); setPage(0) }}
+            />
+            <span className="text-muted-foreground text-sm">–</span>
+            <Input
+              type="date"
+              className="h-8 w-[140px] text-sm"
+              value={endDate}
+              onChange={(e) => { setEndDate(e.target.value); setPage(0) }}
+            />
+          </div>
+        )}
+        {(startDate || endDate) && datePreset !== 'all' && (
+          <Button size="sm" variant="ghost" onClick={clearDateFilter}>
+            <X className="h-3 w-3 mr-1" />
+            {t.activityLog.clearFilter}
+          </Button>
+        )}
       </div>
 
       {loading ? (
