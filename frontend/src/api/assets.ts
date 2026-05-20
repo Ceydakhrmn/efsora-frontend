@@ -54,6 +54,9 @@ export const assetsApi = {
 
   bulkUpdateStatus: (ids: number[], status: string) =>
     api.patch('/assets/bulk-status', { ids, status }),
+
+  bulkImport: (assets: Partial<import('@/types').AssetRequest>[]) =>
+    api.post<{ total: number; success: number; failed: number; results: { row: number; name: string; status: string; message?: string }[] }>('/assets/bulk-import', assets),
 }
 
 export interface AssetStats {

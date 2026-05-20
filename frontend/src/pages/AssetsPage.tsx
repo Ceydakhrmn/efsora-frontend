@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle, Download, QrCode, ArrowRightLeft, Undo2, Trash2 } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download, Upload, QrCode, ArrowRightLeft, Undo2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
 import { AssetTransferDialog } from '@/components/assets/AssetTransferDialog'
+import { AssetBulkImportDialog } from '@/components/assets/AssetBulkImportDialog'
 import { Pagination } from '@/components/Pagination'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
@@ -37,6 +38,7 @@ export function AssetsPage() {
   const [transferAsset, setTransferAsset] = useState<Asset | null>(null)
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [totalElements, setTotalElements] = useState(0)
@@ -252,6 +254,12 @@ export function AssetsPage() {
             PDF
           </Button>
           {canEdit && (
+            <Button variant="outline" onClick={() => setImportDialogOpen(true)}>
+              <Upload className="h-4 w-4 mr-1" />
+              {t.assetImport.importButton}
+            </Button>
+          )}
+          {canEdit && (
             <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
               <Plus className="h-4 w-4 mr-1" />
               {t.assets.addAsset}
@@ -444,6 +452,12 @@ export function AssetsPage() {
         asset={transferAsset}
         users={users}
         onTransfer={handleTransfer}
+      />
+
+      <AssetBulkImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onSuccess={fetchAssets}
       />
     </div>
   )
