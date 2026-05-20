@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowRightLeft } from 'lucide-react'
 import type { Asset, User } from '@/types'
+import { useI18n } from '@/i18n'
 
 interface AssetTransferDialogProps {
   open: boolean
@@ -14,6 +15,7 @@ interface AssetTransferDialogProps {
 }
 
 export function AssetTransferDialog({ open, onOpenChange, asset, users, onTransfer }: AssetTransferDialogProps) {
+  const { t } = useI18n()
   const [selectedUserId, setSelectedUserId] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -39,7 +41,7 @@ export function AssetTransferDialog({ open, onOpenChange, asset, users, onTransf
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ArrowRightLeft className="h-4 w-4" />
-            Varlık Devret
+            {t.assets.transferTitle}
           </DialogTitle>
         </DialogHeader>
 
@@ -47,15 +49,15 @@ export function AssetTransferDialog({ open, onOpenChange, asset, users, onTransf
           <div className="rounded-lg bg-muted px-3 py-2 text-sm">
             <p className="font-medium">{asset.name}</p>
             <p className="text-muted-foreground text-xs mt-0.5">
-              Şu an: {asset.assignedUserName || 'Atanmamış'}
+              {t.assets.currentUser}: {asset.assignedUserName || t.assets.notAssigned}
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <p className="text-sm font-medium">Devredilecek kullanıcı</p>
+            <p className="text-sm font-medium">{t.assets.transferUser}</p>
             <Select value={selectedUserId} onValueChange={setSelectedUserId}>
               <SelectTrigger>
-                <SelectValue placeholder="Kullanıcı seçin..." />
+                <SelectValue placeholder={t.assets.selectUser} />
               </SelectTrigger>
               <SelectContent>
                 {availableUsers.map(u => (
@@ -70,9 +72,9 @@ export function AssetTransferDialog({ open, onOpenChange, asset, users, onTransf
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>İptal</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel}</Button>
           <Button onClick={handleTransfer} disabled={!selectedUserId || loading}>
-            Devret
+            {t.assets.doTransfer}
           </Button>
         </DialogFooter>
       </DialogContent>

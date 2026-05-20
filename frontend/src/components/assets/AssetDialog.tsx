@@ -11,9 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Asset, AssetRequest, User } from '@/types'
 import { AssetAttachments } from './AssetAttachments'
 import { AssetAssignmentHistory } from './AssetAssignmentHistory'
+import { useI18n } from '@/i18n'
 
 const schema = z.object({
-  name: z.string().min(1, 'Ad gerekli'),
+  name: z.string().min(1),
   category: z.enum(['HARDWARE', 'SOFTWARE_LICENSE', 'API_SUBSCRIPTION', 'SAAS_TOOL', 'OFFICE_EQUIPMENT']),
   brand: z.string().optional(),
   model: z.string().optional(),
@@ -32,21 +33,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-const categories = [
-  { value: 'HARDWARE', label: 'Donanım' },
-  { value: 'SOFTWARE_LICENSE', label: 'Yazılım Lisansı' },
-  { value: 'API_SUBSCRIPTION', label: 'API Aboneliği' },
-  { value: 'SAAS_TOOL', label: 'SaaS Araç' },
-  { value: 'OFFICE_EQUIPMENT', label: 'Ofis Ekipmanı' },
-]
-
-const statuses = [
-  { value: 'ACTIVE', label: 'Aktif' },
-  { value: 'MAINTENANCE', label: 'Bakımda' },
-  { value: 'EXPIRED', label: 'Süresi Doldu' },
-  { value: 'RETIRED', label: 'Hurdaya Çıktı' },
-]
-
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 
 interface AssetDialogProps {
@@ -59,12 +45,28 @@ interface AssetDialogProps {
 }
 
 export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, onSubmit }: AssetDialogProps) {
+  const { t } = useI18n()
   const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { status: 'ACTIVE', category: 'HARDWARE' },
   })
 
   const category = watch('category')
+
+  const categories = [
+    { value: 'HARDWARE', label: t.assets.categoryHardware },
+    { value: 'SOFTWARE_LICENSE', label: t.assets.categorySoftware },
+    { value: 'API_SUBSCRIPTION', label: t.assets.categoryApi },
+    { value: 'SAAS_TOOL', label: t.assets.categorySaas },
+    { value: 'OFFICE_EQUIPMENT', label: t.assets.categoryOffice },
+  ]
+
+  const statuses = [
+    { value: 'ACTIVE', label: t.assets.statusActive },
+    { value: 'MAINTENANCE', label: t.assets.statusMaintenance },
+    { value: 'EXPIRED', label: t.assets.statusExpired },
+    { value: 'RETIRED', label: t.assets.statusRetired },
+  ]
 
   const handleFormSubmit = async (data: FormData) => {
     await onSubmit({
@@ -108,20 +110,20 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{asset ? 'Varlık Düzenle' : 'Yeni Varlık Ekle'}</DialogTitle>
-          <DialogDescription>Envanter varlığı bilgilerini girin.</DialogDescription>
+          <DialogTitle>{asset ? t.assets.editAsset : t.assets.addAsset}</DialogTitle>
+          <DialogDescription>{t.assets.dialogDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2 col-span-2">
-              <Label>Ad *</Label>
+              <Label>{t.assets.name} *</Label>
               <Input {...register('name')} placeholder="MacBook Pro M3" />
               {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label>Kategori *</Label>
+              <Label>{t.assets.category} *</Label>
               <Select defaultValue={asset?.category || 'HARDWARE'} onValueChange={(v) => setValue('category', v as FormData['category'])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -131,7 +133,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
             </div>
 
             <div className="space-y-2">
-              <Label>Durum *</Label>
+              <Label>{t.common.status} *</Label>
               <Select defaultValue={asset?.status || 'ACTIVE'} onValueChange={(v) => setValue('status', v as FormData['status'])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -141,54 +143,54 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
             </div>
 
             <div className="space-y-2">
-              <Label>Marka</Label>
+              <Label>{t.assets.brand}</Label>
               <Input {...register('brand')} placeholder="Apple" />
             </div>
 
             <div className="space-y-2">
-              <Label>Model</Label>
+              <Label>{t.assets.model}</Label>
               <Input {...register('model')} placeholder="MacBook Pro 14" />
             </div>
 
             <div className="space-y-2">
-              <Label>Tedarikçi</Label>
+              <Label>{t.assets.vendor}</Label>
               <Input {...register('vendor')} placeholder="İTÜ Teknoloji" />
             </div>
 
             <div className="space-y-2">
-              <Label>Satın Alma Tarihi</Label>
+              <Label>{t.assets.purchaseDate}</Label>
               <Input type="date" {...register('purchaseDate')} />
             </div>
 
             <div className="space-y-2">
-              <Label>Fiyat (₺)</Label>
+              <Label>{t.assets.price}</Label>
               <Input type="number" step="0.01" {...register('purchasePrice')} placeholder="0.00" />
             </div>
 
             {showSerial && (
               <div className="space-y-2">
-                <Label>Seri No</Label>
+                <Label>{t.assets.serialNumber}</Label>
                 <Input {...register('serialNumber')} placeholder="SN123456" />
               </div>
             )}
 
             {showWarranty && (
               <div className="space-y-2">
-                <Label>Garanti Bitiş</Label>
+                <Label>{t.assets.warrantyExpiry}</Label>
                 <Input type="date" {...register('warrantyExpiryDate')} />
               </div>
             )}
 
             {showRenewal && (
               <div className="space-y-2">
-                <Label>Yenileme Tarihi</Label>
+                <Label>{t.assets.renewalDate}</Label>
                 <Input type="date" {...register('renewalDate')} />
               </div>
             )}
 
             {showSeats && (
               <div className="space-y-2">
-                <Label>Koltuk Sayısı</Label>
+                <Label>{t.assets.seatCount}</Label>
                 <Input type="number" {...register('seatCount')} placeholder="10" />
               </div>
             )}
@@ -196,14 +198,14 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
 
           <div className="border-t pt-4 grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Atanan Kullanıcı</Label>
+              <Label>{t.assets.assignedUser}</Label>
               <Select
                 defaultValue={asset?.assignedUserId?.toString() || 'none'}
                 onValueChange={(v) => setValue('assignedUserId', v === 'none' ? undefined : v)}
               >
-                <SelectTrigger><SelectValue placeholder="Seçiniz" /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">— Yok —</SelectItem>
+                  <SelectItem value="none">{t.assets.none}</SelectItem>
                   {users.map((u) => (
                     <SelectItem key={u.id} value={u.id.toString()}>
                       {u.firstName} {u.lastName}
@@ -214,22 +216,22 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
             </div>
 
             <div className="space-y-2">
-              <Label>Atanan Departman</Label>
+              <Label>{t.assets.assignedDepartment}</Label>
               <Select
                 defaultValue={asset?.assignedDepartment || 'none'}
                 onValueChange={(v) => setValue('assignedDepartment', v === 'none' ? '' : v)}
               >
-                <SelectTrigger><SelectValue placeholder="Seçiniz" /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">— Yok —</SelectItem>
+                  <SelectItem value="none">{t.assets.none}</SelectItem>
                   {departments.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2 col-span-2">
-              <Label>Notlar</Label>
-              <Input {...register('notes')} placeholder="Ek bilgiler..." />
+              <Label>{t.assets.notes}</Label>
+              <Input {...register('notes')} />
             </div>
           </div>
 
@@ -242,9 +244,9 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
           )}
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>İptal</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel}</Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Kaydet'}
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.common.save}
             </Button>
           </div>
         </form>

@@ -24,11 +24,6 @@ import { exportToPdf } from '@/lib/exportPdf'
 
 const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
 const roles = ['ADMIN', 'USER', 'EDITOR']
-const statuses = [
-  { value: 'all', label: 'Tümü' },
-  { value: 'active', label: 'Aktif' },
-  { value: 'inactive', label: 'Pasif' },
-]
 
 export function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -48,6 +43,12 @@ export function UsersPage() {
   const [totalPages, setTotalPages] = useState(0)
   const { t } = useI18n()
   const { startImpersonation } = useAuth()
+
+  const statuses = [
+    { value: 'all', label: t.common.all },
+    { value: 'active', label: t.common.active },
+    { value: 'inactive', label: t.common.inactive },
+  ]
   const navigate = useNavigate()
 
   // Checkbox seçimleri
@@ -171,30 +172,29 @@ export function UsersPage() {
     setDialogOpen(true)
   }
 
-  // Kullanıcıları Excel olarak dışa aktar
   const handleExport = () => {
     const rows = filteredUsers.map((u) => ({
       ID: u.id,
-      'Ad': u.firstName,
-      'Soyad': u.lastName,
-      'E-posta': u.email,
-      'Departman': u.department || '',
-      'Durum': u.active ? 'Aktif' : 'Pasif',
-      'Kayıt Tarihi': new Date(u.registrationDate).toLocaleDateString('tr-TR'),
+      [t.auth.firstName]: u.firstName,
+      [t.auth.lastName]: u.lastName,
+      [t.auth.email]: u.email,
+      [t.auth.department]: u.department || '',
+      [t.common.status]: u.active ? t.common.active : t.common.inactive,
+      [t.users.registrationDate]: new Date(u.registrationDate).toLocaleDateString(),
     }))
-    exportToExcel(rows, 'kullanicilar', 'Kullanıcılar')
+    exportToExcel(rows, 'users', t.nav.users)
     notify.success(t.users.export + ' ✓')
   }
 
   const handleExportPdf = () => {
-    const cols = ['ID', 'Ad', 'Soyad', 'E-posta', 'Departman', 'Durum', 'Kayıt Tarihi']
+    const cols = ['ID', t.auth.firstName, t.auth.lastName, t.auth.email, t.auth.department, t.common.status, t.users.registrationDate]
     const rows = filteredUsers.map((u) => [
       u.id, u.firstName, u.lastName, u.email,
-      u.department || '', u.active ? 'Aktif' : 'Pasif',
-      new Date(u.registrationDate).toLocaleDateString('tr-TR'),
+      u.department || '', u.active ? t.common.active : t.common.inactive,
+      new Date(u.registrationDate).toLocaleDateString(),
     ])
-    exportToPdf(cols, rows, 'kullanicilar', 'Kullanıcı Listesi')
-    notify.success('PDF oluşturuldu')
+    exportToPdf(cols, rows, 'users', t.users.title)
+    notify.success(t.assets.pdfExported)
   }
 
   if (loading) {
@@ -232,10 +232,10 @@ export function UsersPage() {
           </Select>
           <Select value={roleFilter} onValueChange={setRoleFilter}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Rol" />
+              <SelectValue placeholder={t.users.role} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tümü</SelectItem>
+              <SelectItem value="all">{t.common.all}</SelectItem>
               {roles.map((role) => (
                 <SelectItem key={role} value={role}>{role}</SelectItem>
               ))}
@@ -243,7 +243,7 @@ export function UsersPage() {
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Durum" />
+              <SelectValue placeholder={t.common.status} />
             </SelectTrigger>
             <SelectContent>
               {statuses.map((s) => (
@@ -267,7 +267,7 @@ export function UsersPage() {
           </Button>
           <Button variant="outline" onClick={() => setInviteDialogOpen(true)}>
             <Mail className="h-4 w-4 mr-1" />
-            Davet Et
+            {t.assets.inviteUser}
           </Button>
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

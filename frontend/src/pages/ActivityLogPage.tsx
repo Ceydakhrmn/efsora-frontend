@@ -57,7 +57,7 @@ export function ActivityLogPage() {
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.toLocaleDateString('tr-TR', {
+    return d.toLocaleDateString(undefined, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -69,24 +69,24 @@ export function ActivityLogPage() {
   const handleExport = () => {
     const rows = logs.map((log) => ({
       ID: log.id,
-      'İşlem': t.activityLog.actions[log.action] || log.action,
-      'Varlık Tipi': log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
-      'Detay': log.details,
-      'Kullanıcı': log.userName || log.userEmail,
-      'IP Adresi': log.ipAddress || '',
-      'Tarih': formatDate(log.createdAt),
+      [t.activityLog.actionColumn]: t.activityLog.actions[log.action] || log.action,
+      [t.activityLog.entityColumn]: log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
+      [t.activityLog.detailColumn]: log.details,
+      [t.activityLog.userColumn]: log.userName || log.userEmail,
+      [t.activityLog.ipColumn]: log.ipAddress || '',
+      [t.activityLog.dateColumn]: formatDate(log.createdAt),
     }))
-    exportToExcel(rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')
+    exportToExcel(rows, 'activity_log', t.activityLog.title)
   }
 
   const handleExportPdf = () => {
-    const cols = ['ID', 'İşlem', 'Varlık Tipi', 'Detay', 'Kullanıcı', 'IP Adresi', 'Tarih']
+    const cols = ['ID', t.activityLog.actionColumn, t.activityLog.entityColumn, t.activityLog.detailColumn, t.activityLog.userColumn, t.activityLog.ipColumn, t.activityLog.dateColumn]
     const rows = logs.map((log) => [
       log.id, t.activityLog.actions[log.action] || log.action,
       log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
       log.details, log.userName || log.userEmail, log.ipAddress || '', formatDate(log.createdAt),
     ])
-    exportToPdf(cols, rows, 'aktivite_gunlugu', 'Aktivite Günlüğü')
+    exportToPdf(cols, rows, 'activity_log', t.activityLog.title)
   }
 
   return (

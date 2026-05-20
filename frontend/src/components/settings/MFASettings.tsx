@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input'
 import { authApi } from '@/api/auth'
 import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
+import { useI18n } from '@/i18n'
 
 export function MFASettings() {
+  const { t } = useI18n()
   const { user, updateUser } = useAuth()
   const [enabled, setEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -29,7 +31,7 @@ export function MFASettings() {
       setQrUrl(res.data.qr)
       setStep('setup')
     } catch {
-      setError('MFA başlatılamadı.')
+      setError(t.mfa.startFailed)
     } finally {
       setLoading(false)
     }
@@ -41,13 +43,13 @@ export function MFASettings() {
     setError(null)
     try {
       await authApi.verifyMfaSetup({ code })
-      notify.success('Authenticator bağlandı! Artık girişte kullanabilirsiniz.')
+      notify.success(t.mfa.connectedSuccess)
       setEnabled(true)
       setStep('view')
       setCode('')
       if (user) updateUser({ ...user, mfaEnabled: true })
     } catch {
-      setError('Kod doğrulanamadı. Google Authenticator\'daki güncel kodu girin.')
+      setError(t.mfa.codeError)
     } finally {
       setLoading(false)
     }
@@ -58,12 +60,12 @@ export function MFASettings() {
     setError(null)
     try {
       await authApi.disableMfa()
-      notify.success('Authenticator bağlantısı kaldırıldı.')
+      notify.success(t.mfa.disconnected)
       setEnabled(false)
       setStep('view')
       if (user) updateUser({ ...user, mfaEnabled: false })
     } catch {
-      setError('Devre dışı bırakılamadı.')
+      setError(t.mfa.disableError)
     } finally {
       setLoading(false)
     }
@@ -73,21 +75,21 @@ export function MFASettings() {
     return (
       <div className="space-y-4">
         <div className="space-y-1">
-          <p className="font-medium text-sm">1. Google Authenticator uygulamasını açın</p>
-          <p className="text-sm text-muted-foreground">App Store veya Google Play'den indirin.</p>
+          <p className="font-medium text-sm">{t.mfa.step1}</p>
+          <p className="text-sm text-muted-foreground">{t.mfa.step1Sub}</p>
         </div>
         <div className="space-y-1">
-          <p className="font-medium text-sm">2. Aşağıdaki QR kodu okutun</p>
+          <p className="font-medium text-sm">{t.mfa.step2}</p>
           <div className="bg-white p-4 rounded-xl w-fit">
             <QRCodeSVG value={qrUrl} size={180} level="M" />
           </div>
         </div>
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">QR okuyamıyorsanız bu kodu manuel girin:</p>
+          <p className="text-xs text-muted-foreground">{t.mfa.manualCode}</p>
           <p className="font-mono text-xs bg-muted px-3 py-2 rounded break-all">{secret}</p>
         </div>
         <div className="space-y-2">
-          <p className="font-medium text-sm">3. Uygulamadan gelen 6 haneli kodu girin</p>
+          <p className="font-medium text-sm">{t.mfa.step3}</p>
           <Input
             placeholder="000000"
             value={code}
@@ -99,10 +101,10 @@ export function MFASettings() {
         {error && <p className="text-sm text-destructive">{error}</p>}
         <div className="flex gap-2">
           <Button onClick={handleVerify} disabled={loading || code.length < 6}>
-            Doğrula ve Etkinleştir
+            {t.mfa.verifyActivate}
           </Button>
           <Button variant="outline" onClick={() => { setStep('view'); setCode(''); setError(null) }}>
-            İptal
+            {t.common.cancel}
           </Button>
         </div>
       </div>
@@ -114,17 +116,17 @@ export function MFASettings() {
       <div className="flex items-center gap-3">
         <div className={`h-2 w-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-muted-foreground'}`} />
         <span className="text-sm">
-          {enabled ? 'Google Authenticator bağlı — girişte kullanılabilir' : 'Authenticator bağlı değil'}
+          {enabled ? t.mfa.connected : t.mfa.notConnected}
         </span>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       {enabled ? (
         <Button variant="destructive" size="sm" onClick={handleDisable} disabled={loading}>
-          Authenticator Bağlantısını Kaldır
+          {t.mfa.disconnect}
         </Button>
       ) : (
         <Button size="sm" onClick={startSetup} disabled={loading}>
-          Google Authenticator'a Bağlan
+          {t.mfa.connect}
         </Button>
       )}
     </div>

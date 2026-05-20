@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { assetsApi } from '@/api/assets'
 import { notify } from '@/lib/notify'
 import type { AssetAttachment } from '@/types'
+import { useI18n } from '@/i18n'
 
 interface AssetAttachmentsProps {
   assetId: number
@@ -23,6 +24,7 @@ function getFileIcon(contentType: string) {
 }
 
 export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
+  const { t } = useI18n()
   const [attachments, setAttachments] = useState<AssetAttachment[]>([])
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -44,16 +46,16 @@ export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
-      notify.error('Dosya boyutu 10MB\'ı aşamaz')
+      notify.error(t.assets.fileSizeError)
       return
     }
     setUploading(true)
     try {
       await assetsApi.uploadAttachment(assetId, file)
-      notify.success('Dosya yüklendi')
+      notify.success(t.assets.fileUploaded)
       fetchAttachments()
     } catch {
-      notify.error('Dosya yüklenemedi')
+      notify.error(t.assets.fileUploadError)
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -72,24 +74,24 @@ export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
       link.remove()
       window.URL.revokeObjectURL(url)
     } catch {
-      notify.error('İndirilemedi')
+      notify.error(t.assets.fileDownloadError)
     }
   }
 
   const handleDelete = async (id: number) => {
     try {
       await assetsApi.deleteAttachment(id)
-      notify.success('Dosya silindi')
+      notify.success(t.assets.fileDeleted)
       fetchAttachments()
     } catch {
-      notify.error('Silinemedi')
+      notify.error(t.assets.fileDeleteError)
     }
   }
 
   return (
     <div className="border-t pt-4 space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium">Dosya Ekleri</h4>
+        <h4 className="text-sm font-medium">{t.assets.attachments}</h4>
         {canEdit && (
           <div>
             <input
@@ -107,14 +109,14 @@ export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="h-3 w-3 mr-1" />
-              {uploading ? 'Yükleniyor...' : 'Dosya Ekle'}
+              {uploading ? t.common.loading : t.assets.addFile}
             </Button>
           </div>
         )}
       </div>
 
       {attachments.length === 0 ? (
-        <p className="text-xs text-muted-foreground">Henüz dosya eklenmedi.</p>
+        <p className="text-xs text-muted-foreground">{t.assets.noAttachments}</p>
       ) : (
         <div className="space-y-2">
           {attachments.map((a) => (

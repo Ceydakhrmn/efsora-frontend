@@ -17,21 +17,6 @@ import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/ty
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 
-const categoryLabels: Record<AssetCategory, string> = {
-  HARDWARE: 'Donanım',
-  SOFTWARE_LICENSE: 'Yazılım Lisansı',
-  API_SUBSCRIPTION: 'API Aboneliği',
-  SAAS_TOOL: 'SaaS Araç',
-  OFFICE_EQUIPMENT: 'Ofis Ekipmanı',
-}
-
-const statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  ACTIVE: { label: 'Aktif', variant: 'default' },
-  MAINTENANCE: { label: 'Bakımda', variant: 'secondary' },
-  EXPIRED: { label: 'Süresi Doldu', variant: 'destructive' },
-  RETIRED: { label: 'Hurdaya Çıktı', variant: 'outline' },
-}
-
 export function AssetsPage() {
   const { user: authUser } = useAuth()
   const { t } = useI18n()
@@ -54,6 +39,22 @@ export function AssetsPage() {
   const [pageSize, setPageSize] = useState(10)
   const [totalElements, setTotalElements] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+
+  const categoryLabels: Record<AssetCategory, string> = {
+    HARDWARE: t.assets.categoryHardware,
+    SOFTWARE_LICENSE: t.assets.categorySoftware,
+    API_SUBSCRIPTION: t.assets.categoryApi,
+    SAAS_TOOL: t.assets.categorySaas,
+    OFFICE_EQUIPMENT: t.assets.categoryOffice,
+  }
+
+  const statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    ACTIVE: { label: t.assets.statusActive, variant: 'default' },
+    MAINTENANCE: { label: t.assets.statusMaintenance, variant: 'secondary' },
+    EXPIRED: { label: t.assets.statusExpired, variant: 'destructive' },
+    RETIRED: { label: t.assets.statusRetired, variant: 'outline' },
+  }
+
   const fetchAssets = async () => {
     try {
       const [assetsRes, usersRes, expiringRes] = await Promise.all([
@@ -67,7 +68,7 @@ export function AssetsPage() {
       setUsers(usersRes.data.content)
       setExpiringSoon(expiringRes.data)
     } catch {
-      notify.error('Veriler yüklenemedi')
+      notify.error(t.assets.loadError)
     } finally {
       setLoading(false)
     }
@@ -89,26 +90,26 @@ export function AssetsPage() {
     try {
       if (editingAsset) {
         await assetsApi.update(editingAsset.id, data)
-        notify.success('Varlık güncellendi')
+        notify.success(t.assets.assetUpdated)
       } else {
         await assetsApi.create(data)
-        notify.success('Varlık eklendi')
+        notify.success(t.assets.assetCreated)
       }
       setDialogOpen(false)
       setEditingAsset(null)
       fetchAssets()
     } catch {
-      notify.error('İşlem başarısız')
+      notify.error(t.assets.saveError)
     }
   }
 
   const handleDelete = async (id: number) => {
     try {
       await assetsApi.delete(id)
-      notify.success('Varlık silindi')
+      notify.success(t.assets.assetDeleted)
       fetchAssets()
     } catch {
-      notify.error('Silinemedi')
+      notify.error(t.assets.deleteError)
     }
   }
 
@@ -123,42 +124,45 @@ export function AssetsPage() {
   const handleExport = () => {
     const rows = filtered.map((a) => ({
       ID: a.id,
-      'Ad': a.name,
-      'Kategori': categoryLabels[a.category],
-      'Marka': a.brand || '',
-      'Model': a.model || '',
-      'Durum': statusConfig[a.status].label,
-      'Atanan Kullanıcı': a.assignedUserName || '',
-      'Departman': a.assignedDepartment || '',
-      'Satın Alma Tarihi': a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString('tr-TR') : '',
-      'Fiyat (₺)': a.purchasePrice ?? '',
-      'Yenileme Tarihi': a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
+      [t.assets.name]: a.name,
+      [t.assets.category]: categoryLabels[a.category],
+      [t.assets.brand]: a.brand || '',
+      [t.assets.model]: a.model || '',
+      [t.common.status]: statusConfig[a.status].label,
+      [t.assets.assignedTo]: a.assignedUserName || '',
+      [t.assets.department]: a.assignedDepartment || '',
+      [t.assets.purchaseDate]: a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString() : '',
+      [t.assets.price]: a.purchasePrice ?? '',
+      [t.assets.renewalDate]: a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
     }))
-    exportToExcel(rows, 'envanter', 'Envanter')
-    notify.success('Envanter dışa aktarıldı')
+    exportToExcel(rows, 'inventory', t.nav.assets)
+    notify.success(t.reports.exported)
   }
 
   const handleExportPdf = () => {
-    const cols = ['ID', 'Ad', 'Kategori', 'Marka', 'Model', 'Durum', 'Atanan', 'Departman', 'Fiyat (₺)', 'Yenileme']
+    const cols = [
+      'ID', t.assets.name, t.assets.category, t.assets.brand, t.assets.model,
+      t.common.status, t.assets.assignedTo, t.assets.department, t.assets.price, t.assets.renewalDate,
+    ]
     const rows = filtered.map((a) => [
       a.id, a.name, categoryLabels[a.category], a.brand || '', a.model || '',
       statusConfig[a.status].label, a.assignedUserName || '', a.assignedDepartment || '',
-      a.purchasePrice ?? '', a.renewalDate ? new Date(a.renewalDate).toLocaleDateString('tr-TR') : '',
+      a.purchasePrice ?? '', a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
     ])
-    exportToPdf(cols, rows, 'envanter', 'Envanter Listesi')
-    notify.success('PDF oluşturuldu')
+    exportToPdf(cols, rows, 'inventory', `${t.nav.assets} ${t.reports.departmentReport}`)
+    notify.success(t.assets.pdfExported)
   }
 
   const handleTransfer = async (assetId: number, userId: number) => {
     await assetsApi.transfer(assetId, userId)
-    notify.success('Varlık devredildi')
+    notify.success(t.assets.transferred)
     fetchAssets()
   }
 
   const handleReturn = async (asset: Asset) => {
     if (!asset.assignedUserId) return
     await assetsApi.returnAsset(asset.id)
-    notify.success('Varlık iade edildi')
+    notify.success(t.assets.returned)
     fetchAssets()
   }
 
@@ -170,7 +174,7 @@ export function AssetsPage() {
         <div className="flex items-center gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-600 dark:text-yellow-400">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>
-            <strong>{expiringSoon.length}</strong> varlığın yenileme tarihi 30 gün içinde doluyor:{' '}
+            <strong>{expiringSoon.length}</strong> {t.assets.expiringAlert}:{' '}
             {expiringSoon.map((a) => a.name).join(', ')}
           </span>
         </div>
@@ -182,29 +186,29 @@ export function AssetsPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Ara..."
+              placeholder={`${t.common.search}...`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Kategori" /></SelectTrigger>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder={t.assets.category} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tüm Kategoriler</SelectItem>
+              <SelectItem value="all">{t.assets.allCategories}</SelectItem>
               {Object.entries(categoryLabels).map(([v, l]) => (
                 <SelectItem key={v} value={v}>{l}</SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]"><SelectValue placeholder="Durum" /></SelectTrigger>
+            <SelectTrigger className="w-[140px]"><SelectValue placeholder={t.common.status} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tüm Durumlar</SelectItem>
-              <SelectItem value="ACTIVE">Aktif</SelectItem>
-              <SelectItem value="MAINTENANCE">Bakımda</SelectItem>
-              <SelectItem value="EXPIRED">Süresi Doldu</SelectItem>
-              <SelectItem value="RETIRED">Hurdaya Çıktı</SelectItem>
+              <SelectItem value="all">{t.assets.allStatuses}</SelectItem>
+              <SelectItem value="ACTIVE">{t.assets.statusActive}</SelectItem>
+              <SelectItem value="MAINTENANCE">{t.assets.statusMaintenance}</SelectItem>
+              <SelectItem value="EXPIRED">{t.assets.statusExpired}</SelectItem>
+              <SelectItem value="RETIRED">{t.assets.statusRetired}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -220,7 +224,7 @@ export function AssetsPage() {
           {canEdit && (
             <Button onClick={() => { setEditingAsset(null); setDialogOpen(true) }}>
               <Plus className="h-4 w-4 mr-1" />
-              Varlık Ekle
+              {t.assets.addAsset}
             </Button>
           )}
         </div>
@@ -244,20 +248,20 @@ export function AssetsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 text-left font-medium">Ad</th>
-              <th className="px-4 py-3 text-left font-medium">Kategori</th>
-              <th className="px-4 py-3 text-left font-medium hidden md:table-cell">Marka / Model</th>
-              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">Atanan</th>
-              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">Yenileme</th>
-              <th className="px-4 py-3 text-left font-medium">Durum</th>
-              <th className="px-4 py-3 text-right font-medium">İşlem</th>
+              <th className="px-4 py-3 text-left font-medium">{t.assets.name}</th>
+              <th className="px-4 py-3 text-left font-medium">{t.assets.category}</th>
+              <th className="px-4 py-3 text-left font-medium hidden md:table-cell">{t.assets.brandModel}</th>
+              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">{t.assets.assignedTo}</th>
+              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">{t.assets.renewalDate}</th>
+              <th className="px-4 py-3 text-left font-medium">{t.common.status}</th>
+              <th className="px-4 py-3 text-right font-medium">{t.common.actions}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
-                  Varlık bulunamadı
+                  {t.assets.noAssets}
                 </td>
               </tr>
             ) : (
@@ -275,7 +279,7 @@ export function AssetsPage() {
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">
                     {asset.renewalDate
-                      ? new Date(asset.renewalDate).toLocaleDateString('tr-TR')
+                      ? new Date(asset.renewalDate).toLocaleDateString()
                       : '—'}
                   </td>
                   <td className="px-4 py-3">
@@ -299,7 +303,7 @@ export function AssetsPage() {
                             size="sm"
                             variant="ghost"
                             onClick={() => { setTransferAsset(asset); setTransferDialogOpen(true) }}
-                            title="Devret"
+                            title={t.assets.transferTitle}
                           >
                             <ArrowRightLeft className="h-4 w-4" />
                           </Button>
@@ -308,7 +312,7 @@ export function AssetsPage() {
                               size="sm"
                               variant="ghost"
                               onClick={() => handleReturn(asset)}
-                              title="İade Et"
+                              title={t.assets.returned}
                             >
                               <Undo2 className="h-4 w-4" />
                             </Button>
@@ -318,7 +322,7 @@ export function AssetsPage() {
                             variant="ghost"
                             onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
                           >
-                            Düzenle
+                            {t.common.edit}
                           </Button>
                         </>
                       )}
@@ -329,7 +333,7 @@ export function AssetsPage() {
                           className="text-destructive hover:text-destructive"
                           onClick={() => handleDelete(asset.id)}
                         >
-                          Sil
+                          {t.common.delete}
                         </Button>
                       )}
                     </div>

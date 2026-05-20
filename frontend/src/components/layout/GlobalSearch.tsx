@@ -3,8 +3,10 @@ import { Search, User, Package, X } from 'lucide-react'
 import { searchApi, type GlobalSearchResult } from '@/api/search'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/i18n'
 
 export function GlobalSearch() {
+  const { t } = useI18n()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<GlobalSearchResult | null>(null)
   const [open, setOpen] = useState(false)
@@ -76,7 +78,7 @@ export function GlobalSearch() {
           value={query}
           onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
           onFocus={() => setOpen(true)}
-          placeholder="Ara... (Ctrl+K)"
+          placeholder={`${t.common.search}... (Ctrl+K)`}
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
         />
         {query && (
@@ -92,18 +94,18 @@ export function GlobalSearch() {
           <div className="absolute left-0 top-10 z-40 w-80 rounded-xl border border-border bg-card shadow-lg overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
-                Aranıyor...
+                {t.common.searching}
               </div>
             ) : !hasResults ? (
               <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
-                Sonuç bulunamadı
+                {t.common.noResults}
               </div>
             ) : (
               <div className="max-h-80 overflow-y-auto">
                 {results!.users.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/50">
-                      Kullanıcılar
+                      {t.nav.users}
                     </div>
                     {results!.users.map((u) => (
                       <button
@@ -128,7 +130,7 @@ export function GlobalSearch() {
                 {results!.assets.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/50">
-                      Envanterler
+                      {t.nav.assets}
                     </div>
                     {results!.assets.map((a) => (
                       <button

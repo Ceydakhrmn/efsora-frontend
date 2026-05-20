@@ -13,9 +13,10 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { invitationsApi } from '@/api/invitations'
 import { notify } from '@/lib/notify'
+import { useI18n } from '@/i18n'
 
 const schema = z.object({
-  email: z.string().email('Geçerli bir email girin'),
+  email: z.string().email(),
   role: z.string().min(1),
 })
 
@@ -27,6 +28,7 @@ interface InviteDialogProps {
 }
 
 export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
+  const { t } = useI18n()
   const [inviteLink, setInviteLink] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
@@ -40,10 +42,10 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
       const res = await invitationsApi.create(data.email, data.role)
       const link = `${window.location.origin}/invite/${res.data.token}`
       setInviteLink(link)
-      notify.success('Davet linki oluşturuldu')
+      notify.success(t.assets.inviteSuccess)
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>
-      const message = axiosError.response?.data?.message || 'Davet gönderilemedi'
+      const message = axiosError.response?.data?.message || t.assets.inviteError
       notify.error(message)
     }
   }
@@ -66,15 +68,15 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Kullanıcı Davet Et</DialogTitle>
+          <DialogTitle>{t.assets.inviteUser}</DialogTitle>
           <DialogDescription>
-            Davet linki oluşturarak kullanıcının sisteme katılmasını sağlayın.
+            {t.assets.inviteDescription}
           </DialogDescription>
         </DialogHeader>
 
         {inviteLink ? (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Davet linki oluşturuldu. Bu linki kullanıcıyla paylaşın:</p>
+            <p className="text-sm text-muted-foreground">{t.assets.inviteLinkCreated}</p>
             <div className="flex gap-2">
               <Input value={inviteLink} readOnly className="text-xs" />
               <Button type="button" variant="outline" size="icon" onClick={handleCopy}>
@@ -82,35 +84,35 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
               </Button>
             </div>
             <div className="flex justify-end">
-              <Button onClick={handleClose}>Kapat</Button>
+              <Button onClick={handleClose}>{t.assets.close}</Button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label>Email</Label>
-              <Input type="email" placeholder="kullanici@efsora.com" {...register('email')} />
+              <Label>{t.assets.inviteEmail}</Label>
+              <Input type="email" placeholder="user@efsora.com" {...register('email')} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label>Rol</Label>
+              <Label>{t.assets.inviteRole}</Label>
               <Select defaultValue="USER" onValueChange={(value) => setValue('role', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USER">User</SelectItem>
-                  <SelectItem value="EDITOR">Editor</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="USER">{t.users.roleUser}</SelectItem>
+                  <SelectItem value="EDITOR">{t.users.roleEditor}</SelectItem>
+                  <SelectItem value="ADMIN">{t.users.roleAdmin}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={handleClose}>İptal</Button>
+              <Button type="button" variant="outline" onClick={handleClose}>{t.common.cancel}</Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Davet Gönder'}
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.assets.inviteSend}
               </Button>
             </div>
           </form>
