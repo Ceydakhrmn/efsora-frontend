@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle, Download, QrCode, ArrowRightLeft, Undo2 } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download, QrCode, ArrowRightLeft, Undo2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
 import { AssetTransferDialog } from '@/components/assets/AssetTransferDialog'
@@ -35,6 +36,7 @@ export function AssetsPage() {
   const [qrDialogOpen, setQrDialogOpen] = useState(false)
   const [transferAsset, setTransferAsset] = useState<Asset | null>(null)
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [totalElements, setTotalElements] = useState(0)
@@ -166,6 +168,34 @@ export function AssetsPage() {
     fetchAssets()
   }
 
+  const handleBulkDelete = async () => {
+    try {
+      await assetsApi.bulkDelete(selectedIds)
+      notify.success(t.assets.bulkDeleted)
+      setSelectedIds([])
+      fetchAssets()
+    } catch {
+      notify.error(t.assets.deleteError)
+    }
+  }
+
+  const handleBulkStatusUpdate = async (status: string) => {
+    try {
+      await assetsApi.bulkUpdateStatus(selectedIds, status)
+      notify.success(t.assets.bulkStatusUpdated)
+      setSelectedIds([])
+      fetchAssets()
+    } catch {
+      notify.error(t.assets.saveError)
+    }
+  }
+
+  const toggleSelect = (id: number) =>
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+
+  const toggleSelectAll = () =>
+    setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(a => a.id))
+
   return (
     <div className="space-y-6">
 
@@ -243,11 +273,43 @@ export function AssetsPage() {
         })}
       </div>
 
+      {/* Bulk action toolbar */}
+      {selectedIds.length > 0 && (
+        <div className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5">
+          <span className="text-sm font-medium">{selectedIds.length} {t.assets.selected}</span>
+          <div className="flex gap-2 ml-auto">
+            <Select onValueChange={handleBulkStatusUpdate}>
+              <SelectTrigger className="h-8 w-[160px] text-sm">
+                <SelectValue placeholder={t.assets.bulkStatusUpdate} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ACTIVE">{t.assets.statusActive}</SelectItem>
+                <SelectItem value="MAINTENANCE">{t.assets.statusMaintenance}</SelectItem>
+                <SelectItem value="EXPIRED">{t.assets.statusExpired}</SelectItem>
+                <SelectItem value="RETIRED">{t.assets.statusRetired}</SelectItem>
+              </SelectContent>
+            </Select>
+            {canDelete && (
+              <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
+                <Trash2 className="h-4 w-4 mr-1" />
+                {t.assets.bulkDelete}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="rounded-lg border">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/50">
+              <th className="px-4 py-3 w-10">
+                <Checkbox
+                  checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                  onCheckedChange={toggleSelectAll}
+                />
+              </th>
               <th className="px-4 py-3 text-left font-medium">{t.assets.name}</th>
               <th className="px-4 py-3 text-left font-medium">{t.assets.category}</th>
               <th className="px-4 py-3 text-left font-medium hidden md:table-cell">{t.assets.brandModel}</th>
@@ -260,13 +322,19 @@ export function AssetsPage() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">
                   {t.assets.noAssets}
                 </td>
               </tr>
             ) : (
               filtered.map((asset) => (
-                <tr key={asset.id} className="border-b hover:bg-muted/30 transition-colors">
+                <tr key={asset.id} className={`border-b hover:bg-muted/30 transition-colors ${selectedIds.includes(asset.id) ? 'bg-primary/5' : ''}`}>
+                  <td className="px-4 py-3">
+                    <Checkbox
+                      checked={selectedIds.includes(asset.id)}
+                      onCheckedChange={() => toggleSelect(asset.id)}
+                    />
+                  </td>
                   <td className="px-4 py-3 font-medium">{asset.name}</td>
                   <td className="px-4 py-3">
                     <span className="text-xs text-muted-foreground">{categoryLabels[asset.category]}</span>

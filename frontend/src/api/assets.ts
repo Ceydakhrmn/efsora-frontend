@@ -48,6 +48,12 @@ export const assetsApi = {
 
   returnAsset: (assetId: number) =>
     api.post<Asset>(`/assets/${assetId}/return`, {}),
+
+  bulkDelete: (ids: number[]) =>
+    api.delete('/assets/bulk', { data: { ids } }),
+
+  bulkUpdateStatus: (ids: number[], status: string) =>
+    api.patch('/assets/bulk-status', { ids, status }),
 }
 
 export interface AssetStats {
