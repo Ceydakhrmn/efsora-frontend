@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TrendingDown, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { assetsApi } from '@/api/assets'
 import { useI18n } from '@/i18n'
 import type { DepreciationInfo } from '@/types'
