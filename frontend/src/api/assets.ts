@@ -1,5 +1,5 @@
 import api from './axios'
-import type { Asset, AssetRequest, AssetAttachment, PagedResponse } from '@/types'
+import type { Asset, AssetRequest, AssetAttachment, PagedResponse, DepreciationInfo, DepreciationSummary } from '@/types'
 
 export interface AssetAssignmentHistory {
   id: number
@@ -57,6 +57,9 @@ export const assetsApi = {
 
   bulkImport: (assets: Partial<import('@/types').AssetRequest>[]) =>
     api.post<{ total: number; success: number; failed: number; results: { row: number; name: string; status: string; message?: string }[] }>('/assets/bulk-import', assets),
+
+  getDepreciation: (id: number) => api.get<DepreciationInfo>(`/assets/${id}/depreciation`),
+  getDepreciationSummary: () => api.get<DepreciationSummary>('/assets/depreciation-summary'),
 }
 
 export interface AssetStats {

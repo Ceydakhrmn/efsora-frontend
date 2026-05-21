@@ -88,6 +88,7 @@ export interface Asset {
   warrantyExpiryDate?: string
   status: AssetStatus
   seatCount?: number
+  usefulLifeYears?: number
   assignedUserId?: number
   assignedUserName?: string
   assignedDepartment?: string
@@ -109,9 +110,33 @@ export interface AssetRequest {
   warrantyExpiryDate?: string
   status: AssetStatus
   seatCount?: number
+  usefulLifeYears?: number
   assignedUserId?: number
   assignedDepartment?: string
   notes?: string
+}
+
+export interface DepreciationInfo {
+  assetId: number
+  assetName: string
+  purchasePrice: number
+  currentValue: number
+  annualDepreciation: number
+  totalDepreciation: number
+  depreciationPercent: number
+  yearsElapsed: number
+  usefulLifeYears: number
+  fullyDepreciated: boolean
+}
+
+export interface DepreciationSummary {
+  totalPurchaseValue: number
+  totalCurrentValue: number
+  totalDepreciation: number
+  overallDepreciationPercent: number
+  fullyDepreciatedCount: number
+  calculableAssetCount: number
+  assets: DepreciationInfo[]
 }
 
 export interface AssetAttachment {

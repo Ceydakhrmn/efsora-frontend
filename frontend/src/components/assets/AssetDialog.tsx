@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Asset, AssetRequest, User } from '@/types'
 import { AssetAttachments } from './AssetAttachments'
 import { AssetAssignmentHistory } from './AssetAssignmentHistory'
+import { AssetDepreciation } from './AssetDepreciation'
 import { useI18n } from '@/i18n'
 
 const schema = z.object({
@@ -26,6 +27,7 @@ const schema = z.object({
   warrantyExpiryDate: z.string().optional(),
   status: z.enum(['ACTIVE', 'MAINTENANCE', 'EXPIRED', 'RETIRED']),
   seatCount: z.string().optional(),
+  usefulLifeYears: z.string().optional(),
   assignedUserId: z.string().optional(),
   assignedDepartment: z.string().optional(),
   notes: z.string().optional(),
@@ -73,6 +75,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
       ...data,
       purchasePrice: data.purchasePrice ? parseFloat(data.purchasePrice) : undefined,
       seatCount: data.seatCount ? parseInt(data.seatCount) : undefined,
+      usefulLifeYears: data.usefulLifeYears ? parseInt(data.usefulLifeYears) : undefined,
       assignedUserId: data.assignedUserId ? parseInt(data.assignedUserId) : undefined,
     } as AssetRequest)
   }
@@ -92,6 +95,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
         warrantyExpiryDate: asset.warrantyExpiryDate || '',
         status: asset.status,
         seatCount: asset.seatCount?.toString() || '',
+        usefulLifeYears: asset.usefulLifeYears?.toString() || '',
         assignedUserId: asset.assignedUserId?.toString() || '',
         assignedDepartment: asset.assignedDepartment || '',
         notes: asset.notes || '',
@@ -165,6 +169,11 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
             <div className="space-y-2">
               <Label>{t.assets.price}</Label>
               <Input type="number" step="0.01" {...register('purchasePrice')} placeholder="0.00" />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t.assets.usefulLifeYears}</Label>
+              <Input type="number" min="1" max="50" {...register('usefulLifeYears')} placeholder="5" />
             </div>
 
             {showSerial && (
@@ -241,6 +250,15 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
 
           {asset && (
             <AssetAssignmentHistory assetId={asset.id} />
+          )}
+
+          {asset && (
+            <div className="border-t pt-4">
+              <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+                <span>{t.assets.depreciationTab}</span>
+              </p>
+              <AssetDepreciation assetId={asset.id} />
+            </div>
           )}
 
           <div className="flex justify-end gap-2 pt-2">
