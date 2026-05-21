@@ -2,9 +2,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
+
+const sentryPlugin = process.env.SENTRY_AUTH_TOKEN
+  ? sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    })
+  : null
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), ...(sentryPlugin ? [sentryPlugin] : [])],
   define: {
     global: 'window',
   },
@@ -15,7 +24,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false, // Smaller bundle size
+    sourcemap: !!process.env.SENTRY_AUTH_TOKEN,
     minify: 'terser', // Best minification
     rollupOptions: {
       output: {
