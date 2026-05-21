@@ -60,6 +60,9 @@ export const assetsApi = {
 
   getDepreciation: (id: number) => api.get<DepreciationInfo>(`/assets/${id}/depreciation`),
   getDepreciationSummary: () => api.get<DepreciationSummary>('/assets/depreciation-summary'),
+
+  getAllTags: () => api.get<string[]>('/assets/tags'),
+  getByTag: (tag: string) => api.get<Asset[]>(`/assets/by-tag?tag=${encodeURIComponent(tag)}`),
 }
 
 export interface AssetStats {

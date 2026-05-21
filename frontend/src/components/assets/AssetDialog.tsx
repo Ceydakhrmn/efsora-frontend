@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -12,6 +12,7 @@ import type { Asset, AssetRequest, User } from '@/types'
 import { AssetAttachments } from './AssetAttachments'
 import { AssetAssignmentHistory } from './AssetAssignmentHistory'
 import { AssetDepreciation } from './AssetDepreciation'
+import { AssetTagInput } from './AssetTagInput'
 import { useI18n } from '@/i18n'
 
 const schema = z.object({
@@ -48,6 +49,7 @@ interface AssetDialogProps {
 
 export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, onSubmit }: AssetDialogProps) {
   const { t } = useI18n()
+  const [tags, setTags] = useState<string[]>([])
   const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { status: 'ACTIVE', category: 'HARDWARE' },
@@ -77,6 +79,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
       seatCount: data.seatCount ? parseInt(data.seatCount) : undefined,
       usefulLifeYears: data.usefulLifeYears ? parseInt(data.usefulLifeYears) : undefined,
       assignedUserId: data.assignedUserId ? parseInt(data.assignedUserId) : undefined,
+      tags,
     } as AssetRequest)
   }
 
@@ -100,8 +103,10 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
         assignedDepartment: asset.assignedDepartment || '',
         notes: asset.notes || '',
       })
+      setTags(asset.tags || [])
     } else {
       reset({ status: 'ACTIVE', category: 'HARDWARE' })
+      setTags([])
     }
   }, [asset, open, reset])
 
@@ -236,6 +241,11 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
                   {departments.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2 col-span-2">
+              <Label>{t.assets.tags}</Label>
+              <AssetTagInput value={tags} onChange={setTags} disabled={!canEdit} />
             </div>
 
             <div className="space-y-2 col-span-2">

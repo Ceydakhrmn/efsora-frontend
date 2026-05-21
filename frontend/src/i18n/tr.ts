@@ -217,6 +217,11 @@ export const tr = {
     totalCurrentValue: 'Güncel Portföy Değeri',
     fullyDepreciatedAssets: 'Tamamen Amortize',
     yearsLabel: 'yıl',
+    tags: 'Etiketler',
+    addTag: 'Etiket ekle...',
+    noTags: 'Etiket yok',
+    allTags: 'Tüm Etiketler',
+    filterByTag: 'Etikete göre filtrele',
   },
   mfa: {
     title: 'MFA/2FA Doğrulama',

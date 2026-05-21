@@ -89,6 +89,7 @@ export interface Asset {
   status: AssetStatus
   seatCount?: number
   usefulLifeYears?: number
+  tags?: string[]
   assignedUserId?: number
   assignedUserName?: string
   assignedDepartment?: string
@@ -111,6 +112,7 @@ export interface AssetRequest {
   status: AssetStatus
   seatCount?: number
   usefulLifeYears?: number
+  tags?: string[]
   assignedUserId?: number
   assignedDepartment?: string
   notes?: string

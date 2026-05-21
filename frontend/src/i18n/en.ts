@@ -217,6 +217,11 @@ export const en = {
     totalCurrentValue: 'Current Portfolio Value',
     fullyDepreciatedAssets: 'Fully Depreciated',
     yearsLabel: 'years',
+    tags: 'Tags',
+    addTag: 'Add tag...',
+    noTags: 'No tags',
+    allTags: 'All Tags',
+    filterByTag: 'Filter by tag',
   },
   mfa: {
     title: 'MFA/2FA Verification',

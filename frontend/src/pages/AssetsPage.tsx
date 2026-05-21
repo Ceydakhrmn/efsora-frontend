@@ -39,6 +39,8 @@ export function AssetsPage() {
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [tagFilter, setTagFilter] = useState<string>('all')
+  const [availableTags, setAvailableTags] = useState<string[]>([])
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [totalElements, setTotalElements] = useState(0)
@@ -61,16 +63,18 @@ export function AssetsPage() {
 
   const fetchAssets = async () => {
     try {
-      const [assetsRes, usersRes, expiringRes] = await Promise.all([
+      const [assetsRes, usersRes, expiringRes, tagsRes] = await Promise.all([
         assetsApi.getAll(page, pageSize),
         usersApi.getAll({ page: 0, size: 1000 }),
         assetsApi.getExpiringSoon(),
+        assetsApi.getAllTags(),
       ])
       setAssets(assetsRes.data.content)
       setTotalElements(assetsRes.data.totalElements)
       setTotalPages(assetsRes.data.totalPages)
       setUsers(usersRes.data.content)
       setExpiringSoon(expiringRes.data)
+      setAvailableTags(tagsRes.data)
     } catch {
       notify.error(t.assets.loadError)
     } finally {
@@ -87,7 +91,8 @@ export function AssetsPage() {
       (a.vendor || '').toLowerCase().includes(search.toLowerCase())
     const matchCat = categoryFilter === 'all' || a.category === categoryFilter
     const matchStatus = statusFilter === 'all' || a.status === statusFilter
-    return matchSearch && matchCat && matchStatus
+    const matchTag = tagFilter === 'all' || (a.tags || []).includes(tagFilter)
+    return matchSearch && matchCat && matchStatus && matchTag
   })
 
   const handleSubmit = async (data: AssetRequest) => {
@@ -243,6 +248,17 @@ export function AssetsPage() {
               <SelectItem value="RETIRED">{t.assets.statusRetired}</SelectItem>
             </SelectContent>
           </Select>
+          {availableTags.length > 0 && (
+            <Select value={tagFilter} onValueChange={setTagFilter}>
+              <SelectTrigger className="w-[150px]"><SelectValue placeholder={t.assets.filterByTag} /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t.assets.allTags}</SelectItem>
+                {availableTags.map((tag) => (
+                  <SelectItem key={tag} value={tag}>#{tag}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport}>
@@ -343,7 +359,18 @@ export function AssetsPage() {
                       onCheckedChange={() => toggleSelect(asset.id)}
                     />
                   </td>
-                  <td className="px-4 py-3 font-medium">{asset.name}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium">{asset.name}</div>
+                    {asset.tags && asset.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {asset.tags.map((tag) => (
+                          <span key={tag} className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium cursor-pointer hover:bg-primary/20" onClick={() => setTagFilter(tag)}>
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="text-xs text-muted-foreground">{categoryLabels[asset.category]}</span>
                   </td>
