@@ -5,6 +5,8 @@ RUN npm install --legacy-peer-deps
 COPY frontend/ .
 ENV VITE_API_URL=https://envanter-yonetimi-backend.onrender.com
 ENV VITE_SOCKJS_URL=https://envanter-yonetimi-backend.onrender.com/ws
+ARG VITE_SENTRY_DSN=""
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
 RUN npm run build
 RUN npm install -g serve
 EXPOSE 3000
