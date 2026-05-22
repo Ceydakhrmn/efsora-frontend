@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { usersApi } from '@/api/users'
 import { activityLogsApi, type ActivityLog } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { User } from '@/types'
 
 function actionIcon(action: string) {
@@ -32,7 +33,8 @@ export function UserDetailPage() {
   const [loading, setLoading] = useState(true)
   const [activities, setActivities] = useState<ActivityLog[]>([])
   const navigate = useNavigate()
-  const { t } = useI18n()
+  const { t, language } = useI18n()
+  const locale = language === 'tr' ? 'tr-TR' : 'en-US'
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,8 +59,16 @@ export function UserDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-9 w-9 rounded-lg" />
+          <Skeleton className="h-7 w-48 rounded" />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Skeleton className="h-[220px] rounded-xl" />
+          <Skeleton className="h-[220px] rounded-xl lg:col-span-2" />
+        </div>
+        <Skeleton className="h-[320px] rounded-xl" />
       </div>
     )
   }
@@ -128,7 +138,7 @@ export function UserDetailPage() {
                 <div>
                   <p className="text-xs text-muted-foreground">{t.users.registrationDate}</p>
                   <p className="text-sm font-medium text-foreground">
-                    {new Date(user.registrationDate).toLocaleDateString('tr-TR', {
+                    {new Date(user.registrationDate).toLocaleDateString(locale, {
                       year: 'numeric', month: 'long', day: 'numeric',
                     })}
                   </p>
@@ -141,14 +151,14 @@ export function UserDetailPage() {
                   <Clock className="h-5 w-5" /> 
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Last Login</p>
+                  <p className="text-xs text-muted-foreground">{t.users.lastLogin}</p>
                   <p className="text-sm font-medium text-foreground">
                     {user.lastLoginDate
-                      ? new Date(user.lastLoginDate).toLocaleDateString('en-US', {
+                      ? new Date(user.lastLoginDate).toLocaleDateString(locale, {
                           year: 'numeric', month: 'long', day: 'numeric',
                           hour: '2-digit', minute: '2-digit',
                         })
-                      : 'Never logged in'}
+                      : t.users.neverLoggedIn}
                   </p>
                 </div>
               </div>
@@ -182,13 +192,13 @@ export function UserDetailPage() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Activity className="h-4 w-4" />
-            {t.activityLog?.title || 'Aktivite Geçmişi'}
+            {t.activityLog.title}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {activities.length === 0 ? (
             <p className="text-sm text-muted-foreground py-4 text-center">
-              Henüz aktivite kaydı yok
+              {t.users.noActivityYet}
             </p>
           ) : (
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
@@ -203,7 +213,7 @@ export function UserDetailPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="outline" className="text-xs">
-                        {t.activityLog?.actions?.[log.action as keyof typeof t.activityLog.actions] || log.action}
+                        {t.activityLog.actions[log.action] || log.action}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {log.entityType}
@@ -214,7 +224,7 @@ export function UserDetailPage() {
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {new Date(log.createdAt).toLocaleDateString('tr-TR', {
+                    {new Date(log.createdAt).toLocaleDateString(locale, {
                       day: '2-digit', month: '2-digit', year: 'numeric',
                       hour: '2-digit', minute: '2-digit',
                     })}

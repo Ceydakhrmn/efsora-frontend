@@ -113,6 +113,9 @@ export const en = {
     userDeleted: 'User permanently deleted',
     name: 'Full Name',
     registrationDate: 'Registration Date',
+    lastLogin: 'Last Login',
+    neverLoggedIn: 'Never logged in',
+    noActivityYet: 'No activity records yet',
     detail: 'User Detail',
     userInfo: 'User Information',
     export: 'Export',
@@ -321,6 +324,8 @@ export const en = {
     clearFilter: 'Clear Filter',
     startDate: 'Start Date',
     endDate: 'End Date',
+    filterByUser: 'Filter by user',
+    userFilterPlaceholder: 'Search by email...',
   },
   security: {
     title: 'Security Dashboard',

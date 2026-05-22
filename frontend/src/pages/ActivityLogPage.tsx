@@ -54,12 +54,18 @@ export function ActivityLogPage() {
   const [datePreset, setDatePreset] = useState<string>('all')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [userFilter, setUserFilter] = useState('')
+  const [userInput, setUserInput] = useState('')
   const { t } = useI18n()
 
   const fetchLogs = async () => {
     setLoading(true)
     try {
-      if (entityFilter !== 'all') {
+      if (userFilter) {
+        const res = await activityLogsApi.getByUser(userFilter)
+        setLogs(res.data)
+        setTotalPages(1)
+      } else if (entityFilter !== 'all') {
         const res = await activityLogsApi.getByEntityType(entityFilter)
         setLogs(res.data)
         setTotalPages(1)
@@ -78,7 +84,7 @@ export function ActivityLogPage() {
 
   useEffect(() => {
     fetchLogs()
-  }, [page, entityFilter, startDate, endDate])
+  }, [page, entityFilter, startDate, endDate, userFilter])
 
   const applyPreset = (preset: string) => {
     setDatePreset(preset)
@@ -161,6 +167,30 @@ export function ActivityLogPage() {
               <SelectItem value="ASSET">{t.activityLog.entityAsset}</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+      </div>
+
+      {/* User filter */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground">{t.activityLog.filterByUser}:</span>
+        <div className="flex items-center gap-1">
+          <Input
+            placeholder={t.activityLog.userFilterPlaceholder}
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') { setUserFilter(userInput.trim()); setPage(0) }
+            }}
+            className="h-8 w-[220px] text-sm"
+          />
+          <Button size="sm" variant="default" className="h-8 px-3" onClick={() => { setUserFilter(userInput.trim()); setPage(0) }}>
+            <Filter className="h-3 w-3" />
+          </Button>
+          {userFilter && (
+            <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setUserFilter(''); setUserInput(''); setPage(0) }}>
+              <X className="h-3 w-3" />
+            </Button>
+          )}
         </div>
       </div>
 

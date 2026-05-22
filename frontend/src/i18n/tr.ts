@@ -113,6 +113,9 @@ export const tr = {
     userDeleted: 'Kullanıcı kalıcı olarak silindi',
     name: 'Ad Soyad',
     registrationDate: 'Kayıt Tarihi',
+    lastLogin: 'Son Giriş',
+    neverLoggedIn: 'Hiç giriş yapılmadı',
+    noActivityYet: 'Henüz aktivite kaydı yok',
     detail: 'Kullanıcı Detayı',
     userInfo: 'Kullanıcı Bilgileri',
     export: 'Dışa Aktar',
@@ -321,6 +324,8 @@ export const tr = {
     clearFilter: 'Filtreyi Temizle',
     startDate: 'Başlangıç',
     endDate: 'Bitiş',
+    filterByUser: 'Kullanıcıya göre filtrele',
+    userFilterPlaceholder: 'E-posta ile ara...',
   },
   security: {
     title: 'Güvenlik Paneli',
