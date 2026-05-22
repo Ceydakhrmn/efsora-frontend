@@ -3,11 +3,15 @@ import { ThemeSelector } from '@/components/settings/ThemeSelector'
 import { PasswordChange } from '@/components/settings/PasswordChange'
 import { ProfileEdit } from '@/components/settings/ProfileEdit'
 import { NotificationSettings } from '@/components/settings/NotificationSettings'
+import { ReminderRulesCard } from '@/components/settings/ReminderRulesCard'
 import { useI18n } from '@/i18n'
+import { useAuth } from '@/contexts/AuthContext'
 import { MFASettings } from '@/components/settings/MFASettings'
 
 export function SettingsPage() {
   const { t } = useI18n()
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'ADMIN'
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -65,6 +69,19 @@ export function SettingsPage() {
           <NotificationSettings />
         </CardContent>
       </Card>
+
+      {/* Reminder Rules — Admin only */}
+      {isAdmin && (
+        <Card className="border border-gray-300 dark:border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-base">{t.settings.reminderRules}</CardTitle>
+            <CardDescription>{t.settings.reminderRulesDesc}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ReminderRulesCard />
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
