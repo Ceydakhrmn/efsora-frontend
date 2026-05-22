@@ -8,6 +8,7 @@ import { activityLogsApi, type ActivityLog, type PageResponse } from '@/api/acti
 import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const PAGE_SIZE = 20
 
@@ -211,8 +212,21 @@ export function ActivityLogPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">{t.common.loading}</p>
+        <div className="space-y-2">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flex items-start gap-4 rounded-lg border p-4">
+              <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-40 rounded" />
+                </div>
+                <Skeleton className="h-3 w-32 rounded" />
+              </div>
+              <Skeleton className="h-4 w-28 rounded flex-shrink-0" />
+            </div>
+          ))}
         </div>
       ) : logs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
