@@ -22,6 +22,10 @@ export const tr = {
     status: 'Durum',
     success: 'Başarılı',
     error: 'Hata',
+    notifications: 'Bildirimler',
+    noNotifications: 'Henüz bildirim yok',
+    markAllAsRead: 'Tümünü okundu işaretle',
+    clearAll: 'Tümünü sil',
   },
   auth: {
     login: 'Giriş Yap',

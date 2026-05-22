@@ -1,14 +1,14 @@
-import { useNotifications } from '@/contexts/NotificationContext'
+import { useNotifications } from '@/hooks/useNotifications'
 import { AlertCircle, CheckCircle2, Info, AlertTriangle, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
 export function NotificationCenter() {
-  const { notifications, removeNotification } = useNotifications()
+  const { notifications, markAsRead } = useNotifications()
   const [isOpen, setIsOpen] = useState(false)
 
-  const getIcon = (severity: string) => {
-    switch (severity) {
+  const getIcon = (type: string) => {
+    switch (type) {
       case 'success':
         return <CheckCircle2 className="h-5 w-5 text-green-500" />
       case 'error':
@@ -30,25 +30,25 @@ export function NotificationCenter() {
         <div
           key={notification.id}
           className={`rounded-lg border p-4 shadow-lg flex items-start gap-3 ${
-            notification.severity === 'success'
+            notification.type === 'success'
               ? 'bg-green-50 border-green-200'
-              : notification.severity === 'error'
+              : notification.type === 'error'
                 ? 'bg-red-50 border-red-200'
-                : notification.severity === 'warning'
+                : notification.type === 'warning'
                   ? 'bg-yellow-50 border-yellow-200'
                   : 'bg-blue-50 border-blue-200'
           }`}
         >
-          <div className="flex-shrink-0 mt-0.5">{getIcon(notification.severity)}</div>
+          <div className="flex-shrink-0 mt-0.5">{getIcon(notification.type)}</div>
           <div className="flex-grow min-w-0">
-            <p className="font-semibold text-sm">{notification.title}</p>
+            <p className="font-semibold text-sm">Notification</p>
             <p className="text-xs text-muted-foreground mt-1">{notification.message}</p>
           </div>
           <Button
             size="sm"
             variant="ghost"
             className="flex-shrink-0"
-            onClick={() => removeNotification(notification.id)}
+            onClick={() => markAsRead(notification.id)}
           >
             <X className="h-4 w-4" />
           </Button>

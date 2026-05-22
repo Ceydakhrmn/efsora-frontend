@@ -3,11 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SuspenseFallback } from '@/components/SuspenseFallback'
-import { NotificationCenter } from '@/components/NotificationCenter'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { I18nProvider } from '@/contexts/I18nProvider'
-import { NotificationProvider } from '@/contexts/NotificationContext'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
 import { MainLayout } from '@/components/layout/MainLayout'
 
@@ -28,13 +26,12 @@ function App() {
       <BrowserRouter>
         <ThemeProvider>
           <I18nProvider>
-            <NotificationProvider>
-              <AuthProvider>
-                <Suspense fallback={null}>
-                  <ImpersonationBar />
-                </Suspense>
-                <Suspense fallback={<SuspenseFallback />}>
-                  <Routes>
+            <AuthProvider>
+              <Suspense fallback={null}>
+                <ImpersonationBar />
+              </Suspense>
+              <Suspense fallback={<SuspenseFallback />}>
+                <Routes>
                   <Route path="/auth" element={<AuthPage />} />
                   <Route path="/invite/:token" element={<InvitePage />} />
                   <Route
@@ -84,9 +81,7 @@ function App() {
                   },
                 }}
               />
-              <NotificationCenter />
             </AuthProvider>
-            </NotificationProvider>
           </I18nProvider>
         </ThemeProvider>
       </BrowserRouter>

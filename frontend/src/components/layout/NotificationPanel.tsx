@@ -3,6 +3,7 @@ import { Bell, X, CheckCircle, AlertCircle, Info, AlertTriangle, Trash2, CheckCh
 import { useNotifications } from '@/hooks/useNotifications'
 import { cn } from '@/lib/utils'
 import type { NotificationItem } from '@/api/notifications'
+import { useI18n } from '@/i18n'
 
 const iconMap: Record<NotificationItem['type'], React.ReactElement> = {
   success: <CheckCircle className="h-4 w-4 text-green-500" />,
@@ -14,6 +15,7 @@ const iconMap: Record<NotificationItem['type'], React.ReactElement> = {
 export function NotificationPanel() {
   const [open, setOpen] = useState(false)
   const { notifications, unreadCount, markAsRead, markAllAsRead, clear } = useNotifications()
+  const { t, language } = useI18n()
 
   return (
     <div className="relative">
@@ -34,15 +36,15 @@ export function NotificationPanel() {
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-10 z-40 w-80 rounded-xl border border-border bg-card shadow-lg">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <span className="text-sm font-semibold text-foreground">Bildirimler</span>
+              <span className="text-sm font-semibold text-foreground">{t.common.notifications}</span>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
-                  <button onClick={markAllAsRead} className="cursor-pointer text-muted-foreground hover:text-foreground" title="Tümünü okundu işaretle">
+                  <button onClick={markAllAsRead} className="cursor-pointer text-muted-foreground hover:text-foreground" title={t.common.markAllAsRead}>
                     <CheckCheck className="h-4 w-4" />
                   </button>
                 )}
                 {notifications.length > 0 && (
-                  <button onClick={clear} className="cursor-pointer text-muted-foreground hover:text-foreground" title="Tümünü sil">
+                  <button onClick={clear} className="cursor-pointer text-muted-foreground hover:text-foreground" title={t.common.clearAll}>
                     <Trash2 className="h-4 w-4" />
                   </button>
                 )}
@@ -56,7 +58,7 @@ export function NotificationPanel() {
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                   <Bell className="h-8 w-8 mb-2 opacity-30" />
-                  <p className="text-sm">Henüz bildirim yok</p>
+                  <p className="text-sm">{t.common.noNotifications}</p>
                 </div>
               ) : (
                 notifications.map((n) => (
@@ -73,7 +75,7 @@ export function NotificationPanel() {
                     <div className="flex-1 min-w-0">
                       <p className={cn('text-sm text-foreground', !n.read && 'font-medium')}>{n.message}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {new Date(n.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(n.createdAt).toLocaleTimeString(language === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     {!n.read && (

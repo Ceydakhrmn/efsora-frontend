@@ -1,39 +1,40 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { notificationsApi, type NotificationItem } from '@/api/notifications'
+import { webSocketService, type WebSocketNotification } from '@/lib/websocket'
 
 export type { NotificationItem as Notification }
-
-// Re-export for backwards compatibility with notify.ts (local-only quick notifications)
-export type LocalNotification = {
-  id: string
-  type: 'success' | 'error' | 'info' | 'warning'
-  message: string
-  timestamp: Date
-}
-
-const localNotifications: LocalNotification[] = []
-const listeners: Array<(n: LocalNotification[]) => void> = []
-
-const notifyLocal = (ls: Array<(n: LocalNotification[]) => void>, ns: LocalNotification[]) => {
-  ls.forEach(l => l([...ns]))
-}
-
-export const addNotification = (type: LocalNotification['type'], message: string) => {
-  const n: LocalNotification = {
-    id: crypto.randomUUID(),
-    type,
-    message,
-    timestamp: new Date(),
-  }
-  localNotifications.unshift(n)
-  if (localNotifications.length > 20) localNotifications.pop()
-  notifyLocal(listeners, localNotifications)
-}
 
 export function useNotifications() {
   const [backendNotifications, setBackendNotifications] = useState<NotificationItem[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const upsertNotification = useCallback((incoming: NotificationItem) => {
+    setBackendNotifications(prev => {
+      const exists = prev.some(n => n.id === incoming.id)
+
+      if (!exists && !incoming.read) {
+        setUnreadCount(count => count + 1)
+      }
+
+      if (exists) {
+        return prev.map(n => (n.id === incoming.id ? incoming : n))
+      }
+      return [incoming, ...prev]
+    })
+  }, [])
+
+  const mapWebSocketToNotificationItem = useCallback((n: WebSocketNotification): NotificationItem => {
+    const parsedId = Number.parseInt(n.id, 10)
+    return {
+      id: Number.isNaN(parsedId) ? Date.now() : parsedId,
+      type: n.severity,
+      message: n.message,
+      userEmail: '',
+      read: n.read,
+      createdAt: n.timestamp,
+    }
+  }, [])
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -48,12 +49,27 @@ export function useNotifications() {
   }, [])
 
   useEffect(() => {
-    fetchNotifications()
-    intervalRef.current = setInterval(fetchNotifications, 30000) // poll every 30s
+    const initialSync = setTimeout(() => {
+      void fetchNotifications()
+    }, 0)
+
+    webSocketService.connect().catch(() => {
+      // Keep silent here; periodic polling remains as fallback.
+    })
+    const unsubscribe = webSocketService.subscribe((message) => {
+      upsertNotification(mapWebSocketToNotificationItem(message))
+    })
+
+    // Fallback sync in case of missed socket events.
+    intervalRef.current = setInterval(fetchNotifications, 60000)
+
     return () => {
+      clearTimeout(initialSync)
+      unsubscribe()
       if (intervalRef.current) clearInterval(intervalRef.current)
+      webSocketService.disconnect()
     }
-  }, [fetchNotifications])
+  }, [fetchNotifications, mapWebSocketToNotificationItem, upsertNotification])
 
   const markAsRead = useCallback(async (id: number) => {
     try {
@@ -88,4 +104,3 @@ export function useNotifications() {
     refresh: fetchNotifications,
   }
 }
-

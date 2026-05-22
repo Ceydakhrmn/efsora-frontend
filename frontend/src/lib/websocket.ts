@@ -1,4 +1,4 @@
-import { Client } from '@stomp/stompjs';
+import { Client, type IFrame } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 export interface WebSocketNotification {
@@ -29,16 +29,26 @@ class WebSocketService {
   }
 
   private setupClient() {
-    // SockJS için ws:// veya wss:// değil, http(s):// ile başlayan adres kullanılmalı
-    const socket = new SockJS(this.sockJsUrl);
     this.stompClient = new Client({
-      webSocketFactory: () => socket,
+      // SockJS endpoint must use http(s), not ws(s).
+      webSocketFactory: () => new SockJS(this.sockJsUrl),
+      reconnectDelay: 3000,
+      beforeConnect: async () => {
+        if (this.stompClient) {
+          this.stompClient.connectHeaders = {
+            Authorization: `Bearer ${this.getToken()}`,
+          };
+        }
+      },
       connectHeaders: {
         Authorization: `Bearer ${this.getToken()}`,
       },
       onConnect: () => this.onConnect(),
       onDisconnect: () => this.onDisconnect(),
       onStompError: (frame) => this.onError(frame),
+      onWebSocketClose: () => {
+        this.connected = false;
+      },
       debug: (msg) => {
         if (import.meta.env.DEV) console.log('[WebSocket]', msg);
       },
@@ -56,19 +66,33 @@ class WebSocketService {
         this.setupClient();
       }
 
-      const onConnectHandler = () => {
-        this.onConnect();
+      const client = this.stompClient;
+      if (!client) {
+        reject(new Error('WebSocket client not initialized'));
+        return;
+      }
+
+      const originalOnConnect = client.onConnect;
+      const originalOnError = client.onStompError;
+
+      client.onConnect = (frame) => {
+        originalOnConnect?.(frame);
+        client.onConnect = originalOnConnect;
+        client.onStompError = originalOnError;
         resolve();
       };
 
-      const onErrorHandler = (frame: any) => {
+      client.onStompError = (frame: IFrame) => {
+        originalOnError?.(frame);
+        client.onConnect = originalOnConnect;
+        client.onStompError = originalOnError;
         reject(frame);
       };
 
-      if (this.stompClient) {
-        this.stompClient.onConnect = onConnectHandler;
-        this.stompClient.onStompError = onErrorHandler;
-        this.stompClient.activate();
+      if (!client.active) {
+        client.activate();
+      } else if (this.connected) {
+        resolve();
       }
     });
   }
@@ -80,14 +104,22 @@ class WebSocketService {
     // Subscribe to broadcast notifications
     if (this.stompClient) {
       this.stompClient.subscribe('/topic/notifications', (message) => {
-        const notification = JSON.parse(message.body) as WebSocketNotification;
-        this.notifyCallbacks(notification);
+        try {
+          const notification = JSON.parse(message.body) as WebSocketNotification;
+          this.notifyCallbacks(notification);
+        } catch (error) {
+          console.error('Invalid notification payload:', error);
+        }
       });
 
       // Subscribe to user-specific notifications
       this.stompClient.subscribe('/user/queue/notifications', (message) => {
-        const notification = JSON.parse(message.body) as WebSocketNotification;
-        this.notifyCallbacks(notification);
+        try {
+          const notification = JSON.parse(message.body) as WebSocketNotification;
+          this.notifyCallbacks(notification);
+        } catch (error) {
+          console.error('Invalid user notification payload:', error);
+        }
       });
     }
   }
@@ -97,12 +129,12 @@ class WebSocketService {
     console.log('WebSocket disconnected');
   }
 
-  private onError(frame: any) {
+  private onError(frame: IFrame) {
     console.error('WebSocket error:', frame);
   }
 
   private getToken(): string {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
     return token || '';
   }
 

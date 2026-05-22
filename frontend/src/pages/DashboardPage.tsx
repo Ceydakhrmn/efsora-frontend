@@ -12,11 +12,10 @@ import { usersApi } from '@/api/users'
 import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { Asset, User } from '@/types'
 
 type FilterType = 'monthly' | 'yearly' | 'custom'
-
-const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
 
 export function DashboardPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -75,7 +74,7 @@ export function DashboardPage() {
   })
 
   const filterLabel = filterType === 'monthly'
-    ? `${MONTHS[selectedMonth]} ${selectedYear}`
+    ? `${t.dashboard.months[selectedMonth]} ${selectedYear}`
     : filterType === 'yearly'
     ? `${selectedYear}`
     : customStart && customEnd
@@ -84,8 +83,31 @@ export function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+          <Skeleton className="h-10 w-96 rounded-xl" />
+        </div>
+        
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-[120px] rounded-xl" />
+          ))}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-[120px] rounded-xl" />
+          ))}
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <Skeleton className="h-[350px] rounded-xl" />
+          <Skeleton className="h-[350px] rounded-xl" />
+        </div>
       </div>
     )
   }

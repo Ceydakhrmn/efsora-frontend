@@ -22,6 +22,10 @@ export const en = {
     status: 'Status',
     success: 'Success',
     error: 'Error',
+    notifications: 'Notifications',
+    noNotifications: 'No notifications yet',
+    markAllAsRead: 'Mark all as read',
+    clearAll: 'Clear all',
   },
   auth: {
     login: 'Login',
