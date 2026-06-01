@@ -44,9 +44,10 @@ const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
 
 interface AssetCategoryChartProps {
   stats: AssetStats
+  showSampleWhenEmpty?: boolean
 }
 
-export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
+export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetCategoryChartProps) {
   const { t } = useI18n()
   const data = Object.entries(stats.byCategory).map(([key, value]) => ({
     name: CATEGORY_LABELS[key] || key,
@@ -64,12 +65,27 @@ export function AssetCategoryChart({ stats }: AssetCategoryChartProps) {
 
   const chartData = data.length > 0
     ? data
-    : sampleData.map((item) => ({
+    : showSampleWhenEmpty
+    ? sampleData.map((item) => ({
         ...item,
         percent: item.value / sampleData.reduce((acc, current) => acc + current.value, 0),
       }))
+    : []
 
-  const isSample = data.length === 0
+  const isSample = data.length === 0 && showSampleWhenEmpty
+
+  if (chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t.reports.categoryBreakdown}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.noData}</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>

@@ -93,6 +93,8 @@ export const tr = {
     monthly: 'Aylık',
     yearly: 'Yıllık',
     customRange: 'Özel Aralık',
+    showSampleData: 'Örnek Veriyi Göster',
+    hideSampleData: 'Örnek Veriyi Gizle',
     expiringAssets: 'Süresi Dolacak',
     totalValue: 'Toplam Değer',
     months: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],

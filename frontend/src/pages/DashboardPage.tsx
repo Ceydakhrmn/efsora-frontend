@@ -13,6 +13,7 @@ import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import type { Asset, User } from '@/types'
 
 type FilterType = 'monthly' | 'yearly' | 'custom'
@@ -27,8 +28,16 @@ export function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [customStart, setCustomStart] = useState('')
   const [customEnd, setCustomEnd] = useState('')
+  const [showSampleAssetCharts, setShowSampleAssetCharts] = useState<boolean>(() => {
+    const saved = localStorage.getItem('dashboard_show_sample_asset_charts')
+    return saved === null ? true : saved === 'true'
+  })
   const { user } = useAuth()
   const { t } = useI18n()
+
+  useEffect(() => {
+    localStorage.setItem('dashboard_show_sample_asset_charts', String(showSampleAssetCharts))
+  }, [showSampleAssetCharts])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -275,9 +284,18 @@ export function DashboardPage() {
           )}
 
           {/* Asset Charts */}
+          <div className="flex items-center justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSampleAssetCharts((prev) => !prev)}
+            >
+              {showSampleAssetCharts ? t.dashboard.hideSampleData : t.dashboard.showSampleData}
+            </Button>
+          </div>
           <div className="grid gap-6 lg:grid-cols-2">
-            <AssetCategoryChart stats={assetStats} />
-            <AssetStatusChart stats={assetStats} />
+            <AssetCategoryChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
+            <AssetStatusChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
           </div>
 
           {assets.length > 0 && (

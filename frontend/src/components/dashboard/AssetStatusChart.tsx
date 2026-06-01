@@ -41,9 +41,10 @@ const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
 
 interface AssetStatusChartProps {
   stats: AssetStats
+  showSampleWhenEmpty?: boolean
 }
 
-export function AssetStatusChart({ stats }: AssetStatusChartProps) {
+export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetStatusChartProps) {
   const { t } = useI18n()
   const data = Object.entries(STATUS_CONFIG)
     .map(([key, config]) => ({
@@ -63,12 +64,27 @@ export function AssetStatusChart({ stats }: AssetStatusChartProps) {
 
   const chartData = data.length > 0
     ? data
-    : sampleData.map((item) => ({
+    : showSampleWhenEmpty
+    ? sampleData.map((item) => ({
         ...item,
         percent: item.value / sampleData.reduce((acc, current) => acc + current.value, 0),
       }))
+    : []
 
-  const isSample = data.length === 0
+  const isSample = data.length === 0 && showSampleWhenEmpty
+
+  if (chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.noData}</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>

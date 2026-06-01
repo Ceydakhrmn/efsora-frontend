@@ -93,6 +93,8 @@ export const en = {
     monthly: 'Monthly',
     yearly: 'Yearly',
     customRange: 'Custom Range',
+    showSampleData: 'Show Sample Data',
+    hideSampleData: 'Hide Sample Data',
     expiringAssets: 'Expiring Soon',
     totalValue: 'Total Value',
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
