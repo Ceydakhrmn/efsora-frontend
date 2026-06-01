@@ -284,15 +284,17 @@ export function DashboardPage() {
           )}
 
           {/* Asset Charts */}
-          <div className="flex items-center justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowSampleAssetCharts((prev) => !prev)}
-            >
-              {showSampleAssetCharts ? t.dashboard.hideSampleData : t.dashboard.showSampleData}
-            </Button>
-          </div>
+          {user?.role === 'ADMIN' && (
+            <div className="flex items-center justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSampleAssetCharts((prev) => !prev)}
+              >
+                {showSampleAssetCharts ? t.dashboard.hideSampleData : t.dashboard.showSampleData}
+              </Button>
+            </div>
+          )}
           <div className="grid gap-6 lg:grid-cols-2">
             <AssetCategoryChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
             <AssetStatusChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
