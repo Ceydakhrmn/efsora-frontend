@@ -10,7 +10,18 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   retired: { label: 'Hurdaya Çıktı', color: '#6b7280' },
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface ChartTooltipPoint {
+  name: string
+  value: number
+  percent: number
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: ChartTooltipPoint }>
+}
+
+const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     const { name, value, percent } = payload[0].payload
     return (
@@ -43,30 +54,40 @@ export function AssetStatusChart({ stats }: AssetStatusChartProps) {
     }))
     .filter((d) => d.value > 0)
 
-  if (data.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">{t.reports.noData}</p>
-        </CardContent>
-      </Card>
-    )
-  }
+  const sampleData = [
+    { name: STATUS_CONFIG.active.label, value: 8, color: STATUS_CONFIG.active.color },
+    { name: STATUS_CONFIG.maintenance.label, value: 3, color: STATUS_CONFIG.maintenance.color },
+    { name: STATUS_CONFIG.expired.label, value: 2, color: STATUS_CONFIG.expired.color },
+    { name: STATUS_CONFIG.retired.label, value: 1, color: STATUS_CONFIG.retired.color },
+  ]
+
+  const chartData = data.length > 0
+    ? data
+    : sampleData.map((item) => ({
+        ...item,
+        percent: item.value / sampleData.reduce((acc, current) => acc + current.value, 0),
+      }))
+
+  const isSample = data.length === 0
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-base">{t.reports.statusBreakdown}</CardTitle>
+          {isSample && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+              {t.common.sampleData}
+            </span>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={chartData}
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
@@ -74,7 +95,7 @@ export function AssetStatusChart({ stats }: AssetStatusChartProps) {
                 paddingAngle={3}
                 dataKey="value"
               >
-                {data.map((entry, index) => (
+                {chartData.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>

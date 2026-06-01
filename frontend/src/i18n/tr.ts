@@ -26,6 +26,7 @@ export const tr = {
     noNotifications: 'Henüz bildirim yok',
     markAllAsRead: 'Tümünü okundu işaretle',
     clearAll: 'Tümünü sil',
+    sampleData: 'Örnek Veri',
   },
   auth: {
     login: 'Giriş Yap',

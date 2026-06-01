@@ -26,6 +26,7 @@ export const en = {
     noNotifications: 'No notifications yet',
     markAllAsRead: 'Mark all as read',
     clearAll: 'Clear all',
+    sampleData: 'Sample Data',
   },
   auth: {
     login: 'Login',
