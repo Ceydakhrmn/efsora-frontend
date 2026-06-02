@@ -3,7 +3,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import type { AssetStats } from '@/api/assets'
 import { useI18n } from '@/i18n'
 
-const STATUS_CONFIG: Record<string, { color: string }> = {
+const STATUS_ORDER = ['active', 'maintenance', 'expired', 'retired'] as const
+
+const STATUS_CONFIG: Record<(typeof STATUS_ORDER)[number], { color: string }> = {
   active: { color: '#10b981' },
   maintenance: { color: '#f59e0b' },
   expired: { color: '#ef4444' },
@@ -11,6 +13,7 @@ const STATUS_CONFIG: Record<string, { color: string }> = {
 }
 
 interface ChartTooltipPoint {
+  key: string
   name: string
   value: number
   percent: number
@@ -51,27 +54,29 @@ interface AssetStatusChartProps {
 export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetStatusChartProps) {
   const { t } = useI18n()
 
-  const statusLabels: Record<string, string> = {
+  const statusLabels: Record<(typeof STATUS_ORDER)[number], string> = {
     active: t.assets.statusActive,
     maintenance: t.assets.statusMaintenance,
     expired: t.assets.statusExpired,
     retired: t.assets.statusRetired,
   }
 
-  const data = Object.entries(STATUS_CONFIG)
-    .map(([key, config]) => ({
-      name: statusLabels[key] || key,
-      value: stats[key as keyof AssetStats] as number,
-      color: config.color,
-      percent: stats.total > 0 ? (stats[key as keyof AssetStats] as number) / stats.total : 0,
+  const data = STATUS_ORDER
+    .map((key) => ({
+      key,
+      name: statusLabels[key],
+      value: (stats[key as keyof AssetStats] as number) ?? 0,
+      color: STATUS_CONFIG[key].color,
+      percent: stats.total > 0 ? ((stats[key as keyof AssetStats] as number) ?? 0) / stats.total : 0,
     }))
     .filter((d) => d.value > 0)
+    .sort((a, b) => b.value - a.value)
 
   const sampleData = [
-    { name: statusLabels.active, value: 8, color: STATUS_CONFIG.active.color },
-    { name: statusLabels.maintenance, value: 3, color: STATUS_CONFIG.maintenance.color },
-    { name: statusLabels.expired, value: 2, color: STATUS_CONFIG.expired.color },
-    { name: statusLabels.retired, value: 1, color: STATUS_CONFIG.retired.color },
+    { key: 'active', name: statusLabels.active, value: 8, color: STATUS_CONFIG.active.color },
+    { key: 'maintenance', name: statusLabels.maintenance, value: 3, color: STATUS_CONFIG.maintenance.color },
+    { key: 'expired', name: statusLabels.expired, value: 2, color: STATUS_CONFIG.expired.color },
+    { key: 'retired', name: statusLabels.retired, value: 1, color: STATUS_CONFIG.retired.color },
   ]
 
   const chartData = data.length > 0
@@ -124,7 +129,7 @@ export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetSta
                 dataKey="value"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={index} fill={entry.color} />
+                  <Cell key={entry.key || index} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip assetsUnit={t.common.assetsUnit} />} />

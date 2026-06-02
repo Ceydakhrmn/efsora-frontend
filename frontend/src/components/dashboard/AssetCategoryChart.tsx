@@ -3,9 +3,18 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import type { AssetStats } from '@/api/assets'
 import { useI18n } from '@/i18n'
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981']
+const CATEGORY_ORDER = ['HARDWARE', 'SOFTWARE_LICENSE', 'API_SUBSCRIPTION', 'SAAS_TOOL', 'OFFICE_EQUIPMENT'] as const
+
+const CATEGORY_COLORS: Record<(typeof CATEGORY_ORDER)[number], string> = {
+  HARDWARE: '#3b82f6',
+  SOFTWARE_LICENSE: '#8b5cf6',
+  API_SUBSCRIPTION: '#06b6d4',
+  SAAS_TOOL: '#f59e0b',
+  OFFICE_EQUIPMENT: '#ef4444',
+}
 
 interface ChartTooltipPoint {
+  key: string
   name: string
   value: number
   percent: number
@@ -54,18 +63,22 @@ export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetC
     OFFICE_EQUIPMENT: t.assets.categoryOffice,
   }
 
-  const data = Object.entries(stats.byCategory).map(([key, value]) => ({
-    name: categoryLabels[key] || key,
-    value,
-    percent: stats.total > 0 ? value / stats.total : 0,
-  })).sort((a, b) => b.value - a.value)
+  const data = CATEGORY_ORDER
+    .map((key) => ({
+      key,
+      name: categoryLabels[key] || key,
+      value: stats.byCategory[key] ?? 0,
+      percent: stats.total > 0 ? (stats.byCategory[key] ?? 0) / stats.total : 0,
+    }))
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value)
 
   const sampleData = [
-    { name: categoryLabels.HARDWARE, value: 9 },
-    { name: categoryLabels.SOFTWARE_LICENSE, value: 6 },
-    { name: categoryLabels.API_SUBSCRIPTION, value: 4 },
-    { name: categoryLabels.SAAS_TOOL, value: 3 },
-    { name: categoryLabels.OFFICE_EQUIPMENT, value: 2 },
+    { key: 'HARDWARE', name: categoryLabels.HARDWARE, value: 9 },
+    { key: 'SOFTWARE_LICENSE', name: categoryLabels.SOFTWARE_LICENSE, value: 6 },
+    { key: 'API_SUBSCRIPTION', name: categoryLabels.API_SUBSCRIPTION, value: 4 },
+    { key: 'SAAS_TOOL', name: categoryLabels.SAAS_TOOL, value: 3 },
+    { key: 'OFFICE_EQUIPMENT', name: categoryLabels.OFFICE_EQUIPMENT, value: 2 },
   ]
 
   const chartData = data.length > 0
@@ -117,8 +130,11 @@ export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetC
                 paddingAngle={3}
                 dataKey="value"
               >
-                {chartData.map((_entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={entry.key || index}
+                    fill={CATEGORY_COLORS[entry.key as keyof typeof CATEGORY_COLORS] ?? '#10b981'}
+                  />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip assetsUnit={t.common.assetsUnit} />} />
