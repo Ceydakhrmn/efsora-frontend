@@ -45,6 +45,20 @@ const entityIcons: Record<string, React.ElementType> = {
   ASSET: Package,
 }
 
+interface SavedActivityFilter {
+  id: string
+  name: string
+  entityFilter: string
+  actionFilter: string
+  datePreset: string
+  startDate: string
+  endDate: string
+  userFilter: string
+  userInput: string
+}
+
+const SAVED_FILTERS_STORAGE_KEY = 'activity_log_saved_filters'
+
 export function ActivityLogPage() {
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [page, setPage] = useState(0)
@@ -57,6 +71,17 @@ export function ActivityLogPage() {
   const [userFilter, setUserFilter] = useState('')
   const [userInput, setUserInput] = useState('')
   const [actionFilter, setActionFilter] = useState<string>('all')
+  const [savedFilters, setSavedFilters] = useState<SavedActivityFilter[]>(() => {
+    try {
+      const raw = localStorage.getItem(SAVED_FILTERS_STORAGE_KEY)
+      if (!raw) return []
+      const parsed = JSON.parse(raw) as SavedActivityFilter[]
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  })
+  const [selectedSavedFilterId, setSelectedSavedFilterId] = useState<string>('none')
   const { t } = useI18n()
 
   const visibleLogs = actionFilter === 'all'
@@ -91,6 +116,10 @@ export function ActivityLogPage() {
     fetchLogs()
   }, [page, entityFilter, startDate, endDate, userFilter])
 
+  useEffect(() => {
+    localStorage.setItem(SAVED_FILTERS_STORAGE_KEY, JSON.stringify(savedFilters))
+  }, [savedFilters])
+
   const applyPreset = (preset: string) => {
     setDatePreset(preset)
     setPage(0)
@@ -109,6 +138,59 @@ export function ActivityLogPage() {
     setStartDate('')
     setEndDate('')
     setPage(0)
+  }
+
+  const saveCurrentFilter = () => {
+    const suggestedName = [
+      entityFilter !== 'all' ? entityFilter : null,
+      actionFilter !== 'all' ? actionFilter : null,
+      userFilter ? userFilter : null,
+      datePreset !== 'all' ? datePreset : null,
+    ].filter(Boolean).join(' · ') || t.activityLog.savedFilterDefaultName
+
+    const name = window.prompt(t.activityLog.savedFilterPrompt, suggestedName)
+    if (!name || !name.trim()) return
+
+    const next: SavedActivityFilter = {
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      entityFilter,
+      actionFilter,
+      datePreset,
+      startDate,
+      endDate,
+      userFilter,
+      userInput,
+    }
+
+    setSavedFilters((prev) => [next, ...prev].slice(0, 10))
+    setSelectedSavedFilterId(next.id)
+  }
+
+  const applySavedFilter = (id: string) => {
+    if (id === 'none') {
+      setSelectedSavedFilterId('none')
+      return
+    }
+
+    const selected = savedFilters.find((f) => f.id === id)
+    if (!selected) return
+
+    setEntityFilter(selected.entityFilter)
+    setActionFilter(selected.actionFilter)
+    setDatePreset(selected.datePreset)
+    setStartDate(selected.startDate)
+    setEndDate(selected.endDate)
+    setUserFilter(selected.userFilter)
+    setUserInput(selected.userInput)
+    setPage(0)
+    setSelectedSavedFilterId(selected.id)
+  }
+
+  const deleteSelectedSavedFilter = () => {
+    if (selectedSavedFilterId === 'none') return
+    setSavedFilters((prev) => prev.filter((f) => f.id !== selectedSavedFilterId))
+    setSelectedSavedFilterId('none')
   }
 
   const formatDate = (dateStr: string) => {
@@ -183,6 +265,28 @@ export function ActivityLogPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button variant="outline" size="sm" onClick={saveCurrentFilter}>
+            {t.activityLog.saveFilter}
+          </Button>
+          <Select value={selectedSavedFilterId} onValueChange={applySavedFilter}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{t.activityLog.savedFilters}</SelectItem>
+              {savedFilters.map((saved) => (
+                <SelectItem key={saved.id} value={saved.id}>{saved.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={deleteSelectedSavedFilter}
+            disabled={selectedSavedFilterId === 'none'}
+          >
+            {t.common.delete}
+          </Button>
         </div>
       </div>
 
