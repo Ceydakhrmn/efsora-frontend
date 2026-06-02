@@ -34,6 +34,8 @@ export function DashboardPage() {
   })
   const { user } = useAuth()
   const { t } = useI18n()
+  const canControlSampleData = user?.role === 'ADMIN'
+  const effectiveShowSampleAssetCharts = canControlSampleData && showSampleAssetCharts
 
   useEffect(() => {
     localStorage.setItem('dashboard_show_sample_asset_charts', String(showSampleAssetCharts))
@@ -284,7 +286,7 @@ export function DashboardPage() {
           )}
 
           {/* Asset Charts */}
-          {user?.role === 'ADMIN' && (
+          {canControlSampleData && (
             <div className="flex items-center justify-end">
               <Button
                 variant="outline"
@@ -296,8 +298,8 @@ export function DashboardPage() {
             </div>
           )}
           <div className="grid gap-6 lg:grid-cols-2">
-            <AssetCategoryChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
-            <AssetStatusChart stats={assetStats} showSampleWhenEmpty={showSampleAssetCharts} />
+            <AssetCategoryChart stats={assetStats} showSampleWhenEmpty={effectiveShowSampleAssetCharts} />
+            <AssetStatusChart stats={assetStats} showSampleWhenEmpty={effectiveShowSampleAssetCharts} />
           </div>
 
           {assets.length > 0 && (
