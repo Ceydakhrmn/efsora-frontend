@@ -328,6 +328,7 @@ export const tr = {
     clearFilter: 'Filtreyi Temizle',
     startDate: 'Başlangıç',
     endDate: 'Bitiş',
+    allActions: 'Tüm İşlemler',
     filterByUser: 'Kullanıcıya göre filtrele',
     userFilterPlaceholder: 'E-posta ile ara...',
   },

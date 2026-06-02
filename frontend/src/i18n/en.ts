@@ -328,6 +328,7 @@ export const en = {
     clearFilter: 'Clear Filter',
     startDate: 'Start Date',
     endDate: 'End Date',
+    allActions: 'All Actions',
     filterByUser: 'Filter by user',
     userFilterPlaceholder: 'Search by email...',
   },

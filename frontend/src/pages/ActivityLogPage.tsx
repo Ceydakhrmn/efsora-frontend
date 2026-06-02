@@ -56,7 +56,12 @@ export function ActivityLogPage() {
   const [endDate, setEndDate] = useState('')
   const [userFilter, setUserFilter] = useState('')
   const [userInput, setUserInput] = useState('')
+  const [actionFilter, setActionFilter] = useState<string>('all')
   const { t } = useI18n()
+
+  const visibleLogs = actionFilter === 'all'
+    ? logs
+    : logs.filter((log) => log.action === actionFilter)
 
   const fetchLogs = async () => {
     setLoading(true)
@@ -118,7 +123,7 @@ export function ActivityLogPage() {
   }
 
   const handleExport = () => {
-    const rows = logs.map((log) => ({
+    const rows = visibleLogs.map((log) => ({
       ID: log.id,
       [t.activityLog.actionColumn]: t.activityLog.actions[log.action] || log.action,
       [t.activityLog.entityColumn]: log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
@@ -132,7 +137,7 @@ export function ActivityLogPage() {
 
   const handleExportPdf = () => {
     const cols = ['ID', t.activityLog.actionColumn, t.activityLog.entityColumn, t.activityLog.detailColumn, t.activityLog.userColumn, t.activityLog.ipColumn, t.activityLog.dateColumn]
-    const rows = logs.map((log) => [
+    const rows = visibleLogs.map((log) => [
       log.id, t.activityLog.actions[log.action] || log.action,
       log.entityType === 'USER' ? t.activityLog.entityUser : t.activityLog.entityAsset,
       log.details, log.userName || log.userEmail, log.ipAddress || '', formatDate(log.createdAt),
@@ -148,11 +153,11 @@ export function ActivityLogPage() {
           <p className="text-muted-foreground">{t.activityLog.subtitle}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={logs.length === 0}>
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={visibleLogs.length === 0}>
             <Download className="h-4 w-4 mr-1" />
             Excel
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={logs.length === 0}>
+          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={visibleLogs.length === 0}>
             <Download className="h-4 w-4 mr-1" />
             PDF
           </Button>
@@ -165,6 +170,17 @@ export function ActivityLogPage() {
               <SelectItem value="all">{t.common.all}</SelectItem>
               <SelectItem value="USER">{t.activityLog.entityUser}</SelectItem>
               <SelectItem value="ASSET">{t.activityLog.entityAsset}</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={actionFilter} onValueChange={(v) => setActionFilter(v)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t.activityLog.allActions}</SelectItem>
+              {Object.keys(t.activityLog.actions).map((action) => (
+                <SelectItem key={action} value={action}>{t.activityLog.actions[action] || action}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -258,14 +274,14 @@ export function ActivityLogPage() {
             </div>
           ))}
         </div>
-      ) : logs.length === 0 ? (
+      ) : visibleLogs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
           <Activity className="h-12 w-12 mb-2 opacity-50" />
           <p>{t.activityLog.noActivity}</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {logs.map((log) => {
+          {visibleLogs.map((log) => {
             const Icon = entityIcons[log.entityType] || Activity
             return (
               <div
