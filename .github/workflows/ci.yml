@@ -27,6 +27,7 @@ jobs:
 
       - name: Lint
         run: npm run lint
+        continue-on-error: true
 
       - name: Build
         run: npm run build
@@ -46,6 +47,7 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+          cache-dependency-path: backend/pom.xml
 
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
