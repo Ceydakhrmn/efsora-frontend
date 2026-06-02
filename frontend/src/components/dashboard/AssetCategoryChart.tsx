@@ -3,14 +3,6 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import type { AssetStats } from '@/api/assets'
 import { useI18n } from '@/i18n'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  HARDWARE: 'Donanım',
-  SOFTWARE_LICENSE: 'Yazılım Lisansı',
-  API_SUBSCRIPTION: 'API Aboneliği',
-  SAAS_TOOL: 'SaaS Araç',
-  OFFICE_EQUIPMENT: 'Ofis Ekipmanı',
-}
-
 const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981']
 
 interface ChartTooltipPoint {
@@ -24,14 +16,18 @@ interface ChartTooltipProps {
   payload?: Array<{ payload: ChartTooltipPoint }>
 }
 
-const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
+interface CustomTooltipLocalizer {
+  assetsUnit: string
+}
+
+const CustomTooltip = ({ active, payload, assetsUnit }: ChartTooltipProps & CustomTooltipLocalizer) => {
   if (active && payload && payload.length) {
     const { name, value, percent } = payload[0].payload
     return (
       <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
         <p className="font-semibold text-foreground">{name}</p>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{value}</span> varlık
+          <span className="font-medium text-foreground">{value}</span> {assetsUnit}
         </p>
         <p className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{(percent * 100).toFixed(0)}%</span>
@@ -49,18 +45,27 @@ interface AssetCategoryChartProps {
 
 export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetCategoryChartProps) {
   const { t } = useI18n()
+
+  const categoryLabels: Record<string, string> = {
+    HARDWARE: t.assets.categoryHardware,
+    SOFTWARE_LICENSE: t.assets.categorySoftware,
+    API_SUBSCRIPTION: t.assets.categoryApi,
+    SAAS_TOOL: t.assets.categorySaas,
+    OFFICE_EQUIPMENT: t.assets.categoryOffice,
+  }
+
   const data = Object.entries(stats.byCategory).map(([key, value]) => ({
-    name: CATEGORY_LABELS[key] || key,
+    name: categoryLabels[key] || key,
     value,
     percent: stats.total > 0 ? value / stats.total : 0,
   })).sort((a, b) => b.value - a.value)
 
   const sampleData = [
-    { name: CATEGORY_LABELS.HARDWARE, value: 9 },
-    { name: CATEGORY_LABELS.SOFTWARE_LICENSE, value: 6 },
-    { name: CATEGORY_LABELS.API_SUBSCRIPTION, value: 4 },
-    { name: CATEGORY_LABELS.SAAS_TOOL, value: 3 },
-    { name: CATEGORY_LABELS.OFFICE_EQUIPMENT, value: 2 },
+    { name: categoryLabels.HARDWARE, value: 9 },
+    { name: categoryLabels.SOFTWARE_LICENSE, value: 6 },
+    { name: categoryLabels.API_SUBSCRIPTION, value: 4 },
+    { name: categoryLabels.SAAS_TOOL, value: 3 },
+    { name: categoryLabels.OFFICE_EQUIPMENT, value: 2 },
   ]
 
   const chartData = data.length > 0
@@ -116,7 +121,7 @@ export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetC
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip assetsUnit={t.common.assetsUnit} />} />
               <Legend
                 formatter={(value) => <span className="text-xs text-foreground">{value}</span>}
               />

@@ -27,6 +27,7 @@ export const tr = {
     markAllAsRead: 'Tümünü okundu işaretle',
     clearAll: 'Tümünü sil',
     sampleData: 'Örnek Veri',
+    assetsUnit: 'varlık',
   },
   auth: {
     login: 'Giriş Yap',

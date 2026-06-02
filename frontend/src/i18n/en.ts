@@ -27,6 +27,7 @@ export const en = {
     markAllAsRead: 'Mark all as read',
     clearAll: 'Clear all',
     sampleData: 'Sample Data',
+    assetsUnit: 'assets',
   },
   auth: {
     login: 'Login',

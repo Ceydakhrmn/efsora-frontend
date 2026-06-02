@@ -3,11 +3,11 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import type { AssetStats } from '@/api/assets'
 import { useI18n } from '@/i18n'
 
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  active: { label: 'Aktif', color: '#10b981' },
-  maintenance: { label: 'Bakımda', color: '#f59e0b' },
-  expired: { label: 'Süresi Doldu', color: '#ef4444' },
-  retired: { label: 'Hurdaya Çıktı', color: '#6b7280' },
+const STATUS_CONFIG: Record<string, { color: string }> = {
+  active: { color: '#10b981' },
+  maintenance: { color: '#f59e0b' },
+  expired: { color: '#ef4444' },
+  retired: { color: '#6b7280' },
 }
 
 interface ChartTooltipPoint {
@@ -21,14 +21,18 @@ interface ChartTooltipProps {
   payload?: Array<{ payload: ChartTooltipPoint }>
 }
 
-const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
+interface CustomTooltipLocalizer {
+  assetsUnit: string
+}
+
+const CustomTooltip = ({ active, payload, assetsUnit }: ChartTooltipProps & CustomTooltipLocalizer) => {
   if (active && payload && payload.length) {
     const { name, value, percent } = payload[0].payload
     return (
       <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
         <p className="font-semibold text-foreground">{name}</p>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{value}</span> varlık
+          <span className="font-medium text-foreground">{value}</span> {assetsUnit}
         </p>
         <p className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{(percent * 100).toFixed(0)}%</span>
@@ -46,9 +50,17 @@ interface AssetStatusChartProps {
 
 export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetStatusChartProps) {
   const { t } = useI18n()
+
+  const statusLabels: Record<string, string> = {
+    active: t.assets.statusActive,
+    maintenance: t.assets.statusMaintenance,
+    expired: t.assets.statusExpired,
+    retired: t.assets.statusRetired,
+  }
+
   const data = Object.entries(STATUS_CONFIG)
     .map(([key, config]) => ({
-      name: config.label,
+      name: statusLabels[key] || key,
       value: stats[key as keyof AssetStats] as number,
       color: config.color,
       percent: stats.total > 0 ? (stats[key as keyof AssetStats] as number) / stats.total : 0,
@@ -56,10 +68,10 @@ export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetSta
     .filter((d) => d.value > 0)
 
   const sampleData = [
-    { name: STATUS_CONFIG.active.label, value: 8, color: STATUS_CONFIG.active.color },
-    { name: STATUS_CONFIG.maintenance.label, value: 3, color: STATUS_CONFIG.maintenance.color },
-    { name: STATUS_CONFIG.expired.label, value: 2, color: STATUS_CONFIG.expired.color },
-    { name: STATUS_CONFIG.retired.label, value: 1, color: STATUS_CONFIG.retired.color },
+    { name: statusLabels.active, value: 8, color: STATUS_CONFIG.active.color },
+    { name: statusLabels.maintenance, value: 3, color: STATUS_CONFIG.maintenance.color },
+    { name: statusLabels.expired, value: 2, color: STATUS_CONFIG.expired.color },
+    { name: statusLabels.retired, value: 1, color: STATUS_CONFIG.retired.color },
   ]
 
   const chartData = data.length > 0
@@ -115,7 +127,7 @@ export function AssetStatusChart({ stats, showSampleWhenEmpty = true }: AssetSta
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip assetsUnit={t.common.assetsUnit} />} />
               <Legend
                 formatter={(value) => <span className="text-xs text-foreground">{value}</span>}
               />
