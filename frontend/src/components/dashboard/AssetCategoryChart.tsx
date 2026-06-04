@@ -90,8 +90,6 @@ export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetC
       }))
     : []
 
-  const isSample = data.length === 0 && showSampleWhenEmpty
-
   if (chartData.length === 0) {
     return (
       <Card>
@@ -108,14 +106,7 @@ export function AssetCategoryChart({ stats, showSampleWhenEmpty = true }: AssetC
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base">{t.reports.categoryBreakdown}</CardTitle>
-          {isSample && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-              {t.common.sampleData}
-            </span>
-          )}
-        </div>
+        <CardTitle className="text-base">{t.reports.categoryBreakdown}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
