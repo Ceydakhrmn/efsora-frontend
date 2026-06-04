@@ -41,13 +41,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug workspace files
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 4 -name pom.xml
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-          cache: maven
-          cache-dependency-path: "**/pom.xml"
 
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
