@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -57,20 +57,20 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
 
   const category = watch('category')
 
-  const categories = [
+  const categories = useMemo(() => [
     { value: 'HARDWARE', label: t.assets.categoryHardware },
     { value: 'SOFTWARE_LICENSE', label: t.assets.categorySoftware },
     { value: 'API_SUBSCRIPTION', label: t.assets.categoryApi },
     { value: 'SAAS_TOOL', label: t.assets.categorySaas },
     { value: 'OFFICE_EQUIPMENT', label: t.assets.categoryOffice },
-  ]
+  ], [t])
 
-  const statuses = [
+  const statuses = useMemo(() => [
     { value: 'ACTIVE', label: t.assets.statusActive },
     { value: 'MAINTENANCE', label: t.assets.statusMaintenance },
     { value: 'EXPIRED', label: t.assets.statusExpired },
     { value: 'RETIRED', label: t.assets.statusRetired },
-  ]
+  ], [t])
 
   const handleFormSubmit = async (data: FormData) => {
     await onSubmit({
@@ -163,7 +163,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
 
             <div className="space-y-2">
               <Label>{t.assets.vendor}</Label>
-              <Input {...register('vendor')} placeholder="İTÜ Teknoloji" />
+              <Input {...register('vendor')} placeholder="Acme Corp" />
             </div>
 
             <div className="space-y-2">
