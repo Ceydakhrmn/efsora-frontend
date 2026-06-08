@@ -75,15 +75,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth()
   }, [])
 
+  const toAuthUser = (data: AuthResponse): AuthUser => ({
+    id: data.id,
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    department: data.department,
+    role: data.role || 'USER',
+    profilePhoto: data.profilePhoto,
+  })
+
   const handleAuthResponse = (data: AuthResponse) => {
-    const authUser: AuthUser = {
-      id: data.id,
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      department: data.department,
-      role: data.role || 'USER',
-    }
+    const authUser = toAuthUser(data)
     setToken(data.token)
     setUser(authUser)
     localStorage.setItem('token', data.token)
@@ -132,22 +135,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const startImpersonation = (data: AuthResponse) => {
-    // Mevcut admin verilerini sakla
     const currentToken = localStorage.getItem('token')!
     const currentRefreshToken = localStorage.getItem('refreshToken')!
-    const currentUser = user!
-    setOriginalAuth({ token: currentToken, user: currentUser, refreshToken: currentRefreshToken })
-    localStorage.setItem('originalAuth', JSON.stringify({ token: currentToken, user: currentUser, refreshToken: currentRefreshToken }))
+    const originalState = { token: currentToken, user: user!, refreshToken: currentRefreshToken }
+    setOriginalAuth(originalState)
+    localStorage.setItem('originalAuth', JSON.stringify(originalState))
 
-    // Impersonate edilen kullanıcıya geç
-    const impUser: AuthUser = {
-      id: data.id,
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      department: data.department,
-      role: data.role || 'USER',
-    }
+    const impUser = toAuthUser(data)
     setToken(data.token)
     setUser(impUser)
     setIsImpersonating(true)
