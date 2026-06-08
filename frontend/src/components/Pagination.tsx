@@ -6,10 +6,10 @@ import { useI18n } from '@/i18n'
 interface PaginationProps {
   currentPage: number
   totalPages: number
-  pageSize: number
   totalElements: number
   onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
+  pageSize?: number
+  onPageSizeChange?: (size: number) => void
 }
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
@@ -26,8 +26,9 @@ export function Pagination({
 
   if (totalPages <= 1) return null
 
-  const startItem = currentPage * pageSize + 1
-  const endItem = Math.min((currentPage + 1) * pageSize, totalElements)
+  const effectivePageSize = pageSize ?? Math.ceil(totalElements / totalPages)
+  const startItem = currentPage * effectivePageSize + 1
+  const endItem = Math.min((currentPage + 1) * effectivePageSize, totalElements)
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -39,24 +40,26 @@ export function Pagination({
       {/* Controls */}
       <div className="flex items-center gap-2">
         {/* Page Size Selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{t.pagination?.perPage || 'Per page'}:</span>
-          <Select value={pageSize.toString()} onValueChange={(val) => {
-            onPageSizeChange(parseInt(val))
-            onPageChange(0) // Reset to first page
-          }}>
-            <SelectTrigger className="w-[80px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {pageSize !== undefined && onPageSizeChange && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">{t.pagination?.perPage || 'Per page'}:</span>
+            <Select value={pageSize.toString()} onValueChange={(val) => {
+              onPageSizeChange(parseInt(val))
+              onPageChange(0)
+            }}>
+              <SelectTrigger className="w-[80px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={size.toString()}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Navigation */}
         <div className="flex items-center gap-1">

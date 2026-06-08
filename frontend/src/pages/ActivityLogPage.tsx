@@ -9,6 +9,7 @@ import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Pagination } from '@/components/Pagination'
 
 const PAGE_SIZE = 20
 
@@ -63,6 +64,7 @@ export function ActivityLogPage() {
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+  const [totalElements, setTotalElements] = useState(0)
   const [loading, setLoading] = useState(true)
   const [entityFilter, setEntityFilter] = useState<string>('all')
   const [datePreset, setDatePreset] = useState<string>('all')
@@ -104,6 +106,7 @@ export function ActivityLogPage() {
         const data = res.data as PageResponse<ActivityLog>
         setLogs(data.content)
         setTotalPages(data.totalPages)
+        setTotalElements(data.totalElements)
       }
     } catch {
       setLogs([])
@@ -415,28 +418,13 @@ export function ActivityLogPage() {
         </div>
       )}
 
-      {entityFilter === 'all' && totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === 0}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            {t.activityLog.prev}
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {page + 1} / {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages - 1}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            {t.activityLog.next}
-          </Button>
-        </div>
+      {entityFilter === 'all' && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          onPageChange={setPage}
+        />
       )}
     </div>
   )
