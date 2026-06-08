@@ -136,6 +136,8 @@ export const tr = {
     roleUser: 'Kullanıcı',
     selectRole: 'Rol seçin',
     ofTotal: 'toplam kullanıcının',
+    selectAll: 'Tümünü seç',
+    selectRow: 'Kullanıcıyı seç',
     inviteInvalidLink: 'Geçersiz davet linki',
     inviteExpired: 'Davet geçersiz veya süresi dolmuş',
     inviteUnavailable: 'Davet kullanılamıyor',

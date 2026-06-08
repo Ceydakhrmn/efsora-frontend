@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Mail, Building2, Calendar, Shield } from 'lucide-react'
-import { ArrowLeft, Activity } from 'lucide-react'
-import { Clock } from 'lucide-react'
+import { Mail, Building2, Calendar, Shield, ArrowLeft, Activity, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -41,12 +39,11 @@ export function UserDetailPage() {
       try {
         const response = await usersApi.getById(Number(id))
         setUser(response.data)
-        // Kullanıcının aktivitelerini getir
         try {
           const logsRes = await activityLogsApi.getByUser(response.data.email)
           setActivities(logsRes.data)
         } catch {
-          // aktivite yoksa sorun değil
+          // activity fetch failure is non-fatal
         }
       } catch {
         navigate('/users')

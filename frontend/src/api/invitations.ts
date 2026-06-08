@@ -1,4 +1,5 @@
 import api from './axios'
+import type { AuthResponse } from '@/types'
 
 export const invitationsApi = {
   create: (email: string, role: string) =>
@@ -13,8 +14,5 @@ export const invitationsApi = {
     ),
 
   accept: (token: string, data: { firstName: string; lastName: string; password: string }) =>
-    api.post<{ token: string; refreshToken: string; email: string; firstName: string; lastName: string }>(
-      `/invitations/accept/${token}`,
-      data
-    ),
+    api.post<AuthResponse>(`/invitations/accept/${token}`, data),
 }

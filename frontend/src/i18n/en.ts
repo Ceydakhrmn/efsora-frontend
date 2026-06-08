@@ -136,6 +136,8 @@ export const en = {
     roleUser: 'User',
     selectRole: 'Select role',
     ofTotal: 'of total users',
+    selectAll: 'Select all',
+    selectRow: 'Select user',
     inviteInvalidLink: 'Invalid invite link',
     inviteExpired: 'Invite is invalid or expired',
     inviteUnavailable: 'Invite unavailable',

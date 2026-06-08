@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { invitationsApi } from '@/api/invitations'
 import { useI18n } from '@/i18n'
+import { useAuth } from '@/contexts/AuthContext'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
@@ -14,6 +15,7 @@ export function InvitePage() {
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
   const { t } = useI18n()
+  const { handleAuthResponse } = useAuth()
   const [error, setError] = useState<string | null>(null)
   const [verifying, setVerifying] = useState(true)
   const [email, setEmail] = useState('')
@@ -63,13 +65,7 @@ export function InvitePage() {
         lastName: lastName.trim(),
         password,
       })
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('refreshToken', res.data.refreshToken)
-      localStorage.setItem('user', JSON.stringify({
-        email: res.data.email,
-        firstName: res.data.firstName,
-        lastName: res.data.lastName,
-      }))
+      handleAuthResponse(res.data)
       navigate('/dashboard')
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>

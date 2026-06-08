@@ -49,7 +49,7 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                   type="checkbox"
                   checked={allSelected}
                   onChange={e => onSelectAll(e.target.checked)}
-                  aria-label="Tümünü seç"
+                  aria-label={t.users.selectAll}
                 />
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -88,7 +88,7 @@ export function UserTable({ users, selectedIds, onSelect, onSelectAll, onEdit, o
                     checked={selectedIds.includes(user.id)}
                     onChange={e => onSelect(user.id, e.target.checked)}
                     onClick={e => e.stopPropagation()}
-                    aria-label="Kullanıcıyı seç"
+                    aria-label={t.users.selectRow}
                   />
                 </td>
                 <td className="px-4 py-3">
