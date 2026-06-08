@@ -6,6 +6,25 @@ on:
   pull_request:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed areas
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend'
+              - 'backend/**'
+              - 'scripts/backend-smoke.sh'
+              - '.github/workflows/ci.yml'
+
   frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -32,7 +51,24 @@ jobs:
       - name: Build
         run: npm run build
 
+  backend-smoke:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run backend smoke script
+        run: |
+          chmod +x ./scripts/backend-smoke.sh
+          ./scripts/backend-smoke.sh
+
   backend:
+    needs: [changes, backend-smoke]
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
