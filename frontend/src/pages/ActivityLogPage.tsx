@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Activity, User, Package, Filter, Download, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -88,7 +88,7 @@ export function ActivityLogPage() {
     ? logs
     : logs.filter((log) => log.action === actionFilter)
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true)
     try {
       if (userFilter) {
@@ -110,11 +110,11 @@ export function ActivityLogPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, entityFilter, startDate, endDate, userFilter])
 
   useEffect(() => {
     fetchLogs()
-  }, [page, entityFilter, startDate, endDate, userFilter])
+  }, [fetchLogs])
 
   useEffect(() => {
     localStorage.setItem(SAVED_FILTERS_STORAGE_KEY, JSON.stringify(savedFilters))

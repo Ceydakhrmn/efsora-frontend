@@ -38,7 +38,7 @@ export function ReportsPage() {
       }
     }
     fetchData()
-  }, [])
+  }, [t])
 
   const handleExport = () => {
     const rows = deptSummary.map((d) => ({

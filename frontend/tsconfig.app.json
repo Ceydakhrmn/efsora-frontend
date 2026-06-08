@@ -15,7 +15,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -25,7 +24,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "ignoreDeprecations": "6.0",
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },

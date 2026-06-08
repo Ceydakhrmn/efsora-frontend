@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Plus, Search, AlertTriangle, Download, Upload, QrCode, ArrowRightLeft, Undo2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -62,7 +62,7 @@ export function AssetsPage() {
     RETIRED: { label: t.assets.statusRetired, variant: 'outline' },
   }
 
-  const fetchAssets = async () => {
+  const fetchAssets = useCallback(async () => {
     try {
       const [assetsRes, usersRes, expiringRes, tagsRes] = await Promise.all([
         assetsApi.getAll(page, pageSize),
@@ -81,9 +81,9 @@ export function AssetsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, pageSize, t])
 
-  useEffect(() => { fetchAssets() }, [page, pageSize])
+  useEffect(() => { fetchAssets() }, [fetchAssets])
 
   const filtered = assets.filter((a) => {
     const matchSearch = search === '' ||

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { Upload, Download, Trash2, FileText, Image, File } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { assetsApi } from '@/api/assets'
@@ -29,18 +29,18 @@ export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const fetchAttachments = async () => {
+  const fetchAttachments = useCallback(async () => {
     try {
       const res = await assetsApi.getAttachments(assetId)
       setAttachments(res.data)
     } catch {
       // silent
     }
-  }
+  }, [assetId])
 
   useEffect(() => {
     fetchAttachments()
-  }, [assetId])
+  }, [fetchAttachments])
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

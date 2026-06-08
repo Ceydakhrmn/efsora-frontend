@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, Download, Mail, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -79,7 +79,7 @@ export function UsersPage() {
     }
   }
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       // Gelişmiş filtreler backend'e parametre olarak gönderiliyor
       const params: UsersQueryParams = { page, size: pageSize }
@@ -96,11 +96,11 @@ export function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, pageSize, deptFilter, roleFilter, statusFilter, search])
 
   useEffect(() => {
     fetchUsers()
-  }, [page, pageSize, deptFilter, roleFilter, statusFilter, search])
+  }, [fetchUsers])
 
   // Backend filtreli getirdiği için local filtre kaldırıldı
   const filteredUsers = users
