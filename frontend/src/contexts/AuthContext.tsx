@@ -37,7 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isImpersonating, setIsImpersonating] = useState(false)
   const [passwordExpired, setPasswordExpired] = useState(false)
-  // Impersonation öncesi admin verileri
   const [originalAuth, setOriginalAuth] = useState<{ token: string; user: AuthUser; refreshToken: string } | null>(null)
 
   useEffect(() => {

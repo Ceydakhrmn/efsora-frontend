@@ -63,6 +63,13 @@ export const tr = {
     backToLogin: 'Girişe dön',
     sendResetCode: 'Sıfırlama Kodu Gönder',
     enterResetCode: 'Sıfırlama kodunuzu girin',
+    passwordExpired: 'Şifrenizin süresi dolmuş. Lütfen şifrenizi değiştirin.',
+    accountLocked: 'Hesap kilitlendi. Lütfen bekleyin.',
+    mfaCodeInvalid: 'Kod doğrulanamadı.',
+    totpInvalidCode: 'Geçersiz kod veya e-posta.',
+    showQrButton: 'QR Göster',
+    totpScanInstruction: 'Google Authenticator ile okutun — kod otomatik gelir',
+    authenticatorCode: 'Authenticator Kodu',
   },
   nav: {
     dashboard: 'Kontrol Paneli',

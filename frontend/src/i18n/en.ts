@@ -63,6 +63,13 @@ export const en = {
     backToLogin: 'Back to login',
     sendResetCode: 'Send Reset Code',
     enterResetCode: 'Enter your reset code',
+    passwordExpired: 'Your password has expired. Please change it.',
+    accountLocked: 'Account locked. Please wait.',
+    mfaCodeInvalid: 'Code could not be verified.',
+    totpInvalidCode: 'Invalid code or email.',
+    showQrButton: 'Show QR',
+    totpScanInstruction: 'Scan with Google Authenticator — code will appear automatically',
+    authenticatorCode: 'Authenticator Code',
   },
   nav: {
     dashboard: 'Dashboard',

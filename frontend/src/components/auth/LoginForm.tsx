@@ -61,7 +61,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     try {
       const result = await login(data)
       if (result.passwordExpired) {
-        notify.warning('Şifrenizin süresi dolmuş. Lütfen şifrenizi değiştirin.')
+        notify.warning(t.auth.passwordExpired)
         navigate('/settings')
       } else {
         navigate('/dashboard')
@@ -75,7 +75,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       if (axiosError.response?.status === 401) {
         setError(t.auth.invalidCredentials)
       } else if (axiosError.response?.status === 429) {
-        setError(axiosError.response.data?.message || 'Hesap kilitlendi. Lütfen bekleyin.')
+        setError(axiosError.response.data?.message || t.auth.accountLocked)
       } else {
         setError(axiosError.response?.data?.message || t.common.error)
       }
@@ -91,7 +91,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       navigate('/dashboard')
     } catch (err) {
       const axiosError = err as AxiosError<MfaRequiredError>
-      setMfaError(axiosError.response?.data?.message || 'Kod doğrulanamadı.')
+      setMfaError(axiosError.response?.data?.message || t.auth.mfaCodeInvalid)
     }
   }
 
@@ -122,9 +122,9 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     } catch (err) {
       const axiosError = err as AxiosError<MfaRequiredError>
       if (axiosError.response?.status === 429) {
-        setError(axiosError.response.data?.message || 'Hesap kilitlendi. Lütfen bekleyin.')
+        setError(axiosError.response.data?.message || t.auth.accountLocked)
       } else {
-        setError(axiosError.response?.data?.message || 'Geçersiz kod veya email.')
+        setError(axiosError.response?.data?.message || t.auth.totpInvalidCode)
       }
     } finally {
       setTotpLoading(false)
@@ -214,7 +214,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 disabled={totpQrLoading || !totpEmail}
                 className="shrink-0"
               >
-                {totpQrLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'QR Göster'}
+                {totpQrLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.auth.showQrButton}
               </Button>
             </div>
           </div>
@@ -225,14 +225,14 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 <QRCodeSVG value={totpQr} size={160} level="M" />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Google Authenticator ile okutun — kod otomatik gelir
+                {t.auth.totpScanInstruction}
               </p>
             </div>
           )}
 
           {(totpQr || totpCode) && (
             <div className="space-y-2">
-              <Label htmlFor="totp-code">Authenticator Kodu</Label>
+              <Label htmlFor="totp-code">{t.auth.authenticatorCode}</Label>
               <Input
                 id="totp-code"
                 placeholder="000000"
@@ -250,7 +250,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
             onClick={handleTotpLogin}
             disabled={totpLoading || totpCode.length < 6 || !totpEmail}
           >
-            {totpLoading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.common.loading}</> : 'Giriş Yap'}
+            {totpLoading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.common.loading}</> : t.auth.login}
           </Button>
         </div>
       )}

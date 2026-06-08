@@ -3,13 +3,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import type { Asset } from '@/types'
 import { useI18n } from '@/i18n'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  HARDWARE: 'Donanım',
-  SOFTWARE_LICENSE: 'Yazılım Lisansı',
-  API_SUBSCRIPTION: 'API Aboneliği',
-  SAAS_TOOL: 'SaaS Araç',
-  OFFICE_EQUIPMENT: 'Ofis Ekipmanı',
-}
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981']
 
@@ -44,6 +37,13 @@ interface AssetValueChartProps {
 
 export function AssetValueChart({ assets }: AssetValueChartProps) {
   const { t } = useI18n()
+  const categoryLabels: Record<string, string> = {
+    HARDWARE: t.assets.categoryHardware,
+    SOFTWARE_LICENSE: t.assets.categorySoftware,
+    API_SUBSCRIPTION: t.assets.categoryApi,
+    SAAS_TOOL: t.assets.categorySaas,
+    OFFICE_EQUIPMENT: t.assets.categoryOffice,
+  }
   const categoryValues = assets.reduce<Record<string, number>>((acc, asset) => {
     if (asset.purchasePrice) {
       const cat = asset.category
@@ -54,7 +54,7 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
 
   const data = Object.entries(categoryValues)
     .map(([key, value]) => ({
-      name: CATEGORY_LABELS[key] || key,
+      name: categoryLabels[key] || key,
       value: Math.round(value),
     }))
     .sort((a, b) => b.value - a.value)

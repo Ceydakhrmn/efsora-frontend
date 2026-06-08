@@ -53,7 +53,6 @@ export function UsersPage() {
   ]
   const navigate = useNavigate()
 
-  // Checkbox seçimleri
   const handleSelect = (id: number, checked: boolean) => {
     setSelectedIds((prev) => checked ? [...prev, id] : prev.filter((x) => x !== id))
   }
@@ -65,7 +64,6 @@ export function UsersPage() {
     }
   }
 
-  // Toplu silme
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return
     try {
@@ -81,7 +79,6 @@ export function UsersPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      // Gelişmiş filtreler backend'e parametre olarak gönderiliyor
       const params: UsersQueryParams = { page, size: pageSize }
       if (deptFilter !== 'all') params.department = deptFilter
       if (roleFilter !== 'all') params.role = roleFilter
@@ -102,7 +99,6 @@ export function UsersPage() {
     fetchUsers()
   }, [fetchUsers])
 
-  // Backend filtreli getirdiği için local filtre kaldırıldı
   const filteredUsers = users
 
   const handleCreate = async (data: UserRequest) => {

@@ -12,7 +12,6 @@ export interface UsersQueryParams {
 }
 
 export const usersApi = {
-    // Çoklu silme
     deleteBulk: (ids: number[]) =>
       api.post('/kullanicilar/bulk-delete', ids, {
         headers: { 'Content-Type': 'application/json' }

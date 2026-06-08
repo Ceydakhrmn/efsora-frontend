@@ -59,7 +59,6 @@ export function RegistrationTrend({ users }: RegistrationTrendProps) {
     months.push({ label: monthLabel, count, change: null })
   }
 
-  // Önceki aya göre değişim hesapla
   const dataWithChange = months.map((m, i) => ({
     ...m,
     change: i === 0 ? null : m.count - months[i - 1].count,
