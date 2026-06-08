@@ -11,6 +11,7 @@ import { InviteDialog } from '@/components/users/InviteDialog'
 import { BulkImportDialog } from '@/components/users/BulkImportDialog'
 import { Pagination } from '@/components/Pagination'
 import { usersApi } from '@/api/users'
+import type { UsersQueryParams } from '@/api/users'
 import { useI18n } from '@/i18n'
 import { useAuth } from '@/contexts/AuthContext'
 import { notify } from '@/lib/notify'
@@ -81,7 +82,7 @@ export function UsersPage() {
   const fetchUsers = async () => {
     try {
       // Gelişmiş filtreler backend'e parametre olarak gönderiliyor
-      const params: any = { page, size: pageSize }
+      const params: UsersQueryParams = { page, size: pageSize }
       if (deptFilter !== 'all') params.department = deptFilter
       if (roleFilter !== 'all') params.role = roleFilter
       if (statusFilter !== 'all') params.active = statusFilter === 'active' ? true : false

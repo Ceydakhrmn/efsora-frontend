@@ -15,7 +15,7 @@ export function checkPasswordStrength(password: string): PasswordStrength {
     minLength: password.length >= 8,
     hasUppercase: /[A-Z]/.test(password),
     hasNumber: /[0-9]/.test(password),
-    hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    hasSpecial: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
   }
 
   const score = Object.values(rules).filter(Boolean).length

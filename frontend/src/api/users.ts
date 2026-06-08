@@ -2,13 +2,22 @@
 import api from './axios'
 import type { User, UserRequest, ChangePasswordRequest, MessageResponse, AuthResponse, PagedResponse } from '@/types'
 
+export interface UsersQueryParams {
+  page?: number
+  size?: number
+  department?: string
+  role?: string
+  active?: boolean
+  search?: string
+}
+
 export const usersApi = {
     // Çoklu silme
     deleteBulk: (ids: number[]) =>
       api.post('/kullanicilar/bulk-delete', ids, {
         headers: { 'Content-Type': 'application/json' }
       }),
-  getAll: (params: any) =>
+  getAll: (params: UsersQueryParams) =>
     api.get<PagedResponse<User>>('/kullanicilar', { params }),
 
   getById: (id: number) =>

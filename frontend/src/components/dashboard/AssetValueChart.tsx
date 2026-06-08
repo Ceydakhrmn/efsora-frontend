@@ -13,7 +13,17 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981']
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface AssetValuePoint {
+  name: string
+  value: number
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: AssetValuePoint }>
+}
+
+const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     const { name, value } = payload[0].payload
     return (

@@ -16,8 +16,7 @@ interface SidebarProps {
   onMobileClose: () => void
 }
 
-const navKeys = ['dashboard', 'users', 'assets', 'activityLog', 'reports', 'settings'] as const
-type NavKey = typeof navKeys[number]
+type NavKey = 'dashboard' | 'users' | 'assets' | 'activityLog' | 'reports' | 'settings'
 
 const navItems: { path: string; icon: React.ElementType; key: NavKey; roles?: string[] }[] = [
   { path: '/dashboard', icon: LayoutDashboard, key: 'dashboard' },

@@ -7,7 +7,18 @@ interface RegistrationTrendProps {
   users: User[]
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface RegistrationTrendPoint {
+  label: string
+  count: number
+  change: number | null
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: RegistrationTrendPoint }>
+}
+
+const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   const { t } = useI18n()
   if (active && payload && payload.length) {
     const { label, count, change } = payload[0].payload

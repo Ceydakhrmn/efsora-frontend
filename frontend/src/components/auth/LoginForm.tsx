@@ -15,6 +15,13 @@ import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 
+interface MfaRequiredError {
+  mfaRequired?: boolean
+  userId?: number
+  mfaType?: string
+  message?: string
+}
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
@@ -60,7 +67,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         navigate('/dashboard')
       }
     } catch (err) {
-      const axiosError = err as AxiosError<any>
+      const axiosError = err as AxiosError<MfaRequiredError>
       if (axiosError.response?.data?.mfaRequired) {
         setMfaModal({ open: true, userId: axiosError.response.data.userId, mfaType: axiosError.response.data.mfaType, email: data.email, password: data.password })
         return
@@ -83,7 +90,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       setMfaModal({ open: false })
       navigate('/dashboard')
     } catch (err) {
-      const axiosError = err as AxiosError<any>
+      const axiosError = err as AxiosError<MfaRequiredError>
       setMfaError(axiosError.response?.data?.message || 'Kod doğrulanamadı.')
     }
   }
@@ -97,7 +104,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       const res = await authApi.getTotpQr(totpEmail)
       setTotpQr(res.data.qr)
     } catch (err) {
-      const axiosError = err as AxiosError<any>
+      const axiosError = err as AxiosError<MfaRequiredError>
       setError(axiosError.response?.data?.message || t.mfa.notActiveForAccount)
     } finally {
       setTotpQrLoading(false)
@@ -113,7 +120,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       handleAuthResponse(res.data)
       navigate('/dashboard')
     } catch (err) {
-      const axiosError = err as AxiosError<any>
+      const axiosError = err as AxiosError<MfaRequiredError>
       if (axiosError.response?.status === 429) {
         setError(axiosError.response.data?.message || 'Hesap kilitlendi. Lütfen bekleyin.')
       } else {

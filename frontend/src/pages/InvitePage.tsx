@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { invitationsApi } from '@/api/invitations'
+import type { AxiosError } from 'axios'
+import type { ErrorResponse } from '@/types'
 
 export function InvitePage() {
   const { token } = useParams<{ token: string }>()
@@ -67,8 +69,9 @@ export function InvitePage() {
         lastName: res.data.lastName,
       }))
       navigate('/dashboard')
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Kayıt sırasında bir hata oluştu'
+    } catch (err) {
+      const axiosError = err as AxiosError<ErrorResponse>
+      const message = axiosError.response?.data?.message || 'Kayıt sırasında bir hata oluştu'
       setFormError(message)
       setSubmitting(false)
     }

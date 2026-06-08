@@ -9,7 +9,18 @@ interface DepartmentChartProps {
   users: User[]
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface DepartmentChartPoint {
+  name: string
+  value: number
+  percentage: number
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: DepartmentChartPoint }>
+}
+
+const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   const { t } = useI18n()
   if (active && payload && payload.length) {
     const { name, value, percentage } = payload[0].payload
