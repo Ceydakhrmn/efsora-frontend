@@ -108,3 +108,8 @@ Degerler `.env` ve container environment uzerinden enjekte edilir. Bu nedenle `.
 
 - Veritabani baglantisi container icinde `postgres` host adi ile kurulur.
 - Lokal (Docker disi) calistirma icin de env degiskenleri tanimlanmalidir.
+
+## Smoke Commands
+
+- Backend targeted smoke: `./scripts/backend-smoke.sh`
+- API end-to-end smoke (running backend required): `./scripts/smoke-test.sh`
