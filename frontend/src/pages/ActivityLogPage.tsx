@@ -8,7 +8,7 @@ import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 import { Pagination } from '@/components/Pagination'
-import { ActivityLogFeed, formatDate } from '@/components/activity/ActivityLogFeed'
+import { ActivityLogFeed } from '@/components/activity/ActivityLogFeed'
 
 const PAGE_SIZE = 20
 
