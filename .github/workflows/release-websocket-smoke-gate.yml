@@ -1,0 +1,43 @@
+name: Release WebSocket Smoke Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      smoke_checked:
+        description: "Did you complete frontend/docs/websocket-smoke-checklist.md?"
+        required: true
+        type: choice
+        options:
+          - "no"
+          - "yes"
+        default: "no"
+      notes:
+        description: "Optional notes about the smoke run"
+        required: false
+        type: string
+
+jobs:
+  websocket-smoke-gate:
+    name: WebSocket Smoke Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show checklist path
+        run: |
+          echo "Checklist: frontend/docs/websocket-smoke-checklist.md"
+          echo "Actor: ${{ github.actor }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Notes: ${{ github.event.inputs.notes }}"
+
+      - name: Enforce manual confirmation
+        run: |
+          if [ "${{ github.event.inputs.smoke_checked }}" != "yes" ]; then
+            echo "WebSocket smoke checklist is not confirmed. Failing gate."
+            exit 1
+          fi
+
+      - name: Gate passed
+        run: echo "WebSocket smoke checklist confirmed. Gate passed."
