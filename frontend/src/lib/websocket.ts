@@ -126,7 +126,7 @@ class WebSocketService {
     this.connected = true;
     this.lastConnectedAt = Date.now();
     this.lastError = null;
-    console.log('WebSocket connected');
+    if (import.meta.env.DEV) console.log('[WebSocket] connected');
 
     this.clearStompSubscriptions();
 
@@ -159,7 +159,7 @@ class WebSocketService {
     this.connected = false;
     this.lastDisconnectedAt = Date.now();
     this.clearStompSubscriptions();
-    console.log('WebSocket disconnected');
+    if (import.meta.env.DEV) console.log('[WebSocket] disconnected');
   }
 
   private onError(frame: IFrame) {

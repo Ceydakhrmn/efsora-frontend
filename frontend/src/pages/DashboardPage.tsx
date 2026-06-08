@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Users, UserCheck, Building2, UserPlus, UserX, TrendingUp, Package, AlertTriangle, DollarSign, Wrench } from 'lucide-react'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { DepartmentChart } from '@/components/dashboard/DepartmentChart'
@@ -12,6 +12,7 @@ import { usersApi } from '@/api/users'
 import { assetsApi, type AssetStats } from '@/api/assets'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
+import { notify } from '@/lib/notify'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import type { Asset, User } from '@/types'
@@ -41,25 +42,24 @@ export function DashboardPage() {
     localStorage.setItem('dashboard_show_sample_asset_charts', String(showSampleAssetCharts))
   }, [showSampleAssetCharts])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [usersRes, assetsRes, statsRes] = await Promise.all([
-          usersApi.getAll({}),
-          assetsApi.getAll(),
-          assetsApi.getStats(),
-        ])
-        setUsers(usersRes.data.content)
-        setAssets(assetsRes.data.content)
-        setAssetStats(statsRes.data)
-      } catch (error) {
-        console.error('Failed to fetch data:', error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = useCallback(async () => {
+    try {
+      const [usersRes, assetsRes, statsRes] = await Promise.all([
+        usersApi.getAll({}),
+        assetsApi.getAll(),
+        assetsApi.getStats(),
+      ])
+      setUsers(usersRes.data.content)
+      setAssets(assetsRes.data.content)
+      setAssetStats(statsRes.data)
+    } catch {
+      notify.error(t.common.error)
+    } finally {
+      setLoading(false)
     }
-    fetchData()
-  }, [])
+  }, [t])
+
+  useEffect(() => { fetchData() }, [fetchData])
 
   const activeUsers = users.filter((u) => u.active)
   const inactiveUsers = users.filter((u) => !u.active)
