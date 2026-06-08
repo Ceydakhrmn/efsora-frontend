@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 
 import { NotificationPanel } from './NotificationPanel'
 import { GlobalSearch } from './GlobalSearch'
+import { WebSocketDebugBadge } from './WebSocketDebugBadge'
 
 interface HeaderProps {
   title: string
@@ -88,6 +89,9 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             EN
           </button>
         </div>
+
+        {/* Notification Bell */}
+        {import.meta.env.DEV && <WebSocketDebugBadge />}
 
         {/* Notification Bell */}
         <NotificationPanel />

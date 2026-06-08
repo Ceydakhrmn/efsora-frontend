@@ -16,12 +16,28 @@ export interface WebSocketNotification {
 
 export type NotificationCallback = (notification: WebSocketNotification) => void;
 
+export interface WebSocketDebugSnapshot {
+  connected: boolean;
+  active: boolean;
+  pendingConnect: boolean;
+  callbacks: number;
+  subscriptions: number;
+  lastConnectedAt: number | null;
+  lastDisconnectedAt: number | null;
+  lastMessageAt: number | null;
+  lastError: string | null;
+}
+
 class WebSocketService {
   private stompClient: Client | null = null;
   private notificationCallbacks = new Set<NotificationCallback>();
   private stompSubscriptions: StompSubscription[] = [];
   private connectPromise: Promise<void> | null = null;
   private connected = false;
+  private lastConnectedAt: number | null = null;
+  private lastDisconnectedAt: number | null = null;
+  private lastMessageAt: number | null = null;
+  private lastError: string | null = null;
 
   private sockJsUrl = import.meta.env.VITE_SOCKJS_URL ||
     (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') + '/ws' : 'http://localhost:8081/ws');
@@ -108,6 +124,8 @@ class WebSocketService {
 
   private onConnect() {
     this.connected = true;
+    this.lastConnectedAt = Date.now();
+    this.lastError = null;
     console.log('WebSocket connected');
 
     this.clearStompSubscriptions();
@@ -139,11 +157,13 @@ class WebSocketService {
 
   private onDisconnect() {
     this.connected = false;
+    this.lastDisconnectedAt = Date.now();
     this.clearStompSubscriptions();
     console.log('WebSocket disconnected');
   }
 
   private onError(frame: IFrame) {
+    this.lastError = frame.headers.message || 'stomp_error';
     console.error('WebSocket error:', frame);
   }
 
@@ -174,6 +194,7 @@ class WebSocketService {
   }
 
   private notifyCallbacks(notification: WebSocketNotification) {
+    this.lastMessageAt = Date.now();
     this.notificationCallbacks.forEach((callback) => callback(notification));
   }
 
@@ -190,6 +211,20 @@ class WebSocketService {
 
   public isConnected(): boolean {
     return this.connected && (this.stompClient?.active ?? false);
+  }
+
+  public getDebugSnapshot(): WebSocketDebugSnapshot {
+    return {
+      connected: this.connected,
+      active: this.stompClient?.active ?? false,
+      pendingConnect: this.connectPromise !== null,
+      callbacks: this.notificationCallbacks.size,
+      subscriptions: this.stompSubscriptions.length,
+      lastConnectedAt: this.lastConnectedAt,
+      lastDisconnectedAt: this.lastDisconnectedAt,
+      lastMessageAt: this.lastMessageAt,
+      lastError: this.lastError,
+    };
   }
 }
 
