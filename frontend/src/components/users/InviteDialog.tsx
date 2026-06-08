@@ -42,10 +42,10 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
       const res = await invitationsApi.create(data.email, data.role)
       const link = `${window.location.origin}/invite/${res.data.token}`
       setInviteLink(link)
-      notify.success(t.assets.inviteSuccess)
+      notify.success(t.users.inviteSuccess)
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>
-      const message = axiosError.response?.data?.message || t.assets.inviteError
+      const message = axiosError.response?.data?.message || t.users.inviteError
       notify.error(message)
     }
   }
@@ -68,15 +68,15 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t.assets.inviteUser}</DialogTitle>
+          <DialogTitle>{t.users.inviteUser}</DialogTitle>
           <DialogDescription>
-            {t.assets.inviteDescription}
+            {t.users.inviteDescription}
           </DialogDescription>
         </DialogHeader>
 
         {inviteLink ? (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{t.assets.inviteLinkCreated}</p>
+            <p className="text-sm text-muted-foreground">{t.users.inviteLinkCreated}</p>
             <div className="flex gap-2">
               <Input value={inviteLink} readOnly className="text-xs" />
               <Button type="button" variant="outline" size="icon" onClick={handleCopy}>
@@ -84,19 +84,19 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
               </Button>
             </div>
             <div className="flex justify-end">
-              <Button onClick={handleClose}>{t.assets.close}</Button>
+              <Button onClick={handleClose}>{t.common.close}</Button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label>{t.assets.inviteEmail}</Label>
+              <Label>{t.users.inviteEmail}</Label>
               <Input type="email" placeholder="user@efsora.com" {...register('email')} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label>{t.assets.inviteRole}</Label>
+              <Label>{t.users.inviteRole}</Label>
               <Select defaultValue="USER" onValueChange={(value) => setValue('role', value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -112,7 +112,7 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={handleClose}>{t.common.cancel}</Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.assets.inviteSend}
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.users.inviteSend}
               </Button>
             </div>
           </form>

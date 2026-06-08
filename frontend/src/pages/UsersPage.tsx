@@ -259,7 +259,7 @@ export function UsersPage() {
           </Button>
           <Button variant="outline" onClick={() => setInviteDialogOpen(true)}>
             <Mail className="h-4 w-4 mr-1" />
-            {t.assets.inviteUser}
+            {t.users.inviteUser}
           </Button>
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />
