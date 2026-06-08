@@ -75,3 +75,7 @@ export default defineConfig([
 ## Operational Checklists
 
 - WebSocket smoke checklist: [docs/websocket-smoke-checklist.md](docs/websocket-smoke-checklist.md)
+
+## Smoke Commands
+
+- WebSocket targeted smoke: `npm run smoke:websocket`
