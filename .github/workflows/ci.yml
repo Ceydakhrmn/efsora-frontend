@@ -136,6 +136,11 @@ jobs:
 
       - name: Run tests
         if: ${{ steps.backend_available.outputs.available == 'true' }}
+        env:
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:ci_test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+          SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
         run: ./mvnw test
 
       - name: Skip backend tests (submodule unavailable)
