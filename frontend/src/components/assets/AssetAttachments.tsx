@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Upload, Download, Trash2, FileText, Image, File } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { assetsApi } from '@/api/assets'
 import { notify } from '@/lib/notify'
 import type { AssetAttachment } from '@/types'
 import { useI18n } from '@/i18n'
+import { useFetch } from '@/hooks/useFetch'
 
 interface AssetAttachmentsProps {
   assetId: number
@@ -25,22 +26,14 @@ function getFileIcon(contentType: string) {
 
 export function AssetAttachments({ assetId, canEdit }: AssetAttachmentsProps) {
   const { t } = useI18n()
-  const [attachments, setAttachments] = useState<AssetAttachment[]>([])
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const fetchAttachments = useCallback(async () => {
-    try {
-      const res = await assetsApi.getAttachments(assetId)
-      setAttachments(res.data)
-    } catch {
-      // silent
-    }
-  }, [assetId])
-
-  useEffect(() => {
-    fetchAttachments()
-  }, [fetchAttachments])
+  const { data, refetch: fetchAttachments } = useFetch<AssetAttachment[]>(
+    () => assetsApi.getAttachments(assetId).then(r => r.data),
+    [assetId]
+  )
+  const attachments = data ?? []
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
