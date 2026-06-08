@@ -1,21 +1,17 @@
-import { useEffect, useState } from 'react'
 import { Shield, ShieldAlert, ShieldCheck, ShieldX, Globe, Activity } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { activityLogsApi, type SecurityStats, type ActivityLog } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
+import { useFetch } from '@/hooks/useFetch'
 
 export function SecurityDashboard() {
-  const [stats, setStats] = useState<SecurityStats | null>(null)
-  const [loading, setLoading] = useState(true)
-  const { t } = useI18n()
-
-  useEffect(() => {
-    activityLogsApi.getSecurityStats()
-      .then((res) => setStats(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
+  const { t, language } = useI18n()
+  const locale = language === 'tr' ? 'tr-TR' : 'en-US'
+  const { data: stats, loading } = useFetch<SecurityStats>(
+    () => activityLogsApi.getSecurityStats().then(r => r.data),
+    []
+  )
 
   if (loading) {
     return (
@@ -27,10 +23,8 @@ export function SecurityDashboard() {
 
   if (!stats) return null
 
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr)
-    return d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-  }
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
 
   return (
     <div className="space-y-4">

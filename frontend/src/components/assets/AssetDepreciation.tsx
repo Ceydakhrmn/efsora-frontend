@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { assetsApi } from '@/api/assets'
 import { useI18n } from '@/i18n'
+import { useFetch } from '@/hooks/useFetch'
 import type { DepreciationInfo } from '@/types'
 
 interface AssetDepreciationProps {
@@ -14,19 +15,17 @@ function fmt(value: number) {
 
 export function AssetDepreciation({ assetId }: AssetDepreciationProps) {
   const { t } = useI18n()
-  const [data, setData] = useState<DepreciationInfo | null>(null)
-  const [loading, setLoading] = useState(true)
   const [noPurchaseData, setNoPurchaseData] = useState(false)
 
-  useEffect(() => {
-    setLoading(true)
-    assetsApi.getDepreciation(assetId)
-      .then((res) => setData(res.data))
-      .catch((err) => {
-        if (err?.response?.status === 204) setNoPurchaseData(true)
-      })
-      .finally(() => setLoading(false))
-  }, [assetId])
+  const { data, loading } = useFetch<DepreciationInfo>(
+    () => assetsApi.getDepreciation(assetId).then(r => r.data),
+    [assetId],
+    { onError: (err: unknown) => {
+      if ((err as { response?: { status?: number } })?.response?.status === 204) {
+        setNoPurchaseData(true)
+      }
+    }}
+  )
 
   if (loading) return <p className="text-sm text-muted-foreground py-4">{t.common.loading}</p>
 
@@ -96,7 +95,7 @@ export function AssetDepreciation({ assetId }: AssetDepreciationProps) {
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <CheckCircle2 className="h-3.5 w-3.5 text-muted-foreground" />
-        <span>{t.assets.usefulLife}: {data.usefulLifeYears} {t.assets.yearsLabel} · {t.assets.totalPurchaseValue ? '' : ''} ₺{fmt(data.purchasePrice)}</span>
+        <span>{t.assets.usefulLife}: {data.usefulLifeYears} {t.assets.yearsLabel} · {t.assets.totalPurchaseValue}: ₺{fmt(data.purchasePrice)}</span>
       </div>
     </div>
   )

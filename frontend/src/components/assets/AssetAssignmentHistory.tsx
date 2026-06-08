@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { UserPlus, UserMinus, ArrowRightLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { assetsApi, type AssetAssignmentHistory as HistoryItem } from '@/api/assets'
 import { useI18n } from '@/i18n'
+import { useFetch } from '@/hooks/useFetch'
 
 interface AssetAssignmentHistoryProps {
   assetId: number
@@ -10,19 +11,17 @@ interface AssetAssignmentHistoryProps {
 
 export function AssetAssignmentHistory({ assetId }: AssetAssignmentHistoryProps) {
   const { t } = useI18n()
-  const [history, setHistory] = useState<HistoryItem[]>([])
+  const { data } = useFetch<HistoryItem[]>(
+    () => assetsApi.getAssignmentHistory(assetId).then(r => r.data),
+    [assetId]
+  )
+  const history = data ?? []
 
-  const actionConfig: Record<string, { label: string; icon: typeof UserPlus; variant: 'default' | 'secondary' | 'destructive' }> = {
-    ASSIGNED: { label: t.assets.assignedAction, icon: UserPlus, variant: 'default' },
-    UNASSIGNED: { label: t.assets.unassignedAction, icon: UserMinus, variant: 'destructive' },
-    REASSIGNED: { label: t.assets.reassignedAction, icon: ArrowRightLeft, variant: 'secondary' },
-  }
-
-  useEffect(() => {
-    assetsApi.getAssignmentHistory(assetId)
-      .then((res) => setHistory(res.data))
-      .catch(() => {})
-  }, [assetId])
+  const actionConfig = useMemo(() => ({
+    ASSIGNED: { label: t.assets.assignedAction, icon: UserPlus, variant: 'default' as const },
+    UNASSIGNED: { label: t.assets.unassignedAction, icon: UserMinus, variant: 'destructive' as const },
+    REASSIGNED: { label: t.assets.reassignedAction, icon: ArrowRightLeft, variant: 'secondary' as const },
+  }), [t])
 
   if (history.length === 0) {
     return (
