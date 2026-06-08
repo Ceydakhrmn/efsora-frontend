@@ -94,4 +94,3 @@ export function ActivityLogFeed({ logs, loading, t }: ActivityLogFeedProps) {
   )
 }
 
-export { formatDate }
