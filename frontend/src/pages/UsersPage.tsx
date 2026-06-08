@@ -88,12 +88,12 @@ export function UsersPage() {
       setUsers(response.data.content)
       setTotalElements(response.data.totalElements)
       setTotalPages(response.data.totalPages)
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
+    } catch {
+      notify.error(t.common.error)
     } finally {
       setLoading(false)
     }
-  }, [page, pageSize, deptFilter, roleFilter, statusFilter, search])
+  }, [page, pageSize, deptFilter, roleFilter, statusFilter, search, t])
 
   useEffect(() => {
     fetchUsers()

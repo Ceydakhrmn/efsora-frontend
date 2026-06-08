@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { invitationsApi } from '@/api/invitations'
+import { useI18n } from '@/i18n'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 
 export function InvitePage() {
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
+  const { t } = useI18n()
   const [error, setError] = useState<string | null>(null)
   const [verifying, setVerifying] = useState(true)
   const [email, setEmail] = useState('')
@@ -24,7 +26,7 @@ export function InvitePage() {
   const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!token) { setError('Geçersiz davet linki'); setVerifying(false); return }
+    if (!token) { setError(t.users.inviteInvalidLink); setVerifying(false); return }
 
     invitationsApi.verify(token)
       .then((res) => {
@@ -32,7 +34,7 @@ export function InvitePage() {
         setVerifying(false)
       })
       .catch(() => {
-        setError('Davet geçersiz veya süresi dolmuş')
+        setError(t.users.inviteExpired)
         setVerifying(false)
       })
   }, [token])
@@ -42,15 +44,15 @@ export function InvitePage() {
     setFormError(null)
 
     if (!firstName.trim() || !lastName.trim()) {
-      setFormError('Ad ve soyad zorunludur')
+      setFormError(t.users.inviteFirstNameRequired)
       return
     }
     if (password.length < 6) {
-      setFormError('Şifre en az 6 karakter olmalıdır')
+      setFormError(t.users.invitePasswordMinLength)
       return
     }
     if (password !== passwordConfirm) {
-      setFormError('Şifreler eşleşmiyor')
+      setFormError(t.users.invitePasswordsMismatch)
       return
     }
 
@@ -71,7 +73,7 @@ export function InvitePage() {
       navigate('/dashboard')
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>
-      const message = axiosError.response?.data?.message || 'Kayıt sırasında bir hata oluştu'
+      const message = axiosError.response?.data?.message || t.users.inviteRegistrationError
       setFormError(message)
       setSubmitting(false)
     }
@@ -82,7 +84,7 @@ export function InvitePage() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
-          <p className="text-muted-foreground text-sm">Davet doğrulanıyor...</p>
+          <p className="text-muted-foreground text-sm">{t.users.inviteVerifying}</p>
         </div>
       </div>
     )
@@ -92,9 +94,9 @@ export function InvitePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-2">
-          <h1 className="text-xl font-semibold">Davet kullanılamıyor</h1>
+          <h1 className="text-xl font-semibold">{t.users.inviteUnavailable}</h1>
           <p className="text-muted-foreground text-sm">{error}</p>
-          <Button variant="outline" onClick={() => navigate('/auth')}>Giriş Yap</Button>
+          <Button variant="outline" onClick={() => navigate('/auth')}>{t.auth.login}</Button>
         </div>
       </div>
     )
@@ -104,9 +106,9 @@ export function InvitePage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Hesabınızı Oluşturun</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t.users.inviteCreateAccount}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{email}</span> için bilgilerinizi girin
+            <span className="font-medium text-foreground">{email}</span> {t.users.inviteEnterDetailsFor}
           </p>
         </div>
 
@@ -115,36 +117,36 @@ export function InvitePage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Ad</Label>
+                  <Label htmlFor="firstName">{t.auth.firstName}</Label>
                   <Input
                     id="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Ad"
+                    placeholder={t.auth.firstName}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Soyad</Label>
+                  <Label htmlFor="lastName">{t.auth.lastName}</Label>
                   <Input
                     id="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Soyad"
+                    placeholder={t.auth.lastName}
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Şifre</Label>
+                <Label htmlFor="password">{t.auth.password}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="En az 6 karakter"
+                    placeholder={t.users.invitePasswordPlaceholder}
                     required
                     minLength={6}
                   />
@@ -159,13 +161,13 @@ export function InvitePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="passwordConfirm">Şifre Tekrar</Label>
+                <Label htmlFor="passwordConfirm">{t.auth.confirmPassword}</Label>
                 <Input
                   id="passwordConfirm"
                   type="password"
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
-                  placeholder="Şifrenizi tekrar girin"
+                  placeholder={t.users.invitePasswordConfirmPlaceholder}
                   required
                   minLength={6}
                 />
@@ -179,10 +181,10 @@ export function InvitePage() {
                 {submitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Oluşturuluyor...
+                    {t.users.inviteCreating}
                   </>
                 ) : (
-                  'Hesabı Oluştur'
+                  t.users.inviteCreateButton
                 )}
               </Button>
             </form>

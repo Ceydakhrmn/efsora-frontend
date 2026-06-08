@@ -62,7 +62,7 @@ export function ReportsPage() {
       d.totalAssets, d.activeAssets, d.maintenanceAssets, d.expiredAssets, d.totalValue,
     ])
     exportToPdf(cols, rows, 'departman-raporu', t.reports.departmentReport)
-    notify.success('PDF oluşturuldu')
+    notify.success(t.assets.pdfExported)
   }
 
   if (loading) {
