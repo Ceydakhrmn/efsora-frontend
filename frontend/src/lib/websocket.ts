@@ -1,4 +1,4 @@
-import { Client, type IFrame } from '@stomp/stompjs';
+import { Client, type IFrame, type StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 export interface WebSocketNotification {
@@ -18,7 +18,9 @@ export type NotificationCallback = (notification: WebSocketNotification) => void
 
 class WebSocketService {
   private stompClient: Client | null = null;
-  private notificationCallbacks: NotificationCallback[] = [];
+  private notificationCallbacks = new Set<NotificationCallback>();
+  private stompSubscriptions: StompSubscription[] = [];
+  private connectPromise: Promise<void> | null = null;
   private connected = false;
 
   private sockJsUrl = import.meta.env.VITE_SOCKJS_URL ||
@@ -56,22 +58,24 @@ class WebSocketService {
   }
 
   public connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.connected && this.stompClient?.active) {
-        resolve();
-        return;
-      }
+    if (this.connected && this.stompClient?.active) {
+      return Promise.resolve();
+    }
 
-      if (!this.stompClient) {
-        this.setupClient();
-      }
+    if (this.connectPromise) {
+      return this.connectPromise;
+    }
 
-      const client = this.stompClient;
-      if (!client) {
-        reject(new Error('WebSocket client not initialized'));
-        return;
-      }
+    if (!this.stompClient) {
+      this.setupClient();
+    }
 
+    const client = this.stompClient;
+    if (!client) {
+      return Promise.reject(new Error('WebSocket client not initialized'));
+    }
+
+    this.connectPromise = new Promise((resolve, reject) => {
       const originalOnConnect = client.onConnect;
       const originalOnError = client.onStompError;
 
@@ -79,6 +83,7 @@ class WebSocketService {
         originalOnConnect?.(frame);
         client.onConnect = originalOnConnect;
         client.onStompError = originalOnError;
+        this.connectPromise = null;
         resolve();
       };
 
@@ -86,24 +91,30 @@ class WebSocketService {
         originalOnError?.(frame);
         client.onConnect = originalOnConnect;
         client.onStompError = originalOnError;
+        this.connectPromise = null;
         reject(frame);
       };
 
       if (!client.active) {
         client.activate();
       } else if (this.connected) {
+        this.connectPromise = null;
         resolve();
       }
     });
+
+    return this.connectPromise;
   }
 
   private onConnect() {
     this.connected = true;
     console.log('WebSocket connected');
 
+    this.clearStompSubscriptions();
+
     // Subscribe to broadcast notifications
     if (this.stompClient) {
-      this.stompClient.subscribe('/topic/notifications', (message) => {
+      const broadcastSubscription = this.stompClient.subscribe('/topic/notifications', (message) => {
         try {
           const notification = JSON.parse(message.body) as WebSocketNotification;
           this.notifyCallbacks(notification);
@@ -111,9 +122,10 @@ class WebSocketService {
           console.error('Invalid notification payload:', error);
         }
       });
+      this.stompSubscriptions.push(broadcastSubscription);
 
       // Subscribe to user-specific notifications
-      this.stompClient.subscribe('/user/queue/notifications', (message) => {
+      const userSubscription = this.stompClient.subscribe('/user/queue/notifications', (message) => {
         try {
           const notification = JSON.parse(message.body) as WebSocketNotification;
           this.notifyCallbacks(notification);
@@ -121,11 +133,13 @@ class WebSocketService {
           console.error('Invalid user notification payload:', error);
         }
       });
+      this.stompSubscriptions.push(userSubscription);
     }
   }
 
   private onDisconnect() {
     this.connected = false;
+    this.clearStompSubscriptions();
     console.log('WebSocket disconnected');
   }
 
@@ -139,6 +153,13 @@ class WebSocketService {
   }
 
   public disconnect() {
+    if (this.notificationCallbacks.size > 0) {
+      return;
+    }
+
+    this.connectPromise = null;
+    this.clearStompSubscriptions();
+
     if (this.stompClient?.active) {
       this.stompClient.deactivate();
       this.connected = false;
@@ -146,14 +167,25 @@ class WebSocketService {
   }
 
   public subscribe(callback: NotificationCallback) {
-    this.notificationCallbacks.push(callback);
+    this.notificationCallbacks.add(callback);
     return () => {
-      this.notificationCallbacks = this.notificationCallbacks.filter((cb) => cb !== callback);
+      this.notificationCallbacks.delete(callback);
     };
   }
 
   private notifyCallbacks(notification: WebSocketNotification) {
     this.notificationCallbacks.forEach((callback) => callback(notification));
+  }
+
+  private clearStompSubscriptions() {
+    this.stompSubscriptions.forEach((subscription) => {
+      try {
+        subscription.unsubscribe();
+      } catch {
+        // Ignore stale subscriptions during reconnect/disconnect transitions.
+      }
+    });
+    this.stompSubscriptions = [];
   }
 
   public isConnected(): boolean {
