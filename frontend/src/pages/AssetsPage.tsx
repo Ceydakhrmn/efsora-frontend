@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Plus, Search, AlertTriangle, Download, Upload, QrCode, ArrowRightLeft, Undo2, Trash2 } from 'lucide-react'
+import { Plus, Search, AlertTriangle, Download, Upload, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import { AssetDialog } from '@/components/assets/AssetDialog'
 import { AssetQrDialog } from '@/components/assets/AssetQrDialog'
 import { AssetTransferDialog } from '@/components/assets/AssetTransferDialog'
 import { AssetBulkImportDialog } from '@/components/assets/AssetBulkImportDialog'
+import { AssetStats } from '@/components/assets/AssetStats'
+import { AssetTable } from '@/components/assets/AssetTable'
+import { AssetCardList } from '@/components/assets/AssetCardList'
 import { Pagination } from '@/components/Pagination'
 import { assetsApi } from '@/api/assets'
 import { usersApi } from '@/api/users'
@@ -123,83 +124,6 @@ export function AssetsPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-1 items-center gap-3 flex-wrap">
-            <Skeleton className="h-10 w-full max-w-sm rounded-md" />
-            <Skeleton className="h-10 w-[130px] rounded-md" />
-            <Skeleton className="h-10 w-[130px] rounded-md" />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-[100px] rounded-md" />
-            ))}
-          </div>
-        </div>
-        
-        <div className="rounded-md border bg-card">
-          <div className="border-b px-4 py-3">
-            <div className="flex items-center justify-between">
-              {[...Array(7)].map((_, i) => (
-                <Skeleton key={i} className="h-4 w-[10%] rounded" />
-              ))}
-            </div>
-          </div>
-          <div className="divide-y">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-4">
-                {[...Array(6)].map((_, j) => (
-                  <div key={j} className="flex flex-col gap-2 w-[12%]">
-                    <Skeleton className="h-4 w-full rounded" />
-                    {j === 0 && <Skeleton className="h-3 w-3/4 rounded" />}
-                  </div>
-                ))}
-                <div className="flex justify-end gap-2 w-[10%]">
-                  <Skeleton className="h-8 w-8 rounded-md" />
-                  <Skeleton className="h-8 w-8 rounded-md" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const handleExport = () => {
-    const rows = filtered.map((a) => ({
-      ID: a.id,
-      [t.assets.name]: a.name,
-      [t.assets.category]: categoryLabels[a.category],
-      [t.assets.brand]: a.brand || '',
-      [t.assets.model]: a.model || '',
-      [t.common.status]: statusConfig[a.status].label,
-      [t.assets.assignedTo]: a.assignedUserName || '',
-      [t.assets.department]: a.assignedDepartment || '',
-      [t.assets.purchaseDate]: a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString() : '',
-      [t.assets.price]: a.purchasePrice ?? '',
-      [t.assets.renewalDate]: a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
-    }))
-    exportToExcel(rows, 'inventory', t.nav.assets)
-    notify.success(t.reports.exported)
-  }
-
-  const handleExportPdf = () => {
-    const cols = [
-      'ID', t.assets.name, t.assets.category, t.assets.brand, t.assets.model,
-      t.common.status, t.assets.assignedTo, t.assets.department, t.assets.price, t.assets.renewalDate,
-    ]
-    const rows = filtered.map((a) => [
-      a.id, a.name, categoryLabels[a.category], a.brand || '', a.model || '',
-      statusConfig[a.status].label, a.assignedUserName || '', a.assignedDepartment || '',
-      a.purchasePrice ?? '', a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
-    ])
-    exportToPdf(cols, rows, 'inventory', `${t.nav.assets} ${t.reports.departmentReport}`)
-    notify.success(t.assets.pdfExported)
-  }
-
   const handleTransfer = async (assetId: number, userId: number) => {
     await assetsApi.transfer(assetId, userId)
     notify.success(t.assets.transferred)
@@ -235,16 +159,91 @@ export function AssetsPage() {
     }
   }
 
+  const handleExport = () => {
+    const rows = filtered.map((a) => ({
+      ID: a.id,
+      [t.assets.name]: a.name,
+      [t.assets.category]: categoryLabels[a.category],
+      [t.assets.brand]: a.brand || '',
+      [t.assets.model]: a.model || '',
+      [t.common.status]: statusConfig[a.status].label,
+      [t.assets.assignedTo]: a.assignedUserName || '',
+      [t.assets.department]: a.assignedDepartment || '',
+      [t.assets.purchaseDate]: a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString() : '',
+      [t.assets.price]: a.purchasePrice ?? '',
+      [t.assets.renewalDate]: a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
+    }))
+    exportToExcel(rows, 'inventory', t.nav.assets)
+    notify.success(t.reports.exported)
+  }
+
+  const handleExportPdf = () => {
+    const cols = [
+      'ID', t.assets.name, t.assets.category, t.assets.brand, t.assets.model,
+      t.common.status, t.assets.assignedTo, t.assets.department, t.assets.price, t.assets.renewalDate,
+    ]
+    const rows = filtered.map((a) => [
+      a.id, a.name, categoryLabels[a.category], a.brand || '', a.model || '',
+      statusConfig[a.status].label, a.assignedUserName || '', a.assignedDepartment || '',
+      a.purchasePrice ?? '', a.renewalDate ? new Date(a.renewalDate).toLocaleDateString() : '',
+    ])
+    exportToPdf(cols, rows, 'inventory', `${t.nav.assets} ${t.reports.departmentReport}`)
+    notify.success(t.assets.pdfExported)
+  }
+
   const toggleSelect = (id: number) =>
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
 
   const toggleSelectAll = () =>
     setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(a => a.id))
 
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-1 items-center gap-3 flex-wrap">
+            <Skeleton className="h-10 w-full max-w-sm rounded-md" />
+            <Skeleton className="h-10 w-[130px] rounded-md" />
+            <Skeleton className="h-10 w-[130px] rounded-md" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-[100px] rounded-md" />
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border bg-card">
+          <div className="border-b px-4 py-3">
+            <div className="flex items-center justify-between">
+              {[...Array(7)].map((_, i) => (
+                <Skeleton key={i} className="h-4 w-[10%] rounded" />
+              ))}
+            </div>
+          </div>
+          <div className="divide-y">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-4">
+                {[...Array(6)].map((_, j) => (
+                  <div key={j} className="flex flex-col gap-2 w-[12%]">
+                    <Skeleton className="h-4 w-full rounded" />
+                    {j === 0 && <Skeleton className="h-3 w-3/4 rounded" />}
+                  </div>
+                ))}
+                <div className="flex justify-end gap-2 w-[10%]">
+                  <Skeleton className="h-8 w-8 rounded-md" />
+                  <Skeleton className="h-8 w-8 rounded-md" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
 
-      {/* Expiring Soon Alert */}
       {expiringSoon.length > 0 && (
         <div className="flex items-center gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-600 dark:text-yellow-400">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -322,20 +321,8 @@ export function AssetsPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {Object.entries(categoryLabels).map(([cat, label]) => {
-          const count = assets.filter((a) => a.category === cat).length
-          return (
-            <div key={cat} className="rounded-lg border bg-card p-3 text-center">
-              <p className="text-2xl font-bold">{count}</p>
-              <p className="text-xs text-muted-foreground mt-1">{label}</p>
-            </div>
-          )
-        })}
-      </div>
+      <AssetStats assets={assets} categoryLabels={categoryLabels} />
 
-      {/* Bulk action toolbar */}
       {selectedIds.length > 0 && (
         <div className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5">
           <span className="text-sm font-medium">{selectedIds.length} {t.assets.selected}</span>
@@ -361,228 +348,41 @@ export function AssetsPage() {
         </div>
       )}
 
-      {/* Mobile card view */}
-      <div className="sm:hidden space-y-3">
-        {filtered.length === 0 ? (
-          <div className="rounded-lg border px-4 py-12 text-center text-muted-foreground">
-            {t.assets.noAssets}
-          </div>
-        ) : (
-          filtered.map((asset) => (
-            <div
-              key={asset.id}
-              className={`rounded-lg border bg-card p-4 space-y-3 ${selectedIds.includes(asset.id) ? 'ring-2 ring-primary/40' : ''}`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Checkbox
-                    checked={selectedIds.includes(asset.id)}
-                    onCheckedChange={() => toggleSelect(asset.id)}
-                    className="flex-shrink-0"
-                  />
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">{asset.name}</p>
-                    <p className="text-xs text-muted-foreground">{categoryLabels[asset.category]}</p>
-                  </div>
-                </div>
-                <Badge variant={statusConfig[asset.status].variant} className="flex-shrink-0">
-                  {statusConfig[asset.status].label}
-                </Badge>
-              </div>
+      <AssetCardList
+        assets={filtered}
+        selectedIds={selectedIds}
+        canEdit={canEdit}
+        canDelete={canDelete}
+        categoryLabels={categoryLabels}
+        statusConfig={statusConfig}
+        t={t}
+        onToggleSelect={toggleSelect}
+        onQr={(asset) => { setQrAsset(asset); setQrDialogOpen(true) }}
+        onTransfer={(asset) => { setTransferAsset(asset); setTransferDialogOpen(true) }}
+        onReturn={handleReturn}
+        onEdit={(asset) => { setEditingAsset(asset); setDialogOpen(true) }}
+        onDelete={handleDelete}
+        onTagFilter={setTagFilter}
+      />
 
-              {(asset.brand || asset.model) && (
-                <p className="text-xs text-muted-foreground">
-                  {[asset.brand, asset.model].filter(Boolean).join(' ')}
-                </p>
-              )}
+      <AssetTable
+        assets={filtered}
+        selectedIds={selectedIds}
+        canEdit={canEdit}
+        canDelete={canDelete}
+        categoryLabels={categoryLabels}
+        statusConfig={statusConfig}
+        t={t}
+        onToggleSelect={toggleSelect}
+        onToggleSelectAll={toggleSelectAll}
+        onQr={(asset) => { setQrAsset(asset); setQrDialogOpen(true) }}
+        onTransfer={(asset) => { setTransferAsset(asset); setTransferDialogOpen(true) }}
+        onReturn={handleReturn}
+        onEdit={(asset) => { setEditingAsset(asset); setDialogOpen(true) }}
+        onDelete={handleDelete}
+        onTagFilter={setTagFilter}
+      />
 
-              {(asset.assignedUserName || asset.assignedDepartment) && (
-                <p className="text-xs text-muted-foreground">
-                  {t.assets.assignedTo}: {asset.assignedUserName || asset.assignedDepartment}
-                </p>
-              )}
-
-              {asset.renewalDate && (
-                <p className="text-xs text-muted-foreground">
-                  {t.assets.renewalDate}: {new Date(asset.renewalDate).toLocaleDateString()}
-                </p>
-              )}
-
-              {asset.tags && asset.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {asset.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium"
-                      onClick={() => setTagFilter(tag)}
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex items-center gap-2 pt-1 border-t border-border">
-                <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setQrAsset(asset); setQrDialogOpen(true) }}>
-                  <QrCode className="h-4 w-4" />
-                </Button>
-                {canEdit && (
-                  <>
-                    <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => { setTransferAsset(asset); setTransferDialogOpen(true) }}>
-                      <ArrowRightLeft className="h-4 w-4" />
-                    </Button>
-                    {asset.assignedUserId && (
-                      <Button size="sm" variant="ghost" className="h-8 px-2" onClick={() => handleReturn(asset)}>
-                        <Undo2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button size="sm" variant="ghost" className="h-8 px-2 ml-auto" onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}>
-                      {t.common.edit}
-                    </Button>
-                  </>
-                )}
-                {canDelete && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className={`h-8 px-2 text-destructive hover:text-destructive ${canEdit ? '' : 'ml-auto'}`}
-                    onClick={() => handleDelete(asset.id)}
-                  >
-                    {t.common.delete}
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Desktop table */}
-      <div className="hidden sm:block rounded-lg border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 w-10">
-                <Checkbox
-                  checked={filtered.length > 0 && selectedIds.length === filtered.length}
-                  onCheckedChange={toggleSelectAll}
-                />
-              </th>
-              <th className="px-4 py-3 text-left font-medium">{t.assets.name}</th>
-              <th className="px-4 py-3 text-left font-medium">{t.assets.category}</th>
-              <th className="px-4 py-3 text-left font-medium hidden md:table-cell">{t.assets.brandModel}</th>
-              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">{t.assets.assignedTo}</th>
-              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell">{t.assets.renewalDate}</th>
-              <th className="px-4 py-3 text-left font-medium">{t.common.status}</th>
-              <th className="px-4 py-3 text-right font-medium">{t.common.actions}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">
-                  {t.assets.noAssets}
-                </td>
-              </tr>
-            ) : (
-              filtered.map((asset) => (
-                <tr key={asset.id} className={`border-b hover:bg-muted/30 transition-colors ${selectedIds.includes(asset.id) ? 'bg-primary/5' : ''}`}>
-                  <td className="px-4 py-3">
-                    <Checkbox
-                      checked={selectedIds.includes(asset.id)}
-                      onCheckedChange={() => toggleSelect(asset.id)}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{asset.name}</div>
-                    {asset.tags && asset.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {asset.tags.map((tag) => (
-                          <span key={tag} className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium cursor-pointer hover:bg-primary/20" onClick={() => setTagFilter(tag)}>
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-xs text-muted-foreground">{categoryLabels[asset.category]}</span>
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">
-                    {[asset.brand, asset.model].filter(Boolean).join(' ') || '—'}
-                  </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">
-                    {asset.assignedUserName || asset.assignedDepartment || '—'}
-                  </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">
-                    {asset.renewalDate
-                      ? new Date(asset.renewalDate).toLocaleDateString()
-                      : '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={statusConfig[asset.status].variant}>
-                      {statusConfig[asset.status].label}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => { setQrAsset(asset); setQrDialogOpen(true) }}
-                        title={t.assets.showQr}
-                      >
-                        <QrCode className="h-4 w-4" />
-                      </Button>
-                      {canEdit && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => { setTransferAsset(asset); setTransferDialogOpen(true) }}
-                            title={t.assets.transferTitle}
-                          >
-                            <ArrowRightLeft className="h-4 w-4" />
-                          </Button>
-                          {asset.assignedUserId && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleReturn(asset)}
-                              title={t.assets.returned}
-                            >
-                              <Undo2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => { setEditingAsset(asset); setDialogOpen(true) }}
-                          >
-                            {t.common.edit}
-                          </Button>
-                        </>
-                      )}
-                      {canDelete && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => handleDelete(asset.id)}
-                        >
-                          {t.common.delete}
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
       <Pagination
         currentPage={page}
         totalPages={totalPages}
