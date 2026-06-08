@@ -281,6 +281,8 @@ export const tr = {
     step2: '2. Aşağıdaki QR kodu okutun',
     step3: '3. Uygulamadan gelen 6 haneli kodu girin',
     manualCode: 'QR okuyamıyorsanız bu kodu manuel girin:',
+    settingsTitle: 'MFA / 2FA',
+    settingsDescription: 'Hesabınız için çok faktörlü kimlik doğrulama ayarları.',
   },
   settings: {
     title: 'Ayarlar',

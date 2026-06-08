@@ -34,7 +34,8 @@ export function DashboardPage() {
     return saved === null ? true : saved === 'true'
   })
   const { user } = useAuth()
-  const { t } = useI18n()
+  const { t, language } = useI18n()
+  const locale = language === 'tr' ? 'tr-TR' : 'en-US'
   const canControlSampleData = user?.role === 'ADMIN'
   const effectiveShowSampleAssetCharts = canControlSampleData && showSampleAssetCharts
 
@@ -271,7 +272,7 @@ export function DashboardPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <StatCard
                 title={t.dashboard.totalValue}
-                value={`₺${assetStats.totalValue.toLocaleString('tr-TR')}`}
+                value={`₺${assetStats.totalValue.toLocaleString(locale)}`}
                 icon={DollarSign}
                 color="green"
               />

@@ -51,8 +51,8 @@ export function SettingsPage() {
       {/* MFA/2FA Settings */}
       <Card className="border border-gray-300 dark:border-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">MFA / 2FA</CardTitle>
-          <CardDescription>Hesabınız için çok faktörlü kimlik doğrulama ayarları.</CardDescription>
+          <CardTitle className="text-base">{t.mfa.settingsTitle}</CardTitle>
+          <CardDescription>{t.mfa.settingsDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <MFASettings />

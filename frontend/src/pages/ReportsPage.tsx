@@ -13,7 +13,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6']
 
 export function ReportsPage() {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
+  const locale = language === 'tr' ? 'tr-TR' : 'en-US'
   const [deptSummary, setDeptSummary] = useState<DepartmentSummary[]>([])
   const [assetOverview, setAssetOverview] = useState<AssetOverview | null>(null)
   const [userOverview, setUserOverview] = useState<UserOverview | null>(null)
@@ -170,7 +171,7 @@ export function ReportsPage() {
             <span className="text-xs">{t.reports.totalValue}</span>
           </div>
           <p className="text-2xl font-bold">
-            {(assetOverview?.totalValue || 0).toLocaleString('tr-TR')} ₺
+            {(assetOverview?.totalValue || 0).toLocaleString(locale)} ₺
           </p>
         </div>
         <div className="rounded-lg border bg-card p-4">
@@ -285,7 +286,7 @@ export function ReportsPage() {
                   <td className="px-4 py-3 text-center hidden md:table-cell">{dept.activeAssets}</td>
                   <td className="px-4 py-3 text-center hidden md:table-cell">{dept.maintenanceAssets}</td>
                   <td className="px-4 py-3 text-center hidden lg:table-cell">{dept.expiredAssets}</td>
-                  <td className="px-4 py-3 text-right">{dept.totalValue.toLocaleString('tr-TR')} ₺</td>
+                  <td className="px-4 py-3 text-right">{dept.totalValue.toLocaleString(locale)} ₺</td>
                 </tr>
               ))
             )}

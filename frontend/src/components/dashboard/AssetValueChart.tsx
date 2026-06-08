@@ -16,27 +16,28 @@ interface ChartTooltipProps {
   payload?: Array<{ payload: AssetValuePoint }>
 }
 
-const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
-  if (active && payload && payload.length) {
-    const { name, value } = payload[0].payload
-    return (
-      <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
-        <p className="font-semibold text-foreground">{name}</p>
-        <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">₺{value.toLocaleString('tr-TR')}</span>
-        </p>
-      </div>
-    )
-  }
-  return null
-}
-
 interface AssetValueChartProps {
   assets: Asset[]
 }
 
 export function AssetValueChart({ assets }: AssetValueChartProps) {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
+  const locale = language === 'tr' ? 'tr-TR' : 'en-US'
+
+  const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
+    if (active && payload && payload.length) {
+      const { name, value } = payload[0].payload
+      return (
+        <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
+          <p className="font-semibold text-foreground">{name}</p>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">₺{value.toLocaleString(locale)}</span>
+          </p>
+        </div>
+      )
+    }
+    return null
+  }
   const categoryLabels: Record<string, string> = {
     HARDWARE: t.assets.categoryHardware,
     SOFTWARE_LICENSE: t.assets.categorySoftware,

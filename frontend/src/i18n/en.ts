@@ -281,6 +281,8 @@ export const en = {
     step2: '2. Scan the QR code below',
     step3: '3. Enter the 6-digit code from your app',
     manualCode: 'If you cannot scan the QR, enter this code manually:',
+    settingsTitle: 'MFA / 2FA',
+    settingsDescription: 'Multi-factor authentication settings for your account.',
   },
   settings: {
     title: 'Settings',
