@@ -34,25 +34,22 @@ jobs:
 
   backend:
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('backend/pom.xml') != '' }}
     defaults:
       run:
         working-directory: backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Debug workspace files
-        run: |
-          pwd
-          ls -la
-          find . -maxdepth 4 -name pom.xml
+        with:
+          submodules: recursive
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
 
       - name: Make Maven wrapper executable
         run: chmod +x mvnw

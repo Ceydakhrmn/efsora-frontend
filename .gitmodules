@@ -1,0 +1,4 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/Ceydakhrmn/envanter-yonetimi-backend
+	branch = master
