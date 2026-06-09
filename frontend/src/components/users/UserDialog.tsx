@@ -12,8 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useI18n } from '@/i18n'
 import type { User, UserRequest } from '@/types'
-
-const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+import { DEPARTMENTS } from '@/lib/constants'
 
 const userSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -105,7 +104,7 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
                 <SelectValue placeholder={t.auth.department} />
               </SelectTrigger>
               <SelectContent>
-                {departments.map((dept) => (
+                {DEPARTMENTS.map((dept) => (
                   <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                 ))}
               </SelectContent>

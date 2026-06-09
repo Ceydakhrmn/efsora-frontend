@@ -36,7 +36,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+import { DEPARTMENTS } from '@/lib/constants'
 
 interface AssetDialogProps {
   open: boolean
@@ -238,7 +238,7 @@ export function AssetDialog({ open, onOpenChange, asset, users, canEdit = true, 
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">{t.assets.none}</SelectItem>
-                  {departments.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                  {DEPARTMENTS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

@@ -13,8 +13,7 @@ import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
 import { PasswordStrengthBar } from '@/components/ui/PasswordStrengthBar'
-
-const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+import { DEPARTMENTS } from '@/lib/constants'
 
 const registerSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -95,7 +94,7 @@ export function RegisterForm(props: RegisterFormProps) {
             <SelectValue placeholder={t.auth.department} />
           </SelectTrigger>
           <SelectContent>
-            {departments.map((dept) => (
+            {DEPARTMENTS.map((dept) => (
               <SelectItem key={dept} value={dept}>{dept}</SelectItem>
             ))}
           </SelectContent>

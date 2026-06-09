@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Filter, Download, X } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
 import { activityLogsApi, type ActivityLog, type PageResponse } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
 import { exportToExcel } from '@/lib/exportExcel'
@@ -71,6 +73,9 @@ export function ActivityLogPage() {
     }
   })
   const [selectedSavedFilterId, setSelectedSavedFilterId] = useState<string>('none')
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const [saveDialogName, setSaveDialogName] = useState('')
+  const saveDialogInputRef = useRef<HTMLInputElement>(null)
   const { t } = useI18n()
 
   const visibleLogs = actionFilter === 'all'
@@ -137,13 +142,18 @@ export function ActivityLogPage() {
       userFilter ? userFilter : null,
       datePreset !== 'all' ? datePreset : null,
     ].filter(Boolean).join(' · ') || t.activityLog.savedFilterDefaultName
+    setSaveDialogName(suggestedName)
+    setSaveDialogOpen(true)
+  }
 
-    const name = window.prompt(t.activityLog.savedFilterPrompt, suggestedName)
-    if (!name || !name.trim()) return
+  const confirmSaveFilter = () => {
+    const name = saveDialogName.trim()
+    if (!name) return
+    setSaveDialogOpen(false)
 
     const next: SavedActivityFilter = {
       id: crypto.randomUUID(),
-      name: name.trim(),
+      name,
       entityFilter,
       actionFilter,
       datePreset,
@@ -361,6 +371,29 @@ export function ActivityLogPage() {
           onPageChange={setPage}
         />
       )}
+
+      <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t.activityLog.saveFilter}</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            <Label htmlFor="filter-name" className="sr-only">{t.activityLog.saveFilter}</Label>
+            <Input
+              id="filter-name"
+              ref={saveDialogInputRef}
+              value={saveDialogName}
+              onChange={e => setSaveDialogName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && confirmSaveFilter()}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>{t.common.cancel}</Button>
+            <Button onClick={confirmSaveFilter} disabled={!saveDialogName.trim()}>{t.common.save}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -24,7 +24,7 @@ import { UserTableSkeleton } from '@/components/users/UserTableSkeleton'
 
 
 
-const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+import { DEPARTMENTS } from '@/lib/constants'
 const roles = ['ADMIN', 'USER', 'EDITOR']
 
 export function UsersPage() {
@@ -217,7 +217,7 @@ export function UsersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.common.all}</SelectItem>
-              {departments.map((dept) => (
+              {DEPARTMENTS.map((dept) => (
                 <SelectItem key={dept} value={dept}>{dept}</SelectItem>
               ))}
             </SelectContent>

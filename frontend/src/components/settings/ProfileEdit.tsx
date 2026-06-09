@@ -14,8 +14,7 @@ import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '@/types'
-
-const departments = ['IT', 'Engineering', 'HR', 'Finance', 'Marketing', 'Sales']
+import { DEPARTMENTS } from '@/lib/constants'
 
 const profileSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -180,7 +179,7 @@ export function ProfileEdit() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {departments.map((dept) => (
+              {DEPARTMENTS.map((dept) => (
                 <SelectItem key={dept} value={dept}>{dept}</SelectItem>
               ))}
             </SelectContent>
