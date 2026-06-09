@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { ForgotPasswordFlow } from '@/components/auth/ForgotPasswordFlow'
+import { Spinner } from '@/components/ui/Spinner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
 
@@ -14,7 +15,7 @@ export function AuthPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Spinner />
       </div>
     )
   }

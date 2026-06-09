@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { activityLogsApi, type SecurityStats, type ActivityLog } from '@/api/activityLogs'
 import { useI18n } from '@/i18n'
 import { useFetch } from '@/hooks/useFetch'
+import { Spinner } from '@/components/ui/Spinner'
 
 export function SecurityDashboard() {
   const { t, language } = useI18n()
@@ -16,7 +17,7 @@ export function SecurityDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <Spinner size="md" />
       </div>
     )
   }
