@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { usersApi } from '@/api/users'
 import { useI18n } from '@/i18n'
 import { notify } from '@/lib/notify'
@@ -21,8 +21,6 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 export function PasswordChange() {
-  const [showCurrent, setShowCurrent] = useState(false)
-  const [showNew, setShowNew] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { t } = useI18n()
 
@@ -50,40 +48,14 @@ export function PasswordChange() {
 
       <div className="space-y-2">
         <Label>{t.auth.currentPassword}</Label>
-        <div className="relative">
-          <Input
-            type={showCurrent ? 'text' : 'password'}
-            placeholder="••••••••"
-            {...register('currentPassword')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowCurrent(!showCurrent)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-          >
-            {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
+        <PasswordInput placeholder="••••••••" {...register('currentPassword')} />
         {errors.currentPassword && <p className="text-xs text-destructive">{errors.currentPassword.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label>{t.auth.newPassword}</Label>
-        <div className="relative">
-          <Input
-            type={showNew ? 'text' : 'password'}
-            placeholder="••••••••"
-            {...register('newPassword')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowNew(!showNew)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-          >
-            {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-          <PasswordStrengthBar password={watch('newPassword')} />
-        </div>
+        <PasswordInput placeholder="••••••••" {...register('newPassword')} />
+        <PasswordStrengthBar password={watch('newPassword')} />
         {errors.newPassword && <p className="text-xs text-destructive">{errors.newPassword.message}</p>}
       </div>
 

@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAuth } from '@/contexts/AuthContext'
 import { useI18n } from '@/i18n'
@@ -30,7 +31,6 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm(props: RegisterFormProps) {
-  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { register: registerUser } = useAuth()
   const { t } = useI18n()
@@ -104,21 +104,7 @@ export function RegisterForm(props: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="reg-password">{t.auth.password}</Label>
-        <div className="relative">
-          <Input
-            id="reg-password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            {...register('password')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
+        <PasswordInput id="reg-password" placeholder="••••••••" {...register('password')} />
         <PasswordStrengthBar password={watch('password')} />
         {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>

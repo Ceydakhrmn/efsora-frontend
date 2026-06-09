@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Eye, EyeOff, KeyRound, ShieldCheck } from 'lucide-react'
+import { Loader2, KeyRound, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
@@ -35,7 +36,6 @@ interface LoginFormProps {
 
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [mode, setMode] = useState<'password' | 'totp'>('password')
-  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mfaModal, setMfaModal] = useState<{ open: boolean; userId?: number; mfaType?: string; email?: string; password?: string }>({ open: false })
   const [mfaError, setMfaError] = useState<string | null>(null)
@@ -174,21 +174,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 {t.auth.forgotPassword}
               </button>
             </div>
-            <div className="relative">
-              <Input
-                id="login-password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                {...register('password')}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
+            <PasswordInput id="login-password" placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
 
