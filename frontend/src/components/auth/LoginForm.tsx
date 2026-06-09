@@ -141,7 +141,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
           className={`flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer ${mode === 'password' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
         >
           <KeyRound className="h-3.5 w-3.5" />
-          Şifre ile Giriş
+          {t.auth.loginWithPassword}
         </button>
         <button
           type="button"
@@ -149,7 +149,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
           className={`flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer ${mode === 'totp' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
         >
           <ShieldCheck className="h-3.5 w-3.5" />
-          Authenticator ile Giriş
+          {t.auth.loginWithAuthenticator}
         </button>
       </div>
 

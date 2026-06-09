@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if (error.response?.status === 429) {
       const retryAfter = parseInt(error.response.headers['retry-after'] || '60', 10)
       const errorData = error.response.data
-      const message = errorData?.message || `İstek çok fazla. Lütfen ${retryAfter} saniye bekleyiniz.`
+      const message = errorData?.message || `Too many requests. Please wait ${retryAfter} seconds.`
       
       console.warn(`[RATE-LIMIT] ${message}`)
       
