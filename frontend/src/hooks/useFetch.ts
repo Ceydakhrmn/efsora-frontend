@@ -13,7 +13,6 @@ interface UseFetchResult<T> {
 
 export function useFetch<T>(
   fetcher: () => Promise<T>,
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   deps: readonly unknown[],
   options?: UseFetchOptions
 ): UseFetchResult<T> {

@@ -39,7 +39,7 @@ export function InvitePage() {
         setError(t.users.inviteExpired)
         setVerifying(false)
       })
-  }, [token])
+  }, [token, t])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

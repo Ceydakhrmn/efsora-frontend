@@ -3,7 +3,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import type { Asset } from '@/types'
 import { useI18n } from '@/i18n'
 
-
 const COLORS = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981']
 
 interface AssetValuePoint {
@@ -13,7 +12,23 @@ interface AssetValuePoint {
 
 interface ChartTooltipProps {
   active?: boolean
-  payload?: Array<{ payload: AssetValuePoint }>
+  payload?: ReadonlyArray<{ payload: AssetValuePoint }>
+  locale: string
+}
+
+function CustomTooltip({ active, payload, locale }: ChartTooltipProps) {
+  if (active && payload && payload.length) {
+    const { name, value } = payload[0].payload
+    return (
+      <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
+        <p className="font-semibold text-foreground">{name}</p>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">₺{value.toLocaleString(locale)}</span>
+        </p>
+      </div>
+    )
+  }
+  return null
 }
 
 interface AssetValueChartProps {
@@ -24,20 +39,6 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
   const { t, language } = useI18n()
   const locale = language === 'tr' ? 'tr-TR' : 'en-US'
 
-  const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
-    if (active && payload && payload.length) {
-      const { name, value } = payload[0].payload
-      return (
-        <div className="rounded-lg border border-border bg-card p-3 shadow-lg">
-          <p className="font-semibold text-foreground">{name}</p>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">₺{value.toLocaleString(locale)}</span>
-          </p>
-        </div>
-      )
-    }
-    return null
-  }
   const categoryLabels: Record<string, string> = {
     HARDWARE: t.assets.categoryHardware,
     SOFTWARE_LICENSE: t.assets.categorySoftware,
@@ -45,6 +46,7 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
     SAAS_TOOL: t.assets.categorySaas,
     OFFICE_EQUIPMENT: t.assets.categoryOffice,
   }
+
   const categoryValues = assets.reduce<Record<string, number>>((acc, asset) => {
     if (asset.purchasePrice) {
       const cat = asset.category
@@ -89,7 +91,16 @@ export function AssetValueChart({ assets }: AssetValueChartProps) {
                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
                 tickFormatter={(v) => `₺${(v / 1000).toFixed(0)}K`}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
+              <Tooltip
+                content={({ active, payload }) => (
+                  <CustomTooltip
+                    active={active}
+                    payload={payload as ReadonlyArray<{ payload: AssetValuePoint }>}
+                    locale={locale}
+                  />
+                )}
+                cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }}
+              />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {data.map((_entry, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
