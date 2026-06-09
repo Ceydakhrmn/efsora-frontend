@@ -3,6 +3,7 @@ export const tr = {
     save: 'Kaydet',
     cancel: 'İptal',
     close: 'Kapat',
+    optional: 'opsiyonel',
     delete: 'Sil',
     edit: 'Düzenle',
     add: 'Ekle',

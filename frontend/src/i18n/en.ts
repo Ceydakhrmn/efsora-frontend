@@ -3,6 +3,7 @@ export const en = {
     save: 'Save',
     cancel: 'Cancel',
     close: 'Close',
+    optional: 'optional',
     delete: 'Delete',
     edit: 'Edit',
     add: 'Add',

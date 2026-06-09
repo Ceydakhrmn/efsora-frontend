@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useI18n } from '@/i18n'
 import type { User, UserRequest } from '@/types'
@@ -132,8 +133,8 @@ export function UserDialog({ open, onOpenChange, user, onSubmit }: UserDialogPro
 
 
           <div className="space-y-2">
-            <Label>{t.auth.password} {isEditing && <span className="text-muted-foreground text-xs">(opsiyonel)</span>}</Label>
-            <Input type="password" placeholder="••••••••" {...register('password')} />
+            <Label>{t.auth.password} {isEditing && <span className="text-muted-foreground text-xs">({t.common.optional})</span>}</Label>
+            <PasswordInput placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
 

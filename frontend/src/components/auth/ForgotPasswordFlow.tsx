@@ -121,7 +121,7 @@ export function ForgotPasswordFlow({ onBack }: ForgotPasswordFlowProps) {
               <Label htmlFor="reset-token">{t.auth.enterResetCode}</Label>
               <Input
                 id="reset-token"
-                placeholder="Token"
+                placeholder={t.auth.enterResetCode}
                 {...resetForm.register('token')}
               />
             </div>

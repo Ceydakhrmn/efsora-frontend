@@ -71,12 +71,12 @@ export function RegisterForm(props: RegisterFormProps) {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label htmlFor="reg-firstName">{t.auth.firstName}</Label>
-          <Input id="reg-firstName" placeholder="Ahmet" {...register('firstName')} />
+          <Input id="reg-firstName" placeholder={t.auth.firstName} {...register('firstName')} />
           {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="reg-lastName">{t.auth.lastName}</Label>
-          <Input id="reg-lastName" placeholder="Yilmaz" {...register('lastName')} />
+          <Input id="reg-lastName" placeholder={t.auth.lastName} {...register('lastName')} />
           {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
         </div>
       </div>
