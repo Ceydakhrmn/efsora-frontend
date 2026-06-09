@@ -11,8 +11,7 @@ import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 import { Pagination } from '@/components/Pagination'
 import { ActivityLogFeed } from '@/components/activity/ActivityLogFeed'
-
-const PAGE_SIZE = 20
+import { ACTIVITY_LOG_PAGE_SIZE as PAGE_SIZE } from '@/lib/constants'
 
 function toDateStr(d: Date) {
   return d.toISOString().slice(0, 10)

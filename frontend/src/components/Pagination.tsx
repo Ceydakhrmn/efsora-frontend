@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useI18n } from '@/i18n'
+import { PAGE_SIZE_OPTIONS } from '@/lib/constants'
 
 interface PaginationProps {
   currentPage: number
@@ -12,7 +13,6 @@ interface PaginationProps {
   onPageSizeChange?: (size: number) => void
 }
 
-const PAGE_SIZE_OPTIONS = [10, 25, 50, 100]
 
 export function Pagination({
   currentPage,

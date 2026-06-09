@@ -20,6 +20,7 @@ import { notify } from '@/lib/notify'
 import type { Asset, AssetCategory, AssetRequest, AssetStatus, User } from '@/types'
 import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants'
 
 
 export function AssetsPage() {
@@ -45,7 +46,7 @@ export function AssetsPage() {
   const [tagFilter, setTagFilter] = useState<string>('all')
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const [page, setPage] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [totalElements, setTotalElements] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
 

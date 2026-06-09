@@ -24,7 +24,7 @@ import { UserTableSkeleton } from '@/components/users/UserTableSkeleton'
 
 
 
-import { DEPARTMENTS, ROLES } from '@/lib/constants'
+import { DEPARTMENTS, ROLES, DEFAULT_PAGE_SIZE } from '@/lib/constants'
 
 export function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -39,7 +39,7 @@ export function UsersPage() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const [bulkImportOpen, setBulkImportOpen] = useState(false)
   const [page, setPage] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [totalElements, setTotalElements] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const { t } = useI18n()
