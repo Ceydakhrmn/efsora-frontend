@@ -28,3 +28,4 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile.frontend
     dockerContext: .
+    healthCheckPath: /
