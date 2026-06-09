@@ -102,12 +102,12 @@ export function GlobalSearch() {
               </div>
             ) : (
               <div className="max-h-80 overflow-y-auto">
-                {results!.users.length > 0 && (
+                {results.users.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/50">
                       {t.nav.users}
                     </div>
-                    {results!.users.map((u) => (
+                    {results.users.map((u) => (
                       <button
                         key={`user-${u.id}`}
                         onClick={() => handleSelect('user', u.id)}
@@ -127,12 +127,12 @@ export function GlobalSearch() {
                     ))}
                   </>
                 )}
-                {results!.assets.length > 0 && (
+                {results.assets.length > 0 && (
                   <>
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/50">
                       {t.nav.assets}
                     </div>
-                    {results!.assets.map((a) => (
+                    {results.assets.map((a) => (
                       <button
                         key={`asset-${a.id}`}
                         onClick={() => handleSelect('asset', a.id)}

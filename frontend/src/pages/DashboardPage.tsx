@@ -91,7 +91,7 @@ export function DashboardPage() {
     ? `${selectedYear}`
     : customStart && customEnd
     ? `${customStart} — ${customEnd}`
-    : 'Custom range'
+    : t.dashboard.customRange
 
   if (loading) {
     return (
@@ -126,7 +126,6 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome + Filtre */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-2xl font-bold text-foreground">
@@ -135,7 +134,6 @@ export function DashboardPage() {
           <p className="text-muted-foreground">{t.dashboard.title}</p>
         </div>
 
-        {/* Filtre kutusu */}
         <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-2 flex-wrap">
           <select
             value={filterType}
@@ -205,7 +203,6 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Ana Stats - 4 kart */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title={t.dashboard.totalUsers} value={users.length} icon={Users} color="blue" />
         <StatCard title={t.dashboard.activeUsers} value={activeUsers.length} icon={UserCheck} color="green" />
@@ -219,7 +216,6 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Ek Stats - 3 kart */}
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           title={t.dashboard.inactiveUsers}
@@ -244,13 +240,11 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         <DepartmentChart users={users} />
         <RegistrationTrend users={users} />
       </div>
 
-      {/* Asset Stats */}
       {assetStats && (
         <>
           <div>
@@ -286,7 +280,6 @@ export function DashboardPage() {
             </div>
           )}
 
-          {/* Asset Charts */}
           {canControlSampleData && (
             <div className="flex items-center justify-end">
               <Button
@@ -311,10 +304,8 @@ export function DashboardPage() {
         </>
       )}
 
-      {/* Recent Users */}
       <RecentUsers users={users} />
 
-      {/* Security Dashboard - Admin Only */}
       {user?.role === 'ADMIN' && <SecurityDashboard />}
     </div>
   )

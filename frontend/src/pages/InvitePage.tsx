@@ -43,6 +43,7 @@ export function InvitePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!token) return
     setFormError(null)
 
     if (!firstName.trim() || !lastName.trim()) {
@@ -60,7 +61,7 @@ export function InvitePage() {
 
     setSubmitting(true)
     try {
-      const res = await invitationsApi.accept(token!, {
+      const res = await invitationsApi.accept(token, {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         password,
