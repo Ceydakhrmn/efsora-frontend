@@ -314,7 +314,6 @@ export function AssetsPage() {
         canDelete={canDelete}
         categoryLabels={categoryLabels}
         statusConfig={statusConfig}
-        t={t}
         onToggleSelect={toggleSelect}
         onQr={(asset) => { setQrAsset(asset); setQrDialogOpen(true) }}
         onTransfer={(asset) => { setTransferAsset(asset); setTransferDialogOpen(true) }}
@@ -331,7 +330,6 @@ export function AssetsPage() {
         canDelete={canDelete}
         categoryLabels={categoryLabels}
         statusConfig={statusConfig}
-        t={t}
         onToggleSelect={toggleSelect}
         onToggleSelectAll={toggleSelectAll}
         onQr={(asset) => { setQrAsset(asset); setQrDialogOpen(true) }}

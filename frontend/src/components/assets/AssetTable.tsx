@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import type { Asset, AssetCategory, AssetStatus } from '@/types'
-import type { Translations } from '@/i18n'
+import { useI18n } from '@/i18n'
 
 interface AssetTableProps {
   assets: Asset[]
@@ -12,7 +12,6 @@ interface AssetTableProps {
   canDelete: boolean
   categoryLabels: Record<AssetCategory, string>
   statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }>
-  t: Translations
   onToggleSelect: (id: number) => void
   onToggleSelectAll: () => void
   onQr: (asset: Asset) => void
@@ -25,9 +24,10 @@ interface AssetTableProps {
 
 export function AssetTable({
   assets, selectedIds, canEdit, canDelete,
-  categoryLabels, statusConfig, t,
+  categoryLabels, statusConfig,
   onToggleSelect, onToggleSelectAll, onQr, onTransfer, onReturn, onEdit, onDelete, onTagFilter,
 }: AssetTableProps) {
+  const { t } = useI18n()
   return (
     <div className="hidden sm:block rounded-lg border">
       <table className="w-full text-sm">

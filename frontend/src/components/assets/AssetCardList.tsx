@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import type { Asset, AssetCategory, AssetStatus } from '@/types'
-import type { Translations } from '@/i18n'
+import { useI18n } from '@/i18n'
 
 interface AssetCardListProps {
   assets: Asset[]
@@ -12,7 +12,6 @@ interface AssetCardListProps {
   canDelete: boolean
   categoryLabels: Record<AssetCategory, string>
   statusConfig: Record<AssetStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }>
-  t: Translations
   onToggleSelect: (id: number) => void
   onQr: (asset: Asset) => void
   onTransfer: (asset: Asset) => void
@@ -24,9 +23,10 @@ interface AssetCardListProps {
 
 export function AssetCardList({
   assets, selectedIds, canEdit, canDelete,
-  categoryLabels, statusConfig, t,
+  categoryLabels, statusConfig,
   onToggleSelect, onQr, onTransfer, onReturn, onEdit, onDelete, onTagFilter,
 }: AssetCardListProps) {
+  const { t } = useI18n()
   if (assets.length === 0) {
     return (
       <div className="rounded-lg border px-4 py-12 text-center text-muted-foreground">
