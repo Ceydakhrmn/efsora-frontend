@@ -2,8 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useI18n } from '@/i18n'
 import type { User } from '@/types'
-
-const COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f59e0b', '#ef4444', '#10b981']
+import { CHART_COLORS } from '@/lib/constants'
 
 interface DepartmentChartProps {
   users: User[]
@@ -71,7 +70,7 @@ export function DepartmentChart({ users }: DepartmentChartProps) {
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {data.map((_entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                 ))}
               </Bar>
             </BarChart>

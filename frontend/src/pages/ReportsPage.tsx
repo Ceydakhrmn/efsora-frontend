@@ -9,8 +9,7 @@ import { exportToExcel } from '@/lib/exportExcel'
 import { exportToPdf } from '@/lib/exportPdf'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 import { Skeleton } from '@/components/ui/skeleton'
-
-const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6']
+import { CHART_COLORS_EXTENDED } from '@/lib/constants'
 
 export function ReportsPage() {
   const { t, language } = useI18n()
@@ -211,7 +210,7 @@ export function ReportsPage() {
             <PieChart>
               <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
                 {categoryData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={CHART_COLORS_EXTENDED[index % CHART_COLORS_EXTENDED.length]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -227,7 +226,7 @@ export function ReportsPage() {
             <PieChart>
               <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
                 {statusData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={CHART_COLORS_EXTENDED[index % CHART_COLORS_EXTENDED.length]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -243,7 +242,7 @@ export function ReportsPage() {
             <PieChart>
               <Pie data={roleData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
                 {roleData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={CHART_COLORS_EXTENDED[index % CHART_COLORS_EXTENDED.length]} />
                 ))}
               </Pie>
               <Tooltip />
