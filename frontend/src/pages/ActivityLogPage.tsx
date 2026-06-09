@@ -361,7 +361,7 @@ export function ActivityLogPage() {
         )}
       </div>
 
-      <ActivityLogFeed logs={visibleLogs} loading={loading} t={t} />
+      <ActivityLogFeed logs={visibleLogs} loading={loading} />
 
       {entityFilter === 'all' && (
         <Pagination

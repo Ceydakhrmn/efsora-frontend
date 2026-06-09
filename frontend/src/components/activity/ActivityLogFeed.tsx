@@ -3,7 +3,7 @@ import { Activity, User, Package } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { ActivityLog } from '@/api/activityLogs'
-import type { Translations } from '@/i18n'
+import { useI18n } from '@/i18n'
 
 const actionColors: Record<string, string> = {
   CREATE: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
@@ -28,10 +28,10 @@ function formatDate(dateStr: string): string {
 interface ActivityLogFeedProps {
   logs: ActivityLog[]
   loading: boolean
-  t: Translations
 }
 
-export function ActivityLogFeed({ logs, loading, t }: ActivityLogFeedProps) {
+export function ActivityLogFeed({ logs, loading }: ActivityLogFeedProps) {
+  const { t } = useI18n()
   if (loading) {
     return (
       <div className="space-y-2">
