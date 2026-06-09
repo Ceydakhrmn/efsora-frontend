@@ -30,6 +30,11 @@ export const en = {
     clearAll: 'Clear all',
     sampleData: 'Sample Data',
     assetsUnit: 'assets',
+    errorTitle: 'Oops! Something went wrong',
+    errorMessage: 'An unexpected error occurred. Please reload the page or return to the home page.',
+    errorReload: 'Reload Page',
+    errorHome: 'Go to Home Page',
+    errorContact: 'If the problem persists, please contact your administrator.',
   },
   auth: {
     login: 'Login',

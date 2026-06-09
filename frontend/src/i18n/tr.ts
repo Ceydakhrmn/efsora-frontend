@@ -30,6 +30,11 @@ export const tr = {
     clearAll: 'Tümünü sil',
     sampleData: 'Örnek Veri',
     assetsUnit: 'varlık',
+    errorTitle: 'Oops! Bir hata oluştu',
+    errorMessage: 'Uygulamada beklenmeyen bir sorun yaşandı. Lütfen sayfayı yenilemek veya anasayfaya gitmek için aşağıdaki düğmeyi tıklayın.',
+    errorReload: 'Sayfayı Yenile',
+    errorHome: 'Anasayfaya Git',
+    errorContact: 'Sorun devam ederse lütfen yöneticinize başvurun.',
   },
   auth: {
     login: 'Giriş Yap',
