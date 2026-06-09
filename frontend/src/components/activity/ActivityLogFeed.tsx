@@ -1,3 +1,4 @@
+import type { ElementType } from 'react'
 import { Activity, User, Package } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,7 +13,7 @@ const actionColors: Record<string, string> = {
   PERMANENT_DELETE: 'bg-red-200 text-red-900 dark:bg-red-950 dark:text-red-200',
 }
 
-const entityIcons: Record<string, React.ElementType> = {
+const entityIcons: Record<string, ElementType> = {
   USER: User,
   ASSET: Package,
 }

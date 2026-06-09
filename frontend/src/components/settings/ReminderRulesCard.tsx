@@ -1,13 +1,15 @@
+import type { ElementType } from 'react'
 import { RefreshCw, ShieldCheck, Clock, Users } from 'lucide-react'
 import { useI18n } from '@/i18n'
 
 interface RuleRowProps {
-  icon: React.ElementType
+  icon: ElementType
   title: string
   description: string
 }
 
 function RuleRow({ icon: Icon, title, description }: RuleRowProps) {
+  const { t } = useI18n()
   return (
     <div className="flex items-start gap-3 py-3 border-b last:border-0">
       <div className="mt-0.5 rounded-md bg-primary/10 p-1.5">
@@ -17,7 +19,7 @@ function RuleRow({ icon: Icon, title, description }: RuleRowProps) {
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium">{title}</p>
           <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 px-2 py-0.5 text-xs font-medium">
-            Aktif
+            {t.common.active}
           </span>
         </div>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>

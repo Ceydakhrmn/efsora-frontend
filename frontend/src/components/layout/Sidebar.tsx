@@ -1,4 +1,4 @@
-import React from 'react'
+import type { ElementType } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Users, Settings, LogOut, Menu, X, ChevronLeft, Package, Activity, FileBarChart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -18,7 +18,7 @@ interface SidebarProps {
 
 type NavKey = 'dashboard' | 'users' | 'assets' | 'activityLog' | 'reports' | 'settings'
 
-const navItems: { path: string; icon: React.ElementType; key: NavKey; roles?: string[] }[] = [
+const navItems: { path: string; icon: ElementType; key: NavKey; roles?: string[] }[] = [
   { path: '/dashboard', icon: LayoutDashboard, key: 'dashboard' },
   { path: '/users', icon: Users, key: 'users', roles: ['ADMIN'] },
   { path: '/assets', icon: Package, key: 'assets' },
