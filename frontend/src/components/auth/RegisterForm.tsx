@@ -83,7 +83,7 @@ export function RegisterForm(props: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="reg-email">{t.auth.email}</Label>
-        <Input id="reg-email" type="email" placeholder="ornek@gmail.com" {...register('email')} />
+        <Input id="reg-email" type="email" placeholder={t.auth.emailPlaceholder} {...register('email')} />
         {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
 

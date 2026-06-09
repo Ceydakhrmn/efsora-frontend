@@ -64,6 +64,7 @@ export const tr = {
     backToLogin: 'Girişe dön',
     sendResetCode: 'Sıfırlama Kodu Gönder',
     enterResetCode: 'Sıfırlama kodunuzu girin',
+    emailPlaceholder: 'siz@ornek.com',
     passwordExpired: 'Şifrenizin süresi dolmuş. Lütfen şifrenizi değiştirin.',
     accountLocked: 'Hesap kilitlendi. Lütfen bekleyin.',
     mfaCodeInvalid: 'Kod doğrulanamadı.',

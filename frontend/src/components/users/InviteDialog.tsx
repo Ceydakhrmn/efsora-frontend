@@ -91,7 +91,7 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label>{t.users.inviteEmail}</Label>
-              <Input type="email" placeholder="user@efsora.com" {...register('email')} />
+              <Input type="email" placeholder={t.auth.emailPlaceholder} {...register('email')} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 

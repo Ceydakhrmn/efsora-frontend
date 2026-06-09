@@ -163,7 +163,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="login-email">{t.auth.email}</Label>
-            <Input id="login-email" type="email" placeholder="ornek@efsora.com" {...register('email')} />
+            <Input id="login-email" type="email" placeholder={t.auth.emailPlaceholder} {...register('email')} />
             {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
           </div>
 
@@ -190,7 +190,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
               <Input
                 id="totp-email"
                 type="email"
-                placeholder="ornek@efsora.com"
+                placeholder={t.auth.emailPlaceholder}
                 value={totpEmail}
                 onChange={e => { setTotpEmail(e.target.value); setTotpQr(null) }}
               />

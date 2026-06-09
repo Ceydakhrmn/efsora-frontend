@@ -64,6 +64,7 @@ export const en = {
     backToLogin: 'Back to login',
     sendResetCode: 'Send Reset Code',
     enterResetCode: 'Enter your reset code',
+    emailPlaceholder: 'you@example.com',
     passwordExpired: 'Your password has expired. Please change it.',
     accountLocked: 'Account locked. Please wait.',
     mfaCodeInvalid: 'Code could not be verified.',

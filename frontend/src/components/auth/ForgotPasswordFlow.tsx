@@ -6,6 +6,7 @@ import { Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { authApi } from '@/api/auth'
 import { useI18n } from '@/i18n'
@@ -99,7 +100,7 @@ export function ForgotPasswordFlow({ onBack }: ForgotPasswordFlowProps) {
               <Input
                 id="forgot-email"
                 type="email"
-                placeholder="ornek@efsora.com"
+                placeholder={t.auth.emailPlaceholder}
                 {...emailForm.register('email')}
               />
               {emailForm.formState.errors.email && (
@@ -126,9 +127,8 @@ export function ForgotPasswordFlow({ onBack }: ForgotPasswordFlowProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="reset-password">{t.auth.newPassword}</Label>
-              <Input
+              <PasswordInput
                 id="reset-password"
-                type="password"
                 placeholder="••••••••"
                 {...resetForm.register('newPassword')}
               />
