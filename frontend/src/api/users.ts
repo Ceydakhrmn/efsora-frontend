@@ -1,4 +1,3 @@
-
 import api from './axios'
 import type { User, UserRequest, ChangePasswordRequest, MessageResponse, AuthResponse, PagedResponse } from '@/types'
 
@@ -11,11 +10,17 @@ export interface UsersQueryParams {
   search?: string
 }
 
+export interface BulkImportResult {
+  total: number
+  success: number
+  failed: number
+  results: Array<{ row: number; email: string; status: string; message?: string }>
+}
+
 export const usersApi = {
-    deleteBulk: (ids: number[]) =>
-      api.post('/kullanicilar/bulk-delete', ids, {
-        headers: { 'Content-Type': 'application/json' }
-      }),
+  deleteBulk: (ids: number[]) =>
+    api.post('/kullanicilar/bulk-delete', ids),
+
   getAll: (params: UsersQueryParams) =>
     api.get<PagedResponse<User>>('/kullanicilar', { params }),
 
@@ -45,6 +50,7 @@ export const usersApi = {
 
   changePassword: (data: ChangePasswordRequest) =>
     api.post<MessageResponse>('/kullanicilar/change-password', data),
+
   uploadPhoto: (id: number, photo: string) =>
     api.post<User>(`/kullanicilar/${id}/photo`, { photo }),
 
@@ -52,5 +58,5 @@ export const usersApi = {
     api.post<AuthResponse>(`/kullanicilar/${id}/impersonate`),
 
   bulkImport: (users: UserRequest[]) =>
-    api.post<{ total: number; success: number; failed: number; results: Array<{ row: number; email: string; status: string; message?: string }> }>('/kullanicilar/bulk-import', users),
+    api.post<BulkImportResult>('/kullanicilar/bulk-import', users),
 }

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, Copy, Check } from 'lucide-react'
 import type { AxiosError } from 'axios'
+import type { ErrorResponse } from '@/types'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog'
@@ -44,7 +45,7 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
       setInviteLink(link)
       notify.success(t.users.inviteSuccess)
     } catch (err) {
-      const axiosError = err as AxiosError<{ message: string }>
+      const axiosError = err as AxiosError<ErrorResponse>
       const message = axiosError.response?.data?.message || t.users.inviteError
       notify.error(message)
     }
