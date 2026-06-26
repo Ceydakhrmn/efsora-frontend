@@ -5,3 +5,5 @@ build/
 .vite/
 target/
 coverage/
+efsora/
+.claude/settings.local.json
