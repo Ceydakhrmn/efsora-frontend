@@ -1,5 +1,5 @@
 # Temel imaj
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:25-jdk
 
 # Çalışma dizini oluştur
 WORKDIR /app
